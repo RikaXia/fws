@@ -1,0 +1,27 @@
+{
+  "name": "autotool",
+  "version": "1.0.0",
+  "description": "~~",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "fetool"
+  ],
+  "author": "sbfkcel",
+  "license": "ISC",
+  "devDependencies": {
+    "clean-css": "^4.0.8",
+    "colors": "^1.1.2",
+    "copy": "^0.3.0",
+    "imagemin": "^5.2.2",
+    "imagemin-guetzli": "^0.1.3",
+    "imagemin-pngquant": "^5.0.0",
+    "jade": "^1.11.0",
+    "node-sass": "^4.5.0",
+    "psd": "^3.1.0",
+    "uglify-js": "^2.6.4",
+    "yazl": "^2.4.2"
+  }
+}
