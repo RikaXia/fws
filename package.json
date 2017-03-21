@@ -4,7 +4,7 @@
   "description": "~~",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node lib/jade2html.js"
   },
   "keywords": [
     "fetool"
@@ -12,6 +12,7 @@
   "author": "sbfkcel",
   "license": "ISC",
   "devDependencies": {
+    "autoprefixer": "^6.7.7",
     "clean-css": "^4.0.8",
     "colors": "^1.1.2",
     "copy": "^0.3.0",
