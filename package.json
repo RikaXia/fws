@@ -4,7 +4,7 @@
   "description": "~~",
   "main": "main.js",
   "scripts": {
-    "test": "node lib/jade2html.js"
+    "pug2html": "node lib/pug2html.js"
   },
   "keywords": [
     "fetool"
@@ -22,7 +22,8 @@
     "jade": "^1.11.0",
     "node-sass": "^4.5.0",
     "psd": "^3.1.0",
-    "uglify-js": "^2.6.4",
+    "pug": "^2.0.0-beta11",
+    "uglify-js": "@2.6.4",
     "yazl": "^2.4.2"
   }
 }

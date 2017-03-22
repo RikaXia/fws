@@ -12,9 +12,9 @@ workspace/
 	`- app/
 		|- project/						//项目
 		|	|- src/						//项目源文件目录，`watch`命令会监听目录下的文件变动
-		|	|	|- jade/				//项目jade文件存放目录
-		|	|	|	|- _module.jade		//共用的jade文件以`_`开头，不会直接编译
-		|	|	|	`- index.jade
+		|	|	|- pug/					//项目pug文件存放目录
+		|	|	|	|- _module.pug		//共用的pug文件以`_`开头，不会直接编译
+		|	|	|	`- index.pug
 		|	|	|- data/				//项目数据文件存放目录，数据文件名与jade文件名相对应
 		|	|	|	`- index.json
 		|	|	|- sass/				//项目sass文件
