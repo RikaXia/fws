@@ -3,8 +3,13 @@
   "version": "1.0.0",
   "description": "~~",
   "main": "main.js",
+  "bin":{
+    "fws":"node lib/main.js"
+  },
   "scripts": {
-    "pug2html": "node lib/pug2html.js"
+    "pug2html": "node lib/pug2html.js",
+    "sass2html": "node lib/sass2css.js",
+    "getParameter": "node lib/getParameter.js"
   },
   "keywords": [
     "fetool"

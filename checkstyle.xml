@@ -1,0 +1,8 @@
+
+> autotool@1.0.0 getParameter E:\wordspace
+> node lib/getParameter.js "checkstyle"
+
+[ 'D:\\nodejs\\node.exe',
+  'E:\\wordspace\\lib\\getParameter.js',
+  'checkstyle' ]
+E:\wordspace
