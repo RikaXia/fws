@@ -1,7 +1,7 @@
 {
   "name": "autotool",
   "version": "1.0.0",
-  "description": "~~",
+  "description": "web fe workspace",
   "main": "main.js",
   "bin":{
     "fws":"node lib/main.js"
@@ -12,7 +12,7 @@
     "getParameter": "node lib/getParameter.js"
   },
   "keywords": [
-    "fetool"
+    "web fe workspace"
   ],
   "author": "sbfkcel",
   "license": "ISC",
