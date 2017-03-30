@@ -4,7 +4,7 @@
   "description": "web fe workspace",
   "main": "main.js",
   "bin":{
-    "fws":"lib/main.js"
+    "fws":"lib/bin.js"
   },
   "scripts": {
     "pug2html": "node lib/pug2html.js",
