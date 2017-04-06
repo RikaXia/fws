@@ -1,5 +1,6 @@
 //该配置会被项目目录下'fws_config.js'同键值所取代
-{   
+
+module.exports = {  
     //作者名称
     author:'name',
     
@@ -33,4 +34,4 @@
         fileType:'*'
     }
 
-}
+};
