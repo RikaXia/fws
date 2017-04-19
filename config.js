@@ -15,6 +15,11 @@ module.exports = {
     
     //字体路径
     ttfPath:'',
+
+    //资源匹配替换
+    srcReplace:[
+        ["localFile","cdnFilePath"]
+    ],
     
     //源文件目录同步路径
     srcSync:{
