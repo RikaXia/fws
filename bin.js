@@ -57,11 +57,27 @@ if(isExist('task',__dirname)){
             
             
             //任务方法绑定
-            if(typeof taskContent.action === 'function'){
-                task[fileName].action(taskContent.action);
+            if(taskContent.action && getType(taskContent.action) === 'function'){
+
+                task[fileName].action((name,options)=>{
+                    try {
+                        new taskContent.action(name,options);
+                    } catch (error) {
+                        taskContent.action(name,options);
+                    };                 
+                });
             }else{
                 tip.error(`任务 "${taskFile}" regTask.action 必须是一个函数`);
             };
+
+            //任务帮助说明处理
+            if(taskContent.help && getType(taskContent.help) === 'function'){
+                task[fileName].on('--help',(...arg)=>{
+                    taskContent.help(arg);
+                });
+            };
+
+            
 
         }else{
             tip.error(`"${taskFile}" 不是一个有效的任务插件，请检查插件暴露参数。`);
@@ -178,21 +194,14 @@ if(isExist('task',__dirname)){
 //     });
 
 
-// //添加额外的帮助信息
-// program.on('--help',()=>{
-//     console.log('  Examples:');
-//     console.log('');
+//添加额外的帮助信息
+program.on('--help',()=>{
+    console.log(`  Examples:`);
+    console.log(``);
 
-//     tip.gray('    # 初始化一个pc项目');
-//     console.log('    $ fws init --pc');
-//     console.log('');
-
-//     tip.gray('    # 创建一个pc项目');
-//     console.log('    $ fws create --pc');
-//     console.log('');
-
-//     tip.highlight('    by 单炒饭 (gz0119)');
-// });
+    tip.highlight(`     fws -h       查看帮助`);
+    tip.highlight(`     Author by 单炒饭 (gz0119)`);
+});
 
 //解析命令行参数argv
 program.parse(process.argv);

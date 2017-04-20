@@ -1,4 +1,6 @@
-{"pug":{
+{
+	"__name__":"移动端",
+	"pug":{
         "_pug":"",
         "__files__":[
             ["pug/index.pug","index.pug"]

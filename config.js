@@ -2,10 +2,10 @@
 
 module.exports = {  
     //作者名称
-    author:'name',
+    author:'单炒饭',
     
     //作者邮箱
-    mail:'name@4399.com',
+    mail:'liyong2@4399.com',
 
     //自动刷新
     autoRefresh:true,
