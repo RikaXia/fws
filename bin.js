@@ -8,26 +8,38 @@ const cwdPath = process.cwd();                      //当前路径
 const program = require('commander');               //（https://github.com/tj/commander.js）
 
 const tip = require('./lib/tip');                   //文字提示
-const isExist = require('./lib/isExist');           //判断文件或目录是否存在
-const getType = require('./lib/getType');          //获取数据类型
+const pathInfo = require('./lib/getPathInfo');      //获取目标路径的相关信息
+const getType = require('./lib/getType');           //获取数据类型
+
+const fwsConfig = require('./config');
 
 //声明版本号
 program.version('0.0.1');
 //program.options[0].description = '输出版本号';
 
 
-//读取任务目录
-const fwsPath = path.join(__dirname,'task/');      //任务目录
+//定义全局
+global.fws = {    
+    'fwsPath':__dirname,                                    //fws目录路径
+    'taskPath':path.join(__dirname,'/task'),                //任务插件路径
+    'tplPath':path.join(__dirname,'/tpl'),                  //内置tpl目录
+    'tplConfigPath':path.join(__dirname,'/tpl/_config'),    //内置tpl配置目录    
+    'cmdPath':cwdPath,                                      //当前进程所在的目录
+    'srcPath':path.join(cwdPath,'/src'),                    //当前进程下的src目录
+    'devPath':path.join(cwdPath,'/dev'),                    //当前进程下的dev目录
+    'distPath':path.join(cwdPath,'/dist'),                  //当前进程下的dist目录
+    'config':fwsConfig
+};
 
 //检查任务目录是否存在,如果有则注册所有任务
-if(isExist('task',__dirname)){
-    let taskList = fs.readdirSync(fwsPath),
+if(pathInfo(path.join(__dirname,'/task')).type === 'dir'){
+    let taskList = fs.readdirSync(fws.taskPath),
         task = {};
     
     for(let index=0,len = taskList.length; index<len; index++){
         let item = taskList[index],
             
-            taskFile = path.join(fwsPath,item),
+            taskFile = path.join(fws.taskPath,item),
             extName = path.extname(taskFile),           //得到文件扩展名，这里为“.json”
             fileName = path.basename(taskFile,extName), //得到文件名,不包括扩展名部分的
             taskContent = require(taskFile).regTask;    //得到任务注册相关参数
@@ -86,7 +98,7 @@ if(isExist('task',__dirname)){
     };
 
 }else{
-    tip.error(`任务目录 ${fwsPath}  好像不存在，请检查……`);
+    tip.error(`任务目录 ${fws.taskPath}  好像不存在，请检查……`);
 };
 
 

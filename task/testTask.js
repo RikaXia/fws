@@ -1,5 +1,9 @@
+const getType = require('../lib/getType');
+const tip = require('../lib/tip');
+
+
 let fun = (name)=>{
-    console.log(name);
+    console.log(fws);
 };
 module.exports = {
     regTask:{

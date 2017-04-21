@@ -4,18 +4,13 @@ const path = require('path');
 
 const program = require('commander');               //（https://github.com/tj/commander.js）
 
-const cwdPath = process.cwd();                      //执行命令的当前路径
-const fwsPath = path.resolve(__dirname,'../');      //当前工作所在的目录
-const tplPath = path.join(fwsPath,'tpl');           //tpl模版目录
-const tplConfigPath = path.join(tplPath,'_config'); //模版配置目录
-
 const tip = require('../lib/tip');                  //文字提示
 const getType = require('../lib/getType');          //获取数据类型
-const isExist = require('../lib/isExist');          //判断文件或目录是否存在
+//const isExist = require('../lib/isExist');          //判断文件或目录是否存在
+const pathInfo = require('../lib/getPathInfo');      //获取目标路径的相关信息
 
-const fwsConfig = require('../config');
 
-let aConfigList = fs.readdirSync(tplConfigPath),    //获取所有配置文件列表
+let aConfigList = fs.readdirSync(fws.tplConfigPath),//获取所有配置文件列表
     aConfigListPath = [],                           //配置文件的具体路径
     //re = /\.json$/;
     re = /^([a-g]|[i-u]|[w-z]){1}__([a-z]{1,}(.json)$)/i;
@@ -23,9 +18,10 @@ let aConfigList = fs.readdirSync(tplConfigPath),    //获取所有配置文件�
 let tplConfig = {};                                 //模版配置数据存放
 let commanderOption = [];                           //命令参数配置
 
+
 //遍历文件列表，得到文件的具体路径
 aConfigList.forEach((item,index)=>{
-    let temp = path.join(tplConfigPath,item);
+    let temp = path.join(fws.tplConfigPath,item);
     aConfigListPath.push(temp);
 });
 
@@ -85,7 +81,7 @@ class create{
                     return;
                 }else{
                     //检查项目目录是否已经存在
-                    let dirIsExist = isExist(name,cwdPath);
+                    let dirIsExist = pathInfo(path.join(fws.cmdPath,name)).type === 'dir';
                     
                     //项目已经存在则不创建，反之创建对应的项目
                     if(dirIsExist){
@@ -154,7 +150,7 @@ class create{
                     let queue = o[i];                                           //创建队列
 
                     queue.forEach((item,index)=>{
-                        let _src = path.join(tplPath,item[0]);                  //母板
+                        let _src = path.join(fws.tplPath,item[0]);                  //母板
                         let _target = path.join(currentPath,item[1]);           //目标
 
                         fs.stat(_src,(err,file)=>{
@@ -199,20 +195,22 @@ class create{
 
         //如果有获取到配置文件，则开始创建项目
         if(tplConfig[type]){
-            let projectPath = path.join(cwdPath,name),
-                projectSrcPath = path.join(projectPath,'/src'),
-                projectDevPath = path.join(projectPath,'/dev'),
-                projectDistPath = path.join(projectPath,'/dist');
+            let projectPath = path.join(fws.cmdPath,name);
+
+            fws.srcPath = path.join(projectPath,'/src'),
+            fws.devPath = path.join(projectPath,'/dev'),
+            fws.distPath = path.join(projectPath,'/dist');
+            
 
             //创建项目目录
             fs.mkdirSync(projectPath);
 
-            fs.mkdirSync(projectSrcPath);
-            fs.mkdirSync(projectDevPath);
-            fs.mkdirSync(projectDistPath);
+            fs.mkdirSync(fws.srcPath);
+            fs.mkdirSync(fws.devPath);
+            fs.mkdirSync(fws.distPath);
 
             //创建项目配置文件
-            let fwsConfigInfo = 
+            let project_fwsConfigContent = 
 `module.exports = {
 	//自动刷新
 	autoRefresh:true,
@@ -242,10 +240,10 @@ class create{
 };`
             ;
             
-            fs.writeFileSync(path.join(projectPath,'fws_config.js'),fwsConfigInfo);
+            fs.writeFileSync(path.join(projectPath,'fws_config.js'),project_fwsConfigContent);
 
             //根据配置文件创建文件
-            _ts.createFn(projectSrcPath,tplConfig[type]);
+            _ts.createFn(fws.srcPath,tplConfig[type]);
         };
     }
 }
@@ -262,7 +260,7 @@ module.exports = {
             console.log(``);
 
             tip.highlight(`     fws create -h       查看帮助`);
-            tip.highlight(`     自定义项目模版见 "${tplPath}"`);
+            tip.highlight(`     自定义项目模版见 "${fws.tplPath}"`);
         },
         action:create
     },
@@ -294,7 +292,7 @@ module.exports = {
 //                 let queue = o[i];                                           //创建队列
 
 //                 queue.forEach((item,index)=>{
-//                     let _src = path.join(tplPath,item[0]);                  //母板
+//                     let _src = path.join(fws.tplPath,item[0]);                  //母板
 //                     let _target = path.join(currentPath,item[1]);           //目标
 
 //                     fs.stat(_src,(err,file)=>{
@@ -335,7 +333,7 @@ module.exports = {
 //  * @param {string} type 项目类型
 //  */
 // let createInit = (name,type)=>{
-//     let configPath = path.join(tplConfigPath,type+'.json'),
+//     let configPath = path.join(fws.tplConfigPath,type+'.json'),
 //         configData;
     
 
@@ -357,7 +355,7 @@ module.exports = {
 
 //     //如果有获取到配置文件，则开始创建项目
 //     if(configData){
-//         let projectPath = path.join(cwdPath,name);
+//         let projectPath = path.join(fws.cmdPath,name);
 
 
 //         //创建项目目录
@@ -379,7 +377,7 @@ module.exports = {
 //         return;
 //     }else{
 //         //检查项目目录是否已经存在
-//         let dirIsExist = isExist(name,cwdPath);
+//         let dirIsExist = pathInfo(path.join(fws.cmdPath,name)).type === 'dir';
         
 //         //项目已经存在则不创建，反之创建对应的项目
 //         if(dirIsExist){
