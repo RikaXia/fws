@@ -28,7 +28,11 @@ global.fws = {
     'srcPath':path.join(cwdPath,'/src'),                    //当前进程下的src目录
     'devPath':path.join(cwdPath,'/dev'),                    //当前进程下的dev目录
     'distPath':path.join(cwdPath,'/dist'),                  //当前进程下的dist目录
-    'config':fwsConfig
+    'config':fwsConfig,
+    'require':(module)=>{                                   //引入模块并且不缓存
+        delete require.cache[require.resolve(module)];
+        return require(module);
+    }
 };
 
 //检查任务目录是否存在,如果有则注册所有任务

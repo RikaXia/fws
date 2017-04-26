@@ -4,7 +4,9 @@ const fs = require('fs');
 
 const tip = require('../lib/tip');                  //文字提示
 const pathInfo = require('../lib/getPathInfo');     //判断文件或目录是否存在
-const sass2css = require('../lib/sass2css');
+const sass2css = require('../lib/sass2css');        //sass编译css
+const pug2html = require('../lib/pug2html');        //pug编译html
+const ts2js = require('../lib/ts2js');              //typescript编译js
 
 const cwdPath = process.cwd();                      //当前路径
 
@@ -56,47 +58,37 @@ class watch{
 
             let pt = pathInfo(filePath),
                 fileType = pt.extension,
-                fileName = pt.name;                
+                fileName = pt.name;
+
+            let dist = '';                
 
             switch (fileType) {
                 case '.pug':
                     //编译jade文件
-                    const pug = require('pug');
+                    dist = path.join(fws.devPath,fileName+'.html');
 
-                    let fn = pug.compileFile(filePath,{
-                        doctype:'html',
-                        pretty:true
-                    });
-
-
+                    //获取数据
+                    let dataPath = path.join(fws.srcPath,'data',fileName+'.js'),
+                        data = {};
+                    if(pathInfo(dataPath.exports === '.js')){
+                        data = fws.require(dataPath);
+                    };
                     
-                    let dataPath = path.join(fws.srcPath,'data','index.js');        //
-                    
-                    delete require.cache[dataPath];                                 //清除数据缓存
-
-                    let data = require(dataPath);
-
-                    let html = fn(data);
-
-                    console.log(data);
-                    console.log(html);
-
-
-
-                    
-                    
+                    pug2html(filePath,dist,data);
                 break;
 
                 case '.scss':
                     //编译scss文件
-                    let dist = path.join(fws.devPath,'css',fileName+'.css');
-                    
+                    dist = path.join(fws.devPath,'css',fileName+'.css');                    
                     sass2css(filePath,dist,true);
-
                 break;
 
                 case '.ts':
                     //编译typescript文件
+                    ts2js(filePath);
+                break;
+
+                case '.tsx':
 
                 break;
             
