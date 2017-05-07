@@ -71,7 +71,7 @@ class create{
 
         let exec = require('child_process').exec;
 
-        exec('rm demo -rf',(err,out)=>{
+        exec('rm -r -f demo',(err,out)=>{
             if(err){
                 tip.error(err);
             }else{
