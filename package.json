@@ -1,18 +1,29 @@
 {
   "name": "fws",
-  "version": "1.0.0",
-  "description": "web fe workspace",
-  "main": "main.js",
+  "version": "0.0.1",
+  "description": "Fws is a workflow management tool that focuses on global automation tasks.",
+  "main": "index.js",
   "bin": {
     "fws": "bin.js"
   },
   "scripts": {
+    "test": "echo 'Welcome to fws (front-end Workspace) ^_^'",
     "pug2html": "node lib/pug2html.js",
     "sass2html": "node lib/sass2css.js",
     "getParameter": "node lib/getParameter.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sbfkcel/fws.git"
+  },
   "keywords": [
-    "web fe workspace"
+    "frontEnd",
+    "SassCompile",
+    "PugCompile",
+    "JadeCompile",
+    "imageSprite",
+    "imageCompression",
+    "fws"
   ],
   "author": "sbfkcel",
   "license": "ISC",
@@ -31,5 +42,11 @@
     "typescript": "^2.2.2",
     "uglify-js": "^2.6.4",
     "yazl": "^2.4.2"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/sbfkcel/fws/issues"
+  },
+  "homepage": "https://github.com/sbfkcel/fws#readme",
+  "_from": "fws@0.0.1",
+  "_resolved": "http://registry.npm.taobao.org/fws/download/fws-0.0.1.tgz"
 }
