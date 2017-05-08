@@ -24,9 +24,11 @@
             ["ts/main.ts","main.ts"]
         ]
     },
+    "tsx":{
+        "__files__":[
+            ["tsx/main.tsx","main.tsx"]
+        ]
+    },
     "media":{},
-    "images":{},
-    "__files__":[
-        ["pug/index.pug","index.pug"]
-    ]
+    "images":{}
 }
