@@ -12,6 +12,10 @@ const cwdPath = process.cwd();                      //当前路径
 
 
 
+
+
+
+//let watch = ()=>{};
 class watch{
     constructor(projectPath){
         const _ts = this;
@@ -252,7 +256,7 @@ class watch{
 module.exports = {
     regTask:{
         command:'[name]',
-        description:'项目监听编译',
+        description:'监听编译，该任务会自动检测Typescript、pug、scss的文件修改变化实时编译对应文件',
         // option:[
         //     ['-p, --pc','初始化一个pc项目'],
         //     ['-m, --mobile','初始化一个移动端项目']
