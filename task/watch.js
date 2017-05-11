@@ -15,7 +15,7 @@ class watch{
     constructor(projectPath){
         const _ts = this;
 
-        _ts.path = projectPath || fws.cmdPath;
+        _ts.path = projectPath || path.join(fws.cmdPath,'src');
 
         //非公共文件保存至该对象,当公共文件有修改时,会遍历相对类型的所有文件进行编译
         _ts.nonPublic = {
@@ -70,11 +70,17 @@ class watch{
         let _path = _ts.path;
 
         let w = chokidar.watch(_path,{persistent:true});
+
+        //检查路径是否为data目录文件
+        let isDataFile = (sPath)=>{
+            let dataDirPath = path.join(fws.srcPath,'data','/');
+            return sPath.indexOf(dataDirPath) === 0;
+        };
         
         tip.highlight(`已经启动项目监听，按"ctrl + c"取消监听变动`);
 
         w.on('all',(stats,filePath)=>{
-            let fileType = path.extname(filePath),
+            let fileType = path.extname(filePath).toLowerCase(),
                 fileName = path.basename(filePath,fileType),
 
                 //得取文件第一个字符，用于决定是否为公共文件
@@ -121,9 +127,13 @@ class watch{
                         case '.tsx':
                             _ts.compileTypeFile('tsx');
                         break;
+
+                        case '.js':
+                            compile(filePath);
+                        break;
                     };
                 }else{
-                    compile(filePath);
+                    compile(filePath);                                       
                 };
             }else if(stats === 'unlink'){
                 //及时删除nonPublic,避免不必要的编译处理
@@ -146,6 +156,24 @@ class watch{
                 };
 
                 //删除旧的已经编译的对应文件
+
+            };
+
+            //如果修改的data目录下的.js文件，则编译pug的对应文件
+            if(stats === 'change' && fileType === '.js' && isDataFile(filePath)){
+                //修改的是公共数据，编译所有jade文件，否则只编译与其文件名相对应的文件
+                if(prefix === '_'){
+                    for(let i in _ts.nonPublic.pug){
+                        compile(i);
+                    };
+                }else{
+                    for(let i in _ts.nonPublic.pug){
+                        let pugName = path.basename(i);                        
+                        if(pugName === fileName+'.pug'){
+                            compile(i);
+                        };
+                    };
+                };
             };
             
             

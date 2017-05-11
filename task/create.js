@@ -45,10 +45,10 @@ class create{
 
         let exec = require('child_process').exec;
 
-        exec('rm -r -f demo',(err,out)=>{
-            if(err){
-                tip.error(err);
-            }else{
+        // exec('rm -r -f demo',(err,out)=>{
+        //     if(err){
+        //         tip.error(err);
+        //     }else{
                 if(name === undefined){
                     //如果没有输入项目名则不允许继续操作
                     tip.error('项目名称不允许为空');
@@ -71,8 +71,8 @@ class create{
                         
                     };
                 };
-            };
-        });
+        //     };
+        // });
     }
 
     /**

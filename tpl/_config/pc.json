@@ -12,11 +12,11 @@
             ["data/index.js","index.js"]
         ]
     },
-    "sass":{
+    "scss":{
         "__files__":[
-            ["sass/_reset.scss","_reset.scss"],
-            ["sass/_mixin.scss","_mixin.scss"],
-            ["sass/style.scss","style.scss"]
+            ["scss/_reset.scss","_reset.scss"],
+            ["scss/_mixin.scss","_mixin.scss"],
+            ["scss/style.scss","style.scss"]
         ]
     },
     "ts":{
