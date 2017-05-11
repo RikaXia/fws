@@ -1,12 +1,20 @@
+const path = require('path');
+
 const getType = require('../lib/getType');
 const tip = require('../lib/tip');
 
+const outSprite = require('../lib/outSprite');
 
 let fun = (name,options)=>{
     // console.log(name);
     // console.log(name,options);
 
-    console.log(options.list,typeof options.list)
+    let imgDirPath = path.join(fws.srcPath,'images','sprite');
+    new outSprite(imgDirPath);
+
+
+
+    //console.log(options.list,typeof options.list)
 };
 
 function range(val) {
