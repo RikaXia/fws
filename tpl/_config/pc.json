@@ -13,8 +13,10 @@
         ]
     },
     "scss":{
+        "_spriteData":"",
         "__files__":[
             ["scss/_reset.scss","_reset.scss"],
+            ["scss/_function.scss","_function.scss"],
             ["scss/_mixin.scss","_mixin.scss"],
             ["scss/style.scss","style.scss"]
         ]

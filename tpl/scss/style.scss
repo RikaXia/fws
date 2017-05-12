@@ -1,5 +1,12 @@
-$reg:red;
+@charset "utf-8";
+@import "reset";		//全局样式重置模块
+@import "function";     //公共函数
+@import "mixin";		//公共类文件
 
-body {
-	background:$reg;
+@import "spriteData";	//精灵图数据，由fws自动更新，引入即可
+
+
+.main {
+
 }
+

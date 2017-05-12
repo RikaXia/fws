@@ -16,6 +16,9 @@ module.exports = {
     //字体路径
     ttfPath:'',
 
+    //ignore的编译目录，只作拷贝
+    ignoreCompileDir:['node_modules'],
+
     //资源匹配替换
     srcReplace:[
         ["localFile","cdnFilePath"]

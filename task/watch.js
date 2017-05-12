@@ -69,25 +69,41 @@ class watch{
         const _ts = this;
         let _path = _ts.path;
 
-        let w = chokidar.watch(_path,{persistent:true});
+        let w = chokidar.watch(_path,{persistent:true}),
 
-        //检查路径是否为data目录文件
-        let isDataFile = (sPath)=>{
-            let dataDirPath = path.join(fws.srcPath,'data','/');
-            return sPath.indexOf(dataDirPath) === 0;
-        };
-        
-        tip.highlight(`已经启动项目监听，按"ctrl + c"取消监听变动`);
+            //检查路径是否为data目录文件
+            isDataFile = (sPath)=>{
+                let dataDirPath = path.join(fws.srcPath,'data','/');
+                return sPath.indexOf(dataDirPath) === 0;
+            },
+
+            //检查路径是否为忽略编译的目录
+            isIgnoreCompileDir = (sPath)=>{
+                let ignoreDir = fws.config.ignoreCompileDir,
+                    aPathList = path.dirname(sPath).split(path.sep);              
+
+                if(ignoreDir.length){
+                    return ignoreDir.some((item,index)=>{
+                        return aPathList.some((_item,_index)=>{
+                            return item === _item;
+                        });
+                    });
+                };
+                return false;
+            };
+
 
         w.on('all',(stats,filePath)=>{
             let fileType = path.extname(filePath).toLowerCase(),
                 fileName = path.basename(filePath,fileType),
 
+                notIgnoreDir = !isIgnoreCompileDir(filePath),
+
                 //得取文件第一个字符，用于决定是否为公共文件
                 prefix = fileName ? fileName.substr(0,1) : undefined;
             
             //将非公共文件保存至nonPublic
-            if(stats === 'add'){
+            if(stats === 'add' && notIgnoreDir){
                 switch (fileType){
                     case '.pug':
                         _ts.nonPublic.pug[filePath] = null;
@@ -137,23 +153,26 @@ class watch{
                 };
             }else if(stats === 'unlink'){
                 //及时删除nonPublic,避免不必要的编译处理
-                switch (fileType){
-                    case '.pug':
-                        delete _ts.nonPublic.pug[filePath];
-                    break;
+                if(notIgnoreDir){
+                    switch (fileType){
+                        case '.pug':
+                            delete _ts.nonPublic.pug[filePath];
+                        break;
 
-                    case '.scss':
-                        delete _ts.nonPublic.sass[filePath];
-                    break;
+                        case '.scss':
+                            delete _ts.nonPublic.sass[filePath];
+                        break;
 
-                    case '.ts':
-                        delete _ts.nonPublic.ts[filePath];
-                    break;
+                        case '.ts':
+                            delete _ts.nonPublic.ts[filePath];
+                        break;
 
-                    case '.tsx':
-                        delete _ts.nonPublic.tsx[filePath];
-                    break;
+                        case '.tsx':
+                            delete _ts.nonPublic.tsx[filePath];
+                        break;
+                    };
                 };
+                
 
                 //删除旧的已经编译的对应文件
 
