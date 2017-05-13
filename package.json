@@ -32,6 +32,7 @@
     "chokidar": "^1.6.1",
     "clean-css": "^4.0.8",
     "colors": "^1.1.2",
+    "commander": "^2.9.0",
     "fs-extra": "^3.0.1",
     "imagemin": "^5.2.2",
     "imagemin-guetzli": "^0.1.3",
