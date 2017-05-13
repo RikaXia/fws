@@ -17,8 +17,6 @@ const fwsConfig = require('./config');
 program.version('0.0.1');
 //program.options[0].description = '输出版本号';
 
-
-
 //定义全局
 global.fws = {    
     'fwsPath':__dirname,                                    //fws目录路径

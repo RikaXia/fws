@@ -153,7 +153,6 @@ class watch{
                 }else{
                     compile(filePath);                                       
                 };
-                
             }else if(stats === 'unlink'){
                 //及时删除nonPublic,避免不必要的编译处理
                 if(notIgnoreDir){
