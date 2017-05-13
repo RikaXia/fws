@@ -14,10 +14,11 @@
     },
     "scss":{
         "_spriteData":"",
-        "__files__":[
-            ["scss/_reset.scss","_reset.scss"],
-            ["scss/_function.scss","_function.scss"],
-            ["scss/_mixin.scss","_mixin.scss"],
+        "__files__":[            
+            ["scss/_fws_function.scss","_fws_function.scss"],
+            ["scss/_fws_mixin.scss","_fws_mixin.scss"],
+            ["scss/_reset.scss","_reset.scss"],          
+            ["scss/_fws_spriteData.scss","_fws_spriteData.scss"],
             ["scss/style.scss","style.scss"]
         ]
     },

@@ -1,0 +1,16 @@
+@charset "utf-8";
+
+@mixin sprite-size($sprite,$element){
+    $w:spriteW($sprite,$element)+px;
+    $h:spriteH($sprite,$element)+px;
+    
+    width:$w;
+    height:$h;
+};
+
+@mixin sprite-position($sprite,$element){
+    $x:- spriteX($sprite,$element)+px;
+    $y:- spriteY($sprite,$element)+px;
+    
+    background-position:$x $y;
+};

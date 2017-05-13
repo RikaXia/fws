@@ -1,6 +1,6 @@
 const path = require('path');
 const chokidar = require('chokidar');
-const fs = require('fs');
+const fs = require('fs-extra');
 
 const tip = require('../lib/tip');                  //文字提示
 const pathInfo = require('../lib/getPathInfo');     //判断文件或目录是否存在
@@ -19,18 +19,10 @@ class watch{
 
         //非公共文件保存至该对象,当公共文件有修改时,会遍历相对类型的所有文件进行编译
         _ts.nonPublic = {
-            'pug':{
-
-            },
-            'sass':{
-
-            },            
-            'ts':{
-
-            },
-            'tsx':{
-
-            }
+            'pug':{},
+            'scss':{},            
+            'ts':{},
+            'tsx':{}
         };
 
         _ts.init();
@@ -42,7 +34,12 @@ class watch{
 
         //检查"src"目录是否存在，有则进行文件监听
         if(_ts.check()){
-             _ts.changeWatch();
+            //先清除dev目录再监听
+            fs.remove(fws.devPath,err => {
+                if(!err){
+                    _ts.changeWatch();
+                };
+            });
         }else{
             tip.error(`错误， "${path}" 不是一个有效的fws项目目录，必须有一个"src"目录存在`);
         };
@@ -103,14 +100,14 @@ class watch{
                 prefix = fileName ? fileName.substr(0,1) : undefined;
             
             //将非公共文件保存至nonPublic
-            if(stats === 'add' && notIgnoreDir){
+            if(stats === 'add' && notIgnoreDir && prefix !== '_'){
                 switch (fileType){
                     case '.pug':
                         _ts.nonPublic.pug[filePath] = null;
                     break;
 
                     case '.scss':
-                        _ts.nonPublic.sass[filePath] = null;
+                        _ts.nonPublic.scss[filePath] = null;
                     break;
 
                     case '.ts':
@@ -123,9 +120,10 @@ class watch{
                 };
             };           
             
+            
             //当文件状态是新增加或有修改变化的时候 且 不在忽略列表时，编译对应的文件
             if(stats === 'add' || stats === 'change'){
-                //如果修改的是公共文件，则编译同类型所有文件
+                //如果修改的是公共文件，则编译同类型所有文件，js和其它
                 if(prefix === '_'){
                     switch (fileType){
                         case '.pug':
@@ -144,7 +142,11 @@ class watch{
                             _ts.compileTypeFile('tsx');
                         break;
 
-                        case '.js':
+                        // case '.js':
+                        //     compile(filePath);
+                        // break;
+                        
+                        default:
                             compile(filePath);
                         break;
                     };
@@ -160,7 +162,7 @@ class watch{
                         break;
 
                         case '.scss':
-                            delete _ts.nonPublic.sass[filePath];
+                            delete _ts.nonPublic.scss[filePath];
                         break;
 
                         case '.ts':

@@ -35,6 +35,8 @@ global.fws = {
     }
 };
 
+global.fws_spriteTime ={};                                  //用于保存精灵图目录编译时间
+
 //检查任务目录是否存在,如果有则注册所有任务
 if(pathInfo(path.join(__dirname,'/task')).type === 'dir'){
     let taskList = fs.readdirSync(fws.taskPath),
