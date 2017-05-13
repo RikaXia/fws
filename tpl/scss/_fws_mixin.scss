@@ -1,5 +1,6 @@
 @charset "utf-8";
 
+//精灵图宽高设置方法
 @mixin sprite-size($sprite,$element){
     $w:spriteW($sprite,$element)+px;
     $h:spriteH($sprite,$element)+px;
@@ -8,6 +9,7 @@
     height:$h;
 };
 
+//精灵图背景坐标获取方法
 @mixin sprite-position($sprite,$element){
     $x:- spriteX($sprite,$element)+px;
     $y:- spriteY($sprite,$element)+px;
