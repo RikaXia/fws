@@ -2,7 +2,7 @@
 
 Fws is short for front-end Workspace
 
-![](https://img.shields.io/badge/schedule-20%-brightgreen.svg)
+![schedule](https://img.shields.io/badge/schedule-20%-brightgreen.svg)
 
 [TOC]
 
