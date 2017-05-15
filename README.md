@@ -1,6 +1,6 @@
 <span style="font-size:30px; display:block;">What is fws?</span>
 
-![schedule](https://img.shields.io/badge/schedule-20%-brightgreen.svg)
+![schedule](https://img.shields.io/badge/schedule-20%25-brightgreen.svg)
 
 Fws is short for front-end Workspace
 
