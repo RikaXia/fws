@@ -1,57 +1,57 @@
 # What is fws?
+
+![](https://img.shields.io/badge/schedule-20%-brightgreen.svg)
+
+---
 Fws is short for front-end Workspace
 
 [TOC]
 
-## 三分钟上手
+## 一、三分钟上手
 
-一、克隆
+### 1.1 安装fws
+```
+# 克隆项目
+git clone https://github.com/sbfkcel/fws.git
 
-## schedule
+# 进入fws目录
+cd fws
+
+# 安装依赖
+npm install
+
+# 注册工具
+npm link
+
+# 检查是否安装成功
+fws -V
+```
+
+### 1.2 创建项目
+```
+fws create <项目名称>
+```
+
+### 1.3 监听项目
+
+```
+cd <项目目录>
+
+fws watch
+```
+
+## 二、扩展阅读（待整理）
+- 如何自定义任务插件
+- 如何自定义项目模版
+- 文件命名约定
+
+## 三、API
+稍后……
+
+## 四、schedule
 
 20%
 
-## 文件结构
-```
-workspace/
-	|- config.js
-	|- package.json						//工具依赖模块配置
-	|- README.md						//工具介绍文档
-	|- node_modules/					//所有的依赖模块
-	|- lib/								//工具的各任务
-	`- app/
-		|- project/						//项目
-		|	|- src/						//项目源文件目录，`watch`命令会监听目录下的文件变动
-		|	|	|- pug/					//项目pug文件存放目录
-		|	|	|	|- _module.pug		//共用的pug文件以`_`开头，不会直接编译
-		|	|	|	`- index.pug
-		|	|	|- data/				//项目数据文件存放目录，数据文件名与jade文件名相对应
-		|	|	|	`- index.json
-		|	|	|- sass/				//项目sass文件
-		|	|	|	`- index.scss
-		|	|	|- ts/					//项目typescript文件
-		|	|	|	`- main.ts
-		|	|	|- images/				//图片目录
-		|	|	|	|- _sprite			//雪碧图目录
-		|	|	|	|- icon.png
-		|	|	|	`- module.psd		//`psd2jade --module`，会生成对应的`_module.jade`、`_module.scss`、`images/_module/`、`images/module.bj`文件
-		|	|	`- media/				//媒体目录，用于存放音视频文件
-		|	|
-		|	|- dev/						//开发目录，由`build --dev`生成
-		|	|	|- index.html
-		|	|	|- css/
-		|	|	|- images/
-		|	|	| 	|- _sprite.png		//合并的雪碧图，但没有压缩
-		|	|	|	`- icon.png			//直接将dev里复制过来
-		|	|	`- js/
-		|	|	
-		|	`- dist/					//生产目录，由`build --dist`生成，不同于`build --dev`的是，该目录下的js、css、img都是压缩处理过的
-		|		|- index.html
-		|		|- css/
-		|		|- images/
-		|		`- js/
-		|
-		`- other project				//其它项目
-```
+---
 
 web fe workspace

@@ -6,9 +6,6 @@ module.exports = {
     
     //作者邮箱
     mail:'liyong2@4399.com',
-
-    //自动刷新
-    autoRefresh:true,
     
     //模版路径
     tplPath:'',
@@ -27,7 +24,7 @@ module.exports = {
     //源文件目录同步路径
     srcSync:{
         path:'',
-        fileType:'*'
+        fileType:'*.*'
     },
 
     //编译目录同步路径

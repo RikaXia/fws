@@ -181,35 +181,42 @@ class create{
         fs.mkdirSync(fws.distPath);
 
         //创建项目配置文件
-        let project_fwsConfigContent = 
-`module.exports = {
-	//自动刷新
-	autoRefresh:true,
+        let project_fwsConfigContent = {
 
-	//资源匹配替换
-	srcReplace:[
-		["localFile","cdnFilePath"]
-	],
+            //资源匹配替换
+            srcReplace:[
+                ["localFile","cdnFilePath"]
+            ],
 
-	//源文件目录同步路径
-	srcSync:{
-		path:'',
-		fileType:'*'
-	},
+            //源文件目录同步路径
+            srcSync:{
+                path:'',
+                fileType:'*'
+            },
 
-	//编译目录同步路径
-	devSync:{
-		path:'',
-		fileType:'*'
-	},
+            //编译目录同步路径
+            devSync:{
+                path:'',
+                fileType:'*'
+            },
 
-	//发布目录同步路径
-	distSync:{
-		path:'',
-		fileType:'*'
-	}
-};`
-        ;
+            //发布目录同步路径
+            distSync:{
+                path:'',
+                fileType:'*'
+            }
+        };
+        project_fwsConfigContent.author = fws.config.author;            //作者
+        project_fwsConfigContent.mail = fws.config.mail;                //作者邮箱
+        project_fwsConfigContent.srcReplace = fws.config.srcReplace;    //资源替换
+        project_fwsConfigContent.srcSync = fws.config.srcSync;
+        project_fwsConfigContent.devSync = fws.config.devSync;
+        project_fwsConfigContent.distSync = fws.config.distSync;
+
+
+        project_fwsConfigContent = 'module.exports = '+JSON.stringify(project_fwsConfigContent,null,2);
+
+        console.log(fws);
             
         fs.writeFileSync(path.join(projectPath,'fws_config.js'),project_fwsConfigContent);
 
