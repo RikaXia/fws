@@ -1,21 +1,19 @@
 #!/usr/bin/env node
 'use strict';
 
-//const parameter = process.argv.splice(2);           //传入的参数
 const fs = require('fs');
 const path = require('path');
-const cwdPath = process.cwd();                      //当前路径
-const program = require('commander');               //（https://github.com/tj/commander.js）
+const cwdPath = process.cwd();                              //当前路径
+const program = require('commander');
 
-const tip = require('./lib/tip');                   //文字提示
-const pathInfo = require('./lib/getPathInfo');      //获取目标路径的相关信息
-const getType = require('./lib/getType');           //获取数据类型
+const tip = require('./lib/tip');                           //文字提示
+const pathInfo = require('./lib/getPathInfo');              //获取目标路径的相关信息
+const getType = require('./lib/getType');                   //获取数据类型
 
 const fwsConfig = require('./config');
 
 //声明版本号
 program.version('0.0.1');
-//program.options[0].description = '输出版本号';
 
 //定义全局
 global.fws = {    
@@ -42,8 +40,7 @@ if(pathInfo(path.join(__dirname,'/task')).type === 'dir'){
         task = {};
     
     for(let index=0,len = taskList.length; index<len; index++){
-        let item = taskList[index],
-            
+        let item = taskList[index],            
             taskFile = path.join(fws.taskPath,item),
             extName = path.extname(taskFile),           //得到文件扩展名，这里为“.json”
             fileName = path.basename(taskFile,extName), //得到文件名,不包括扩展名部分的
@@ -66,20 +63,11 @@ if(pathInfo(path.join(__dirname,'/task')).type === 'dir'){
             };      
 
             //任务参数绑定
-            // function list(val) {
-            //     return val.split(',');
-            // }
-            // task[fileName].option('-l, --list <items>', 'IP列表', list);
-
-            // console.log(task[fileName]);
-
             if(taskContent.option && getType(taskContent.option) === 'array'){
                 taskContent.option.forEach((item,index)=>{
-                    task[fileName].option.apply(task[fileName],item);               
-                    //task[fileName].option(item[0],item[1],item[2]);
+                    task[fileName].option.apply(task[fileName],item);
                 });
             };
-            
             
             //任务方法绑定
             if(taskContent.action && getType(taskContent.action) === 'function'){
@@ -102,8 +90,6 @@ if(pathInfo(path.join(__dirname,'/task')).type === 'dir'){
                 });
             };
 
-            
-
         }else{
             tip.error(`"${taskFile}" 不是一个有效的任务插件，请检查插件暴露参数。`);
         };
@@ -119,8 +105,6 @@ if(pathInfo(path.join(__dirname,'/task')).type === 'dir'){
 program.on('--help',()=>{
     console.log(`  Examples:`);
     console.log(``);
-
-    //tip.highlight(`     fws -h       查看帮助`);
     tip.highlight(`     Author by 单炒饭`);
 });
 

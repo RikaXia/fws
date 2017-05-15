@@ -182,37 +182,22 @@ class create{
 
         //创建项目配置文件
         let project_fwsConfigContent = {
+            //作者、邮箱
+            author:fws.config.author,
+            mail:fws.config.mail,
 
             //资源匹配替换
-            srcReplace:[
-                ["localFile","cdnFilePath"]
-            ],
+            srcReplace:fws.config.srcReplace,
 
             //源文件目录同步路径
-            srcSync:{
-                path:'',
-                fileType:'*'
-            },
+            srcSync:fws.config.srcSync,
 
             //编译目录同步路径
-            devSync:{
-                path:'',
-                fileType:'*'
-            },
+            devSync:fws.config.devSync,
 
             //发布目录同步路径
-            distSync:{
-                path:'',
-                fileType:'*'
-            }
+            distSync:fws.config.distSync
         };
-        project_fwsConfigContent.author = fws.config.author;            //作者
-        project_fwsConfigContent.mail = fws.config.mail;                //作者邮箱
-        project_fwsConfigContent.srcReplace = fws.config.srcReplace;    //资源替换
-        project_fwsConfigContent.srcSync = fws.config.srcSync;
-        project_fwsConfigContent.devSync = fws.config.devSync;
-        project_fwsConfigContent.distSync = fws.config.distSync;
-
 
         project_fwsConfigContent = 'module.exports = '+JSON.stringify(project_fwsConfigContent,null,2);
 
@@ -235,8 +220,6 @@ module.exports = {
         help:()=>{
             console.log(`  Examples:`);
             console.log(``);
-
-            //tip.highlight(`     fws create -h       查看帮助`);
             tip.highlight(`     如何自定义项目模版见 "${fws.tplPath}"`);
         },
         action:create

@@ -30,13 +30,13 @@ module.exports = {
     //编译目录同步路径
     devSync:{
         path:'',
-        fileType:'*'
+        fileType:'*.*'
     },
 
     //发布目录同步路径
     distSync:{
         path:'',
-        fileType:'*'
+        fileType:'*.*'
     }
 
 };
