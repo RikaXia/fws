@@ -1,12 +1,12 @@
-# What is fws?
-
-Fws is short for front-end Workspace
+<span style="font-size:30px; display:block;">What is fws?</span>
 
 ![schedule](https://img.shields.io/badge/schedule-20%-brightgreen.svg)
 
-[TOC]
+Fws is short for front-end Workspace
 
-## 一、三分钟上手
+
+
+## 一、快速上手
 
 ### 1.1 安装fws
 ```
@@ -47,9 +47,15 @@ fws watch
 ## 三、API
 稍后……
 
-## 四、schedule
+## 四、后续计划
 
-20%
+- 页面同步刷新
+- jsx编译支持
+- vue项目编译支持
+- 任务串联机制
+- api开放
+- 字体精简支持
+- 发布机制
 
 ---
 
