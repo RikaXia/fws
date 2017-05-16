@@ -185,6 +185,11 @@ class create{
             //作者、邮箱
             author:fws.config.author,
             mail:fws.config.mail,
+            projectType:_ts.templateName,
+            createTime:new Date().valueOf(),
+
+            updater:undefined,
+            updateTime:undefined,
 
             //资源匹配替换
             srcReplace:fws.config.srcReplace,
@@ -200,8 +205,6 @@ class create{
         };
 
         project_fwsConfigContent = 'module.exports = '+JSON.stringify(project_fwsConfigContent,null,2);
-
-        console.log(fws);
             
         fs.writeFileSync(path.join(projectPath,'fws_config.js'),project_fwsConfigContent);
 

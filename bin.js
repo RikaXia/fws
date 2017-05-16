@@ -42,9 +42,9 @@ if(pathInfo(path.join(__dirname,'/task')).type === 'dir'){
     for(let index=0,len = taskList.length; index<len; index++){
         let item = taskList[index],            
             taskFile = path.join(fws.taskPath,item),
-            extName = path.extname(taskFile),           //得到文件扩展名，这里为“.json”
-            fileName = path.basename(taskFile,extName), //得到文件名,不包括扩展名部分的
-            taskContent = require(taskFile).regTask;    //得到任务注册相关参数
+            extName = path.extname(taskFile),               //得到文件扩展名
+            fileName = path.basename(taskFile,extName),     //得到文件名,不包括扩展名部分的
+            taskContent = require(taskFile).regTask;        //得到任务注册相关参数
         
         //检查是否有注册任务
         if(taskContent){
