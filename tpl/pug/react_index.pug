@@ -1,0 +1,16 @@
+html
+    head
+        title #{title}
+        link(href="./images/favicon.ico", rel="shortcut icon")
+        link(href="./css/style.css", rel="stylesheet")        
+    body
+        div#box
+        
+        div#footer.footer !{footer}
+
+        //- React库
+        script(src='https://cdn.staticfile.org/react/15.5.4/react.min.js')
+        script(src='https://cdn.staticfile.org/react/15.5.4/react-dom.min.js')
+
+        //- 页面入口文件
+        script(src='./js/main.js')

@@ -22,7 +22,8 @@ class watch{
             'pug':{},
             'scss':{},            
             'ts':{},
-            'tsx':{}
+            'tsx':{},
+            'jsx':{}
         };
 
         _ts.init();
@@ -117,6 +118,10 @@ class watch{
                     case '.tsx':
                         _ts.nonPublic.tsx[filePath] = null;
                     break;
+
+                    case '.jsx':
+                        _ts.nonPublic.jsx[filePath] = null;
+                    break;
                 };
             };           
             
@@ -142,6 +147,9 @@ class watch{
                             _ts.compileTypeFile('tsx');
                         break;
 
+                        case '.jsx':
+                            _ts.compileTypeFile('jsx');
+                        break;
                         // case '.js':
                         //     compile(filePath);
                         // break;
@@ -171,6 +179,10 @@ class watch{
 
                         case '.tsx':
                             delete _ts.nonPublic.tsx[filePath];
+                        break;
+
+                        case '.jsx':
+                            delete _ts.nonPublic.jsx[filePath];
                         break;
                     };
                 };

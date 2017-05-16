@@ -26,7 +26,7 @@ class create{
         //将命令传入的名称，和参数绑定到对象之上
         _ts.projectName = name;
         _ts.rojectOptions = options;
-        _ts.templateName = (getType(options.template) === 'string') ? options.template  : 'pc';
+        _ts.templateName = (getType(options.template) === 'string') ? options.template  : 'default';
 
         _ts.init();
     }

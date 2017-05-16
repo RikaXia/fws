@@ -1,9 +1,9 @@
 {	
-	"__name__":"PC端",
+	"__name__":"React项目模版",
 	"pug":{
         "_pug":"",
         "__files__":[
-            ["pug/index.pug","index.pug"]
+            ["pug/react_index.pug","index.pug"]
         ]
     },
     "data":{
@@ -22,16 +22,15 @@
             ["scss/style.scss","style.scss"]
         ]
     },
-    "ts":{
-        "__files__":[
-            ["ts/main.ts","main.ts"]
-        ]
-    },
     "tsx":{
         "__files__":[
-            ["tsx/main.tsx","main.tsx"]
+            ["ts/main.tsx","main.tsx"]
         ]
     },
     "media":{},
-    "images":{}
+    "images":{
+        "__files__":[
+            ["images/favicon.ico","favicon.ico"]
+        ]
+    }
 }
