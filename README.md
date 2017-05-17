@@ -41,7 +41,7 @@ fws watch
 
 ## 二、扩展阅读（待整理）
 - 如何自定义任务插件
-- [如何自定义项目模版](https://github.com/sbfkcel/fws/blob/master/tpl/_config/README.md)
+- [如何自定义项目模版](https://github.com/sbfkcel/fws/blob/master/docs/%E9%A1%B9%E7%9B%AE%E6%A8%A1%E7%89%88%E5%AE%9A%E4%B9%89.md)
 - 文件命名约定
 
 ## 三、API
