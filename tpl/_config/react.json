@@ -1,18 +1,15 @@
 {	
 	"__name__":"React项目模版",
-	"pug":{
-        "_pug":"",
-        "__files__":[
-            ["pug/react_index.pug","index.pug"]
-        ]
-    },
+    "__files__":[
+        ["pug/react_index.pug","index.pug"]
+    ],
     "data":{
         "__files__":[
             ["data/_public.js","_public.js"],
             ["data/index.js","index.js"]
         ]
     },
-    "scss":{
+    "css":{
         "_spriteData":"",
         "__files__":[            
             ["scss/_fws_function.scss","_fws_function.scss"],
@@ -22,7 +19,7 @@
             ["scss/style.scss","style.scss"]
         ]
     },
-    "tsx":{
+    "js":{
         "__files__":[
             ["ts/main.tsx","main.tsx"]
         ]

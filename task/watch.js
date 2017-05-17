@@ -4,27 +4,20 @@ const fs = require('fs-extra');
 
 const tip = require('../lib/tip');                  //文字提示
 const pathInfo = require('../lib/getPathInfo');     //判断文件或目录是否存在
-const compile = require('../lib/compile');          //编译文件
+const Compile = require('../lib/compile');          //编译文件
 
 const cwdPath = process.cwd();                      //当前路径
 
 
 
 //检查当前项目有哪些文件
-class watch{
+class Watch{
     constructor(projectPath){
         const _ts = this;
 
         _ts.path = projectPath || path.join(fws.cmdPath,'src');
 
-        //非公共文件保存至该对象,当公共文件有修改时,会遍历相对类型的所有文件进行编译
-        _ts.nonPublic = {
-            'pug':{},
-            'scss':{},            
-            'ts':{},
-            'tsx':{},
-            'jsx':{}
-        };
+        _ts.nonPublic = {};                         //保存非"_"开始的文件
 
         _ts.init();
     }
@@ -58,161 +51,72 @@ class watch{
     compileTypeFile(type){
         const _ts = this;
         for(let i in _ts.nonPublic[type]){
-            compile(i);
+            new Compile({
+                'src':i,            //输入文件
+                'dist':undefined,   //输出模块，不指定由编译模块处理
+                'debug':true        //开启debug模式，会生成map并编译到dev目录
+            });
         };
     }
 
     //文件修改监听
     changeWatch(){
         const _ts = this;
-        let _path = _ts.path;
+        let _path = _ts.path,
+            w = chokidar.watch(_path,{persistent:true}),
 
-        let w = chokidar.watch(_path,{persistent:true}),
-
-            //检查路径是否为data目录文件
-            isDataFile = (sPath)=>{
-                let dataDirPath = path.join(fws.srcPath,'data','/');
-                return sPath.indexOf(dataDirPath) === 0;
+            //检查类型是否可能存在公共文件引入的情况
+            isLinkedFile = (fileType)=>{                
+                let aLinked = ['.pug','.scss','.ts','.tsx','.jsx','.es','.es6'];
+                return aLinked.some((item,index)=>{
+                    return item === fileType;
+                });
             },
 
-            //检查路径是否为忽略编译的目录
-            isIgnoreCompileDir = (sPath)=>{
-                let ignoreDir = fws.config.ignoreCompileDir,
-                    aPathList = path.dirname(sPath).split(path.sep);              
-
-                if(ignoreDir.length){
-                    return ignoreDir.some((item,index)=>{
-                        return aPathList.some((_item,_index)=>{
-                            return item === _item;
-                        });
-                    });
-                };
-                return false;
+            //检查是否可能为pug数据
+            isPageData = (filePath)=>{
+                let dataDir = path.join(fws.srcPath,'data','/');
+                return filePath.indexOf(dataDir) === 0;
             };
-
+        
 
         w.on('all',(stats,filePath)=>{
-            let fileType = path.extname(filePath).toLowerCase(),
-                fileName = path.basename(filePath,fileType),
-
-                notIgnoreDir = !isIgnoreCompileDir(filePath),
-
-                //得取文件第一个字符，用于决定是否为公共文件
-                prefix = fileName ? fileName.substr(0,1) : undefined;
+            let fileType = path.extname(filePath).toLowerCase(),            //文件类型
+                fileName = path.basename(filePath,fileType),                //文件名称
+                filePrefix = fileName ? fileName.substr(0,1) : undefined;   //得取文件第一个字符，用于决定是否为公共文件
             
-            //将非公共文件保存至nonPublic
-            if(stats === 'add' && notIgnoreDir && prefix !== '_'){
-                switch (fileType){
-                    case '.pug':
-                        _ts.nonPublic.pug[filePath] = null;
-                    break;
-
-                    case '.scss':
-                        _ts.nonPublic.scss[filePath] = null;
-                    break;
-
-                    case '.ts':
-                        _ts.nonPublic.ts[filePath] = null;
-                    break;
-
-                    case '.tsx':
-                        _ts.nonPublic.tsx[filePath] = null;
-                    break;
-
-                    case '.jsx':
-                        _ts.nonPublic.jsx[filePath] = null;
-                    break;
+            //将非"_"开始的文件归类保存起来，监听到有"_"开始的公共文件有改动，则编译同类型所有文件
+            if(stats === 'add' && filePrefix !== '_'){
+                if(_ts.nonPublic[fileType] === undefined){
+                    _ts.nonPublic[fileType] = {};
                 };
-            };           
-            
-            
-            //当文件状态是新增加或有修改变化的时候 且 不在忽略列表时，编译对应的文件
+                _ts.nonPublic[fileType][filePath] = null;
+            };
+                       
             if(stats === 'add' || stats === 'change'){
-                //如果修改的是公共文件，则编译同类型所有文件，js和其它
-                if(prefix === '_'){
-                    switch (fileType){
-                        case '.pug':
-                            _ts.compileTypeFile('pug');
-                        break;
-
-                        case '.scss':
-                            _ts.compileTypeFile('scss');
-                        break;
-                            
-                        case '.ts':
-                            _ts.compileTypeFile('ts');
-                        break;
-
-                        case '.tsx':
-                            _ts.compileTypeFile('tsx');
-                        break;
-
-                        case '.jsx':
-                            _ts.compileTypeFile('jsx');
-                        break;
-                        // case '.js':
-                        //     compile(filePath);
-                        // break;
-                        
-                        default:
-                            compile(filePath);
-                        break;
-                    };
-                }else{
-                    compile(filePath);                                       
-                };
-            }else if(stats === 'unlink'){
-                //及时删除nonPublic,避免不必要的编译处理
-                if(notIgnoreDir){
-                    switch (fileType){
-                        case '.pug':
-                            delete _ts.nonPublic.pug[filePath];
-                        break;
-
-                        case '.scss':
-                            delete _ts.nonPublic.scss[filePath];
-                        break;
-
-                        case '.ts':
-                            delete _ts.nonPublic.ts[filePath];
-                        break;
-
-                        case '.tsx':
-                            delete _ts.nonPublic.tsx[filePath];
-                        break;
-
-                        case '.jsx':
-                            delete _ts.nonPublic.jsx[filePath];
-                        break;
-                    };
+                //如果是数据文件，且是公共的，编译所有的jade文件
+                if(isPageData(filePath) && (filePrefix === '_')){
+                    _ts.compileTypeFile('.pug');
+                    return;
                 };
                 
-
-                //删除旧的已经编译的对应文件
-
-            };
-
-            //如果修改的data目录下的.js文件，则编译pug的对应文件
-            if(stats === 'change' && fileType === '.js' && isDataFile(filePath)){
-                //修改的是公共数据，编译所有jade文件，否则只编译与其文件名相对应的文件
-                if(prefix === '_'){
-                    for(let i in _ts.nonPublic.pug){
-                        compile(i);
-                    };
+                //文件首字母以"_"起始，且属于可能存在公共文件引入类型的，每次修改会编译项目内同类型所有文件
+                if((filePrefix === '_') && isLinkedFile(fileType)){
+                    _ts.compileTypeFile(fileType);
                 }else{
-                    for(let i in _ts.nonPublic.pug){
-                        let pugName = path.basename(i);                        
-                        if(pugName === fileName+'.pug'){
-                            compile(i);
-                        };
-                    };
+                    new Compile({
+                        'src':filePath,     //输入文件
+                        'dist':undefined,   //输出模块，不指定由编译模块处理
+                        'debug':true        //开启debug模式，会生成map并编译到dev目录
+                    });
                 };
+            }else if(stats === 'unlink'){
+                //删除_ts.noPublic的文件，避免不必要的编译处理
+                delete _ts.nonPublic[fileType][filePath];
             };
-            
-            
         });
 
-
+        //开启server
     }
 };
 
@@ -221,13 +125,12 @@ module.exports = {
     regTask:{
         command:'[name]',
         description:'项目监听编译',
-        // option:[
-        //     ['-p, --pc','初始化一个pc项目'],
-        //     ['-m, --mobile','初始化一个移动端项目']
-        // ],
+        option:[
+            ['-s, --server','开启http server']
+        ],
         help:()=>{
             //额外的帮助
         },
-        action:watch
+        action:Watch
     }
 };
