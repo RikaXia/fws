@@ -6,11 +6,6 @@ const tip = require('../lib/tip');                  //文字提示
 const pathInfo = require('../lib/getPathInfo');     //判断文件或目录是否存在
 const Compile = require('../lib/compile');          //编译文件
 
-const cwdPath = process.cwd();                      //当前路径
-
-
-
-//检查当前项目有哪些文件
 class Watch{
     constructor(projectPath,options){
         const _ts = this;
