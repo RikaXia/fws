@@ -28,7 +28,7 @@ class create{
         _ts.rojectOptions = options;
         _ts.templateName = (getType(options.template) === 'string') ? options.template  : 'default';
 
-        _ts.init();
+        _ts.init(_ts.rojectOptions);
     }
 
     /**
@@ -185,7 +185,8 @@ class create{
             //作者、邮箱
             author:fws.config.author,
             mail:fws.config.mail,
-            projectType:_ts.templateName,
+            template:_ts.templateName,
+            projectType:_ts.templateName.split('_')[0],
             createTime:new Date().valueOf(),
 
             updater:undefined,

@@ -12,7 +12,7 @@ const cwdPath = process.cwd();                      //当前路径
 
 //检查当前项目有哪些文件
 class Watch{
-    constructor(projectPath){
+    constructor(projectPath,options){
         const _ts = this;
 
         _ts.path = projectPath || path.join(fws.cmdPath,'src');
@@ -95,13 +95,13 @@ class Watch{
                        
             if(stats === 'add' || stats === 'change'){
                 //如果是数据文件，且是公共的，编译所有的jade文件
-                if(isPageData(filePath) && (filePrefix === '_')){
+                if(isPageData(filePath) && (filePrefix === '_') && stats === 'change'){
                     _ts.compileTypeFile('.pug');
                     return;
                 };
                 
                 //文件首字母以"_"起始，且属于可能存在公共文件引入类型的，每次修改会编译项目内同类型所有文件
-                if((filePrefix === '_') && isLinkedFile(fileType)){
+                if((filePrefix === '_') && isLinkedFile(fileType) && stats === 'change'){
                     _ts.compileTypeFile(fileType);
                 }else{
                     new Compile({
