@@ -5,12 +5,18 @@ const tip = require('../lib/tip');
 
 const outSprite = require('../lib/outSprite');
 
+const autoRefresh = require('../lib/autoRefresh.js');
+
 let fun = (name,options)=>{
     // console.log(name);
     // console.log(name,options);
 
-    let imgDirPath = path.join(fws.srcPath,'images','sprite');
-    new outSprite(imgDirPath);
+    // let imgDirPath = path.join(fws.srcPath,'images','sprite');
+    // new outSprite(imgDirPath);
+
+    new autoRefresh({
+        listenPort:3005
+    });
 
 
 

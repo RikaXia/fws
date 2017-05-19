@@ -10,6 +10,8 @@ module.exports = {
     //图像合并处理引擎，推荐('canvassmith')
     //由于安装门槛，请在全局或fws成功安装'canvassmith'再启用，否则可能导致出错
     imgEngine:'',
+
+    listenPort:3000,
     
     //模版路径
     tplPath:'',
