@@ -5,6 +5,8 @@ class Watch{
            path:require('path'),
            chokidar:require('chokidar'),
            fs:require('fs-extra'),
+           autoRefresh:require('../lib/autoRefresh'),   //自动刷新
+           openurl:require('openurl'),                  //打开前台页面
            tip:require('../lib/tip'),                   //文字提示
            pathInfo:require('../lib/getPathInfo'),      //判断文件或目录是否存在
            Compile:require('../lib/compile')            //编译文件
@@ -12,7 +14,8 @@ class Watch{
 
         _ts.path = projectPath || _ts.m.path.join(fws.cmdPath,'src');
 
-        _ts.nonPublic = {};                         //保存非"_"开始的文件
+        _ts.nonPublic = {};                             //保存非"_"开始的文件
+        _ts.server = new _ts.m.autoRefresh();           //socket server
 
         _ts.init();
     }
@@ -49,7 +52,10 @@ class Watch{
             new _ts.m.Compile({
                 'src':i,            //输入文件
                 'dist':undefined,   //输出模块，不指定由编译模块处理
-                'debug':true        //开启debug模式，会生成map并编译到dev目录
+                'debug':true,       //开启debug模式，会生成map并编译到dev目录
+                'callback':(result)=>{
+                    _ts.server.io.broadcast('refresh',result);
+                }
             });
         };
     }
@@ -102,7 +108,10 @@ class Watch{
                     new _ts.m.Compile({
                         'src':filePath,     //输入文件
                         'dist':undefined,   //输出模块，不指定由编译模块处理
-                        'debug':true        //开启debug模式，会生成map并编译到dev目录
+                        'debug':true,       //开启debug模式，会生成map并编译到dev目录
+                        'callback':(result)=>{
+                            _ts.server.io.broadcast('refresh',result);
+                        }
                     });
                 };
             }else if(stats === 'unlink'){
@@ -112,7 +121,7 @@ class Watch{
         });
 
         //开启server
-        
+        _ts.m.openurl.open('http://localhost:'+_ts.server.listenPort);
     }
 };
 
