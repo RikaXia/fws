@@ -1,13 +1,5 @@
 'use strict';
 const fs = require('fs');
-const path = require('path');
-
-const program = require('commander');               //（https://github.com/tj/commander.js）
-
-const tip = require('../lib/tip');                  //文字提示
-const getType = require('../lib/getType');          //获取数据类型
-const pathInfo = require('../lib/getPathInfo');     //获取目标路径的相关信息
-
 
 let aConfigDirList = fs.readdirSync(fws.tplConfigPath),//获取配置目录所有文件列表
     aConfigList = [],
@@ -23,10 +15,17 @@ class create{
     constructor(name,options){
         const _ts = this;
 
+        _ts.m = {
+            path:require('path'),
+            tip:require('../lib/tip'),                  //文字提示
+            getType:require('../lib/getType'),          //获取数据类型
+            pathInfo:require('../lib/getPathInfo')      //获取目标路径的相关信息
+        };
+
         //将命令传入的名称，和参数绑定到对象之上
         _ts.projectName = name;
         _ts.rojectOptions = options;
-        _ts.templateName = (getType(options.template) === 'string') ? options.template  : 'default';
+        _ts.templateName = (_ts.m.getType(options.template) === 'string') ? options.template  : 'default';
 
         _ts.init(_ts.rojectOptions);
     }
@@ -47,26 +46,26 @@ class create{
 
         // exec('rm -r -f demo',(err,out)=>{
         //     if(err){
-        //         tip.error(err);
+        //         _ts.m.tip.error(err);
         //     }else{
                 if(name === undefined){
                     //如果没有输入项目名则不允许继续操作
-                    tip.error('项目名称不允许为空');
+                    _ts.m.tip.error('项目名称不允许为空');
                     return;
                 }else{
                     //检查项目目录是否已经存在
-                    let dirIsExist = pathInfo(path.join(fws.cmdPath,name)).type === 'dir';
+                    let dirIsExist = _ts.m.pathInfo(_ts.m.path.join(fws.cmdPath,name)).type === 'dir';
                     
                     //项目已经存在则不创建，反之创建对应的项目
                     if(dirIsExist){
-                        tip.error(`警告："${name}"目录已存在。请更换项目名称或删除原有项目之后重试。`);
+                        _ts.m.tip.error(`警告："${name}"目录已存在。请更换项目名称或删除原有项目之后重试。`);
                     }else{
                         let type = _ts.getType();
 
                         if(type){
                             _ts.createEntry(name,type);
                         }else{
-                            tip.error('请指定有效的项目类型！');
+                            _ts.m.tip.error('请指定有效的项目类型！');
                         };
                         
                     };
@@ -85,13 +84,13 @@ class create{
     getType(){
         const _ts = this;
         
-        let templateFilePath = path.join(fws.tplConfigPath,_ts.templateName+'.json'),
+        let templateFilePath = _ts.m.path.join(fws.tplConfigPath,_ts.templateName+'.json'),
             tplConfig;
 
-        if(pathInfo(templateFilePath).type === 'file'){
+        if(_ts.m.pathInfo(templateFilePath).type === 'file'){
             tplConfig = JSON.parse(fs.readFileSync(templateFilePath));
         }else{
-            tip.error('模版文件 "'+templateFilePath+'" 不存在');
+            _ts.m.tip.error('模版文件 "'+templateFilePath+'" 不存在');
         };
         return tplConfig;
     }
@@ -114,7 +113,7 @@ class create{
         (eachCreate = (o,p)=>{
             for(let i in o){
                 
-                let currentPath = path.join(p);                                 //得到当前路径
+                let currentPath = _ts.m.path.join(p);                                 //得到当前路径
 
                 if(i === "__files__"){
                     /**创建文件开始 */
@@ -122,12 +121,12 @@ class create{
                     let queue = o[i];                                           //创建队列
 
                     queue.forEach((item,index)=>{
-                        let _src = path.join(fws.tplPath,item[0]);              //母板
-                        let _target = path.join(currentPath,item[1]);           //目标
+                        let _src = _ts.m.path.join(fws.tplPath,item[0]);              //母板
+                        let _target = _ts.m.path.join(currentPath,item[1]);           //目标
 
                         fs.stat(_src,(err,file)=>{
                             if(err){
-                                tip.error(err);
+                                _ts.m.tip.error(err);
                             }else if(file.isFile()){
                                 
                                 let readAble = fs.createReadStream(_src),       //创建读取流
@@ -135,18 +134,18 @@ class create{
                                 
                                 readAble.pipe(writAble);                        //通过管道来传输
 
-                                tip.success(`创建文件 ${_target}`);
-                                tip.gray(`用时：${new Date().valueOf() - starTime} ms`);
+                                _ts.m.tip.success(`创建文件 ${_target}`);
+                                _ts.m.tip.gray(`用时：${new Date().valueOf() - starTime} ms`);
                             };
                         });
                     });
                 }else if(i !== '__name__'){
-                    currentPath = path.join(currentPath,i);                     //设置当前路径为新的目录
-                    fs.mkdirSync(path.join(currentPath));                       //创建目录
-                    tip.success(`创建目录 ${path.join(currentPath)}`);;
-                    tip.gray(`用时：${new Date().valueOf() - starTime} ms`);
+                    currentPath = _ts.m.path.join(currentPath,i);                     //设置当前路径为新的目录
+                    fs.mkdirSync(_ts.m.path.join(currentPath));                       //创建目录
+                    _ts.m.tip.success(`创建目录 ${_ts.m.path.join(currentPath)}`);;
+                    _ts.m.tip.gray(`用时：${new Date().valueOf() - starTime} ms`);
                     
-                    if(getType(o[i]) === 'object'){
+                    if(_ts.m.getType(o[i]) === 'object'){
                         eachCreate(o[i],currentPath);                          //如果是目录则无限级循环
                     };
                 };
@@ -166,11 +165,11 @@ class create{
         const _ts = this;
 
         //如果有获取到配置文件，则开始创建项目        
-        let projectPath = path.join(fws.cmdPath,name);
+        let projectPath = _ts.m.path.join(fws.cmdPath,name);
 
-        fws.srcPath = path.join(projectPath,'/src'),
-        fws.devPath = path.join(projectPath,'/dev'),
-        fws.distPath = path.join(projectPath,'/dist');
+        fws.srcPath = _ts.m.path.join(projectPath,'/src'),
+        fws.devPath = _ts.m.path.join(projectPath,'/dev'),
+        fws.distPath = _ts.m.path.join(projectPath,'/dist');
         
 
         //创建项目目录
@@ -207,7 +206,7 @@ class create{
 
         project_fwsConfigContent = 'module.exports = '+JSON.stringify(project_fwsConfigContent,null,2);
             
-        fs.writeFileSync(path.join(projectPath,'fws_config.js'),project_fwsConfigContent);
+        fs.writeFileSync(_ts.m.path.join(projectPath,'fws_config.js'),project_fwsConfigContent);
 
         //根据配置文件创建文件
         _ts.createFn(fws.srcPath,tplConfig);
@@ -224,7 +223,7 @@ module.exports = {
         help:()=>{
             console.log(`  Examples:`);
             console.log(``);
-            tip.highlight(`     如何自定义项目模版见 "${fws.tplPath}"`);
+            _ts.m.tip.highlight(`     如何自定义项目模版见 "${fws.tplPath}"`);
         },
         action:create
     },

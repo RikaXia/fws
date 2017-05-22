@@ -1,16 +1,16 @@
-const path = require('path');
-const chokidar = require('chokidar');
-const fs = require('fs-extra');
-
-const tip = require('../lib/tip');                  //文字提示
-const pathInfo = require('../lib/getPathInfo');     //判断文件或目录是否存在
-const Compile = require('../lib/compile');          //编译文件
-
 class Watch{
     constructor(projectPath,options){
         const _ts = this;
+        _ts.m = {
+           path:require('path'),
+           chokidar:require('chokidar'),
+           fs:require('fs-extra'),
+           tip:require('../lib/tip'),                   //文字提示
+           pathInfo:require('../lib/getPathInfo'),      //判断文件或目录是否存在
+           Compile:require('../lib/compile')            //编译文件
+        };
 
-        _ts.path = projectPath || path.join(fws.cmdPath,'src');
+        _ts.path = projectPath || _ts.m.path.join(fws.cmdPath,'src');
 
         _ts.nonPublic = {};                         //保存非"_"开始的文件
 
@@ -24,13 +24,13 @@ class Watch{
         //检查"src"目录是否存在，有则进行文件监听
         if(_ts.check()){
             //先清除dev目录再监听
-            fs.remove(fws.devPath,err => {
+            _ts.m.fs.remove(fws.devPath,err => {
                 if(!err){
                     _ts.changeWatch();
                 };
             });
         }else{
-            tip.error(`错误， "${path}" 不是一个有效的fws项目目录，必须有一个"src"目录存在`);
+            _ts.m.tip.error(`错误， "${path}" 不是一个有效的fws项目目录，必须有一个"src"目录存在`);
         };
     }
 
@@ -39,14 +39,14 @@ class Watch{
         const _ts = this;
         let path = _ts.path;
 
-        return pathInfo(fws.srcPath).type === 'dir';
+        return _ts.m.pathInfo(fws.srcPath).type === 'dir';
     }
 
     //编译项目指定类型的所有文件
     compileTypeFile(type){
         const _ts = this;
         for(let i in _ts.nonPublic[type]){
-            new Compile({
+            new _ts.m.Compile({
                 'src':i,            //输入文件
                 'dist':undefined,   //输出模块，不指定由编译模块处理
                 'debug':true        //开启debug模式，会生成map并编译到dev目录
@@ -58,7 +58,7 @@ class Watch{
     changeWatch(){
         const _ts = this;
         let _path = _ts.path,
-            w = chokidar.watch(_path,{persistent:true}),
+            w = _ts.m.chokidar.watch(_path,{persistent:true}),
 
             //检查类型是否可能存在公共文件引入的情况
             isLinkedFile = (fileType)=>{                
@@ -70,14 +70,14 @@ class Watch{
 
             //检查是否可能为pug数据
             isPageData = (filePath)=>{
-                let dataDir = path.join(fws.srcPath,'data','/');
+                let dataDir = _ts.m.path.join(fws.srcPath,'data','/');
                 return filePath.indexOf(dataDir) === 0;
             };
         
 
         w.on('all',(stats,filePath)=>{
-            let fileType = path.extname(filePath).toLowerCase(),            //文件类型
-                fileName = path.basename(filePath,fileType),                //文件名称
+            let fileType = _ts.m.path.extname(filePath).toLowerCase(),            //文件类型
+                fileName = _ts.m.path.basename(filePath,fileType),                //文件名称
                 filePrefix = fileName ? fileName.substr(0,1) : undefined;   //得取文件第一个字符，用于决定是否为公共文件
             
             //将非"_"开始的文件归类保存起来，监听到有"_"开始的公共文件有改动，则编译同类型所有文件
@@ -99,7 +99,7 @@ class Watch{
                 if((filePrefix === '_') && isLinkedFile(fileType) && stats === 'change'){
                     _ts.compileTypeFile(fileType);
                 }else{
-                    new Compile({
+                    new _ts.m.Compile({
                         'src':filePath,     //输入文件
                         'dist':undefined,   //输出模块，不指定由编译模块处理
                         'debug':true        //开启debug模式，会生成map并编译到dev目录

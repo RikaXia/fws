@@ -1,27 +1,22 @@
-const path = require('path');
+class Test{
+    constructor(){
+        const _ts = this;
+        _ts.m = {
+            path:require('path'),
+            getType:require('../lib/getType'),
+            tip:require('../lib/tip'),
+            outSprite:require('../lib/outSprite'),
+            autoRefresh:require('../lib/autoRefresh')
+        };
+    }
 
-const getType = require('../lib/getType');
-const tip = require('../lib/tip');
-
-const outSprite = require('../lib/outSprite');
-
-const autoRefresh = require('../lib/autoRefresh.js');
-
-let fun = (name,options)=>{
-    // console.log(name);
-    // console.log(name,options);
-
-    // let imgDirPath = path.join(fws.srcPath,'images','sprite');
-    // new outSprite(imgDirPath);
-
-    new autoRefresh({
-        listenPort:3005
-    });
-
-
-
-    //console.log(options.list,typeof options.list)
-};
+    init(){
+        const _ts = this;
+        new _ts.m.autoRefresh({
+            listenPort:3005
+        });
+    }
+}
 
 function range(val) {
   return val.split('..').map(Number);
@@ -29,7 +24,8 @@ function range(val) {
 
 function list(val) {
     return val.split(',');
-}
+};
+
 module.exports = {
     regTask:{
         command:'[name]',
@@ -45,7 +41,7 @@ module.exports = {
             tip.highlight(`     fws testTask -h       查看帮助`);
             tip.highlight(`     自定义项目模版见`);
         },
-        action:fun
+        action:Test
     },
     fun:()=>{}
 };
