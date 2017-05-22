@@ -3,11 +3,13 @@ class Test{
         const _ts = this;
         _ts.m = {
             path:require('path'),
+            openurl:require('openurl'),
             getType:require('../lib/getType'),
             tip:require('../lib/tip'),
             outSprite:require('../lib/outSprite'),
             autoRefresh:require('../lib/autoRefresh')
         };
+        _ts.init();
     }
 
     init(){
@@ -15,6 +17,9 @@ class Test{
         new _ts.m.autoRefresh({
             listenPort:3005
         });
+
+        _ts.m.openurl.open('http://web.4399.com')
+
     }
 }
 
