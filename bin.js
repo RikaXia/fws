@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const cwdPath = process.cwd();                              //当前路径
-const program = require('commander');
-
-const tip = require('./lib/tip');                           //文字提示
-const pathInfo = require('./lib/getPathInfo');              //获取目标路径的相关信息
-const getType = require('./lib/getType');                   //获取数据类型
-
-const fwsConfig = require('./config');
+const {fs,path,cwdPath,program,tip,pathInfo,getType,fwsConfig} = {
+    fs:require('fs'),
+    path:require('path'),
+    cwdPath:process.cwd(),                                  //当前路径
+    program:require('commander'),
+    tip:require('./lib/tip'),                               //文字提示
+    pathInfo:require('./lib/getPathInfo'),                  //获取目标路径的相关信息
+    getType:require('./lib/getType'),                       //获取数据类型
+    fwsConfig:require('./config')
+};
 
 //声明版本号
 program.version('0.0.1');
@@ -45,8 +45,16 @@ if(pathInfo(fwsConfigPath).type === 'file'){
 
 //检查任务目录是否存在,如果有则注册所有任务
 if(pathInfo(path.join(__dirname,'/task')).type === 'dir'){
-    let taskList = fs.readdirSync(fws.taskPath),
-        task = {};
+    let taskDirList = fs.readdirSync(fws.taskPath),
+        task = {},
+        taskList = [];
+    
+    //获取任务目录下的所有.js文件
+    taskDirList.forEach((item,index)=>{
+        if(path.extname(item).toLowerCase() === '.js'){
+            taskList.push(item);
+        };
+    });
     
     for(let index=0,len = taskList.length; index<len; index++){
         let item = taskList[index],            
