@@ -132,4 +132,3 @@ program.parse(process.argv);
 if (!process.argv.splice(2).length) {
     program.outputHelp();
 };
-
