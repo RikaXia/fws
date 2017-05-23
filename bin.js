@@ -120,9 +120,9 @@ if(pathInfo(path.join(__dirname,'/task')).type === 'dir'){
 
 //添加额外的帮助信息
 program.on('--help',()=>{
-    console.log(`  Examples:`);
-    console.log(``);
-    tip.highlight(`     Author by 单炒饭`);
+    console.log(`   意见反馈:`);
+    console.log(`   ------------------------------------------------------------`);
+    console.log('   @单炒饭  https://github.com/sbfkcel/fws/wiki');
 });
 
 //解析命令行参数argv

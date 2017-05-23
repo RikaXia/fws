@@ -221,9 +221,9 @@ module.exports = {
             ['-t, --template [template]','可选，指定项目类型，默认pc。可选参数 '+aConfigList.toString()]
         ],
         help:()=>{
-            console.log(`  Examples:`);
-            console.log(``);
-            _ts.m.tip.highlight(`     如何自定义项目模版见 "${fws.tplPath}"`);
+            console.log('   补充说明:');
+            console.log('   ------------------------------------------------------------');
+            console.log('   如何自定义项目模版见 '+fws.tplPath);
         },
         action:create
     },

@@ -162,7 +162,9 @@ module.exports = {
             ['-s, --server','开启http server']
         ],
         help:()=>{
-            //额外的帮助
+            console.log('   补充说明:');
+            console.log('   ------------------------------------------------------------');
+            console.log('   暂无');
         },
         action:Watch
     }

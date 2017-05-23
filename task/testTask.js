@@ -38,11 +38,9 @@ module.exports = {
             ['-l, --list <items>','一个列表',list]
         ],
         help:()=>{
-            console.log(`  Examples:`);
-            console.log(``);
-
-            tip.highlight(`     fws testTask -h       查看帮助`);
-            tip.highlight(`     自定义项目模版见`);
+            console.log('   补充说明:');
+            console.log('   ------------------------------------------------------------');
+            console.log('   描述信息');
         },
         action:Test
     },
