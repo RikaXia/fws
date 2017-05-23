@@ -17,14 +17,14 @@ program.version('0.0.1');
 
 //定义全局
 global.fws = {    
-    'fwsPath':__dirname,                                    //fws目录路径
-    'taskPath':path.join(__dirname,'/task'),                //任务插件路径
-    'tplPath':path.join(__dirname,'/tpl'),                  //内置tpl目录
-    'tplConfigPath':path.join(__dirname,'/tpl/_config'),    //内置tpl配置目录    
+    'fwsPath':path.join(__dirname,'/'),                     //fws目录路径
+    'taskPath':path.join(__dirname,'task/'),                //任务插件路径
+    'tplPath':path.join(__dirname,'tpl/'),                  //内置tpl目录
+    'tplConfigPath':path.join(__dirname,'tpl/','_config/'), //内置tpl配置目录    
     'cmdPath':cwdPath,                                      //当前进程所在的目录
-    'srcPath':path.join(cwdPath,'/src'),                    //当前进程下的src目录
-    'devPath':path.join(cwdPath,'/dev'),                    //当前进程下的dev目录
-    'distPath':path.join(cwdPath,'/dist'),                  //当前进程下的dist目录
+    'srcPath':path.join(cwdPath,'src/'),                    //当前进程下的src目录
+    'devPath':path.join(cwdPath,'dev/'),                    //当前进程下的dev目录
+    'distPath':path.join(cwdPath,'dist/'),                  //当前进程下的dist目录
     'config':fwsConfig,
     'require':(module)=>{                                   //引入模块并且不缓存
         delete require.cache[require.resolve(module)];

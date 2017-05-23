@@ -81,7 +81,7 @@ class Watch{
             };
         
 
-        w.on('all',(stats,filePath)=>{
+        w.on('all',(stats,filePath)=>{            
             let fileType = _ts.m.path.extname(filePath).toLowerCase(),            //文件类型
                 fileName = _ts.m.path.basename(filePath,fileType),                //文件名称
                 filePrefix = fileName ? fileName.substr(0,1) : undefined;   //得取文件第一个字符，用于决定是否为公共文件
@@ -98,6 +98,26 @@ class Watch{
                 //如果是数据文件，且是公共的，编译所有的jade文件
                 if(isPageData(filePath) && (filePrefix === '_') && stats === 'change'){
                     _ts.compileTypeFile('.pug');
+                    return;
+                };
+                if(isPageData(filePath) && stats === 'change'){
+                    //编译与data所可能对应的页面
+                    for(let i in _ts.nonPublic['.pug']){
+                        let aPugName = i.split(_ts.m.path.sep),
+                            pugName = aPugName[aPugName.length - 1].toLowerCase();
+                        
+                        if(pugName === fileName+'.pug'){
+                            console.log(i);
+                            new _ts.m.Compile({
+                                'src':i,            //输入文件
+                                'dist':undefined,   //输出模块，不指定由编译模块处理
+                                'debug':true,       //开启debug模式，会生成map并编译到dev目录
+                                'callback':(result)=>{
+                                    _ts.server.io.broadcast('refresh',result);
+                                }
+                            });
+                        };
+                    };
                     return;
                 };
                 
@@ -118,11 +138,19 @@ class Watch{
                 //删除_ts.noPublic的文件，避免不必要的编译处理
                 delete _ts.nonPublic[fileType][filePath];
             };
+
+            
         });
 
         //开启server
         _ts.m.openurl.open('http://localhost:'+_ts.server.listenPort);
     }
+
+    //isData
+    // isData(path){
+    //     const _ts = this;
+    //     return path.indexOf(_ts.m.path.join(fws.cmdPath,'data/')) === 0;
+    // }
 };
 
 
