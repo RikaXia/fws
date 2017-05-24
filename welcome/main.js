@@ -14,7 +14,8 @@
                         _ts.updateCss();
                     break;
                     case 'js':
-                        _ts.updateJs();
+                        _ts.refresh();
+                        //_ts.updateJs();
                     break;
                     default:
                         _ts.log('更新信息：',result);
