@@ -4,6 +4,7 @@ class Watch{
         _ts.m = {
            path:require('path'),
            chokidar:require('chokidar'),
+           os:require('os'),
            fs:require('fs-extra'),
            autoRefresh:require('../lib/autoRefresh'),   //自动刷新
            openurl:require('openurl'),                  //打开前台页面
@@ -58,6 +59,27 @@ class Watch{
                 }
             });
         };
+    }
+
+    //获取本机IP
+    getLocalIp(){
+        const _ts = this;
+
+        let networkInfo = _ts.m.os.networkInterfaces();
+
+        let ip;
+        for(let i in networkInfo){
+            let t = networkInfo[i].some((item,index)=>{
+                if(item.family === 'IPv4' && item.address !== '127.0.0.1'){
+                    ip = item.address;
+                    return true;;
+                };
+            });
+            if(t){
+                break;
+            };
+        };
+        return ip ? ip : 'localhost';
     }
 
     //文件修改监听
@@ -143,7 +165,7 @@ class Watch{
         });
 
         //开启server
-        _ts.m.openurl.open('http://localhost:'+_ts.server.listenPort);
+        _ts.m.openurl.open('http://'+_ts.getLocalIp()+':'+_ts.server.listenPort);
     }
 
     //isData
@@ -159,7 +181,7 @@ module.exports = {
         command:'[name]',
         description:'项目监听编译',
         option:[
-            ['-s, --server','开启http server']
+            //['-s, --server','开启http server']
         ],
         help:()=>{
             console.log('   补充说明:');

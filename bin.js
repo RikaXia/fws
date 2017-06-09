@@ -34,6 +34,10 @@ global.fws = {
 
 global.fws_spriteTime ={};                                  //用于保存精灵图目录编译时间
 
+
+fws.config.update_author = fwsConfig.author;
+fws.config.update_mail = fwsConfig.mail;
+
 //项目配置信息覆盖fws信息
 let fwsConfigPath = path.join(cwdPath,'fws_config.js');
 if(pathInfo(fwsConfigPath).type === 'file'){
@@ -42,6 +46,7 @@ if(pathInfo(fwsConfigPath).type === 'file'){
         fws.config[i] = fwsConfigData[i];
     };
 };
+
 
 //检查任务目录是否存在,如果有则注册所有任务
 if(pathInfo(path.join(__dirname,'/task')).type === 'dir'){

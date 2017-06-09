@@ -184,6 +184,7 @@ class create{
             //作者、邮箱
             author:fws.config.author,
             mail:fws.config.mail,
+            projectName:name,
             template:_ts.templateName,
             projectType:_ts.templateName.split('_')[0],
             createTime:new Date().valueOf(),
