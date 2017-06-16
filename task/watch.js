@@ -70,7 +70,7 @@ class Watch{
         let ip;
         for(let i in networkInfo){
             let t = networkInfo[i].some((item,index)=>{
-                if(item.family === 'IPv4' && item.address !== '127.0.0.1'){
+                if(item.family === 'IPv4' && item.address !== '127.0.0.1' && item.address !== '0.0.0.0'){
                     ip = item.address;
                     return true;;
                 };

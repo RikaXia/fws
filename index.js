@@ -1,3 +1,4 @@
+/// <reference path="./typings/index.d.ts" />
 var fs = require("fs")
 var browserify = require('browserify')
 var path = require('path')

@@ -1,4 +1,4 @@
-@charset "utf-8";
+﻿@charset "utf-8";
 
 //=========================
 //精灵图信息获取
@@ -15,8 +15,8 @@
 };
 
 //获取精灵图url
-@function mapUrl($sprite){
-    @return map-get($sprite,url);
+@function mapUrl($sprite,$addedPath:'../'){
+    @return $addedPath + map-get($sprite,url);
 };
 
 //获取精灵图列表
