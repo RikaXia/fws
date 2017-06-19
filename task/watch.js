@@ -115,8 +115,9 @@ class Watch{
                 };
                 _ts.nonPublic[fileType][filePath] = null;
             };
-                       
-            if(stats === 'add' || stats === 'change'){
+
+            //声明编译方法
+            let compileFn = ()=>{
                 //如果是数据文件，且是公共的，编译所有的jade文件
                 if(isPageData(filePath) && (filePrefix === '_') && stats === 'change'){
                     _ts.compileTypeFile('.pug');
@@ -156,6 +157,13 @@ class Watch{
                         }
                     });
                 };
+            }
+                       
+            if(stats === 'add'){
+                compileFn();                
+            }else if(stats === 'change'){
+                //延迟编译，以避免某些 IDE 的safe write功能导致编译不能成功
+                setTimeout(compileFn,350);
             }else if(stats === 'unlink'){
                 //删除_ts.noPublic的文件，避免不必要的编译处理
                 delete _ts.nonPublic[fileType][filePath];
