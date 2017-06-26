@@ -62,7 +62,9 @@
     "chalk": "^1.1.3"
   },
   "devDependencies": {
-    
+    "fonteditor-core": "0.0.37",
+    "fontmin": "^0.9.6",
+    "imagemin-gifsicle": "^5.1.0"
   },
   "bugs": {
     "url": "https://github.com/sbfkcel/fws/issues"

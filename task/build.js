@@ -12,6 +12,7 @@ class Build{
            imagemin:require('imagemin'),
            imagemin_pngquant:require('imagemin-pngquant'),
            imagemin_jpegtran:require('imagemin-jpegtran'),
+           imagemin_gifsicle:require('imagemin-gifsicle'),
            imagemin_jpegrecompress:require('imagemin-jpeg-recompress'),
            pathInfo:require('../lib/getPathInfo')
         };
@@ -60,7 +61,7 @@ class Build{
         };
 
         //处理文件，压缩、autoprefixer添加签名等
-        console.log(oOutFiles);
+        //console.log(oOutFiles);
 
 
         
@@ -76,7 +77,7 @@ class Build{
         const _ts = this;
         let fileInfo = _ts.m.pathInfo(filePath),
             fileContent = fileInfo.type === 'file' ? _ts.m.fs.readFileSync(filePath) : '';
-
+        
         switch (fileInfo.extension) {
             case '.html':
                 let html = _ts.compression_html(fileContent.toString());
@@ -101,10 +102,21 @@ class Build{
             case '.png':case '.jpg':case '.jpeg':
                 _ts.compression_img(filePath);
             break;
+            case '.gif':
+                _ts.compression_git(filePath);
+            break;
             case '.ttf':
 
             break;
         }
+    }
+    //压缩git
+    compression_git(path){
+        const _ts = this;
+        //原始图片大小
+        let originalImg = _ts.m.fs.readFileSync(path).length;
+        console.log(originalImg)
+
     }
 
     //压缩位图

@@ -33,8 +33,12 @@ class Build{
                 debug:false,
                 callback:(obj)=>{
                     //回调处理文件，压缩、autoprefixer添加签名等
-                    if(obj.status === 'success' && obj.path){
-                        _ts.compression(obj.path);
+                    if(obj.status === 'success' && obj.path){                        
+                        try {
+                            _ts.compression(obj.path);
+                        } catch (error) {
+                            _ts.m.tip.error(error);
+                        };                        
                     };
                 }
             });
@@ -64,7 +68,7 @@ class Build{
                     let filePath = _ts.m.path.join(dir,item),
                         itemInfo = _ts.m.pathInfo(filePath);
                     
-                    if(itemInfo.type === 'dir'){
+                    if(itemInfo.type === 'dir' && itemInfo.name != 'node_modules'){
                         eachDir(filePath)
                     }else if(itemInfo.type === 'file'){
                         if(oFiles[itemInfo.extension] === undefined){
@@ -133,13 +137,13 @@ class Build{
                             quality:'low',
                             accurate:true,
                             method:m,
-                            min:35,
-                            max:60,
+                            min:60,
+                            max:80,
                             loops:0
                         }),
                         _ts.m.imagemin_pngquant({
                             nofs:true,
-                            quality:'35-60'
+                            quality:'60-80'
                         })
                     ]
                 }).then(file => {                    
