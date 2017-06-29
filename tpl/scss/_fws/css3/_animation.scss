@@ -1,0 +1,28 @@
+﻿@charset "utf-8";
+
+//播放指定动画(动画名称, 单次播放时间s, 播放方式, 延迟时间, 播放次数)
+@mixin animation($value){
+	-webkit-animation:$value;
+	-moz-animation:$value;
+	-ms-animation:$value;
+	-o-animation:$value;
+	animation:$value;
+}
+
+//动画播放延迟时间
+@mixin animation-delay($time){	
+	-webkit-animation-delay:$time;
+	-moz-animation-delay:$time;
+	-ms-animation-delay:$time;
+	-o-animation-delay:$time;
+	animation-delay:$time;
+}
+
+//声明一个动画(动画名字)
+@mixin keyframes($name){
+	@-webkit-keyframes #{$name} {@content;};
+	@-moz-keyframes #{$name} {@content;};
+	@-ms-keyframes #{$name} {@content;};
+	@-o-keyframes #{$name} {@content;};
+	@keyframes #{$name} {@content;};
+}

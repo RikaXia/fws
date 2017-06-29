@@ -31,7 +31,7 @@ module.exports = {
 
     //资源匹配替换
     srcReplace:[
-        ["localFile","cdnFilePath"]
+        ["local-cdn.1x3x.com","pic.my4399.com/re/cms/feUtil"]
     ],
     
     //源文件目录同步路径

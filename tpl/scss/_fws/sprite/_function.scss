@@ -5,12 +5,12 @@
 //=========================
 
 //获取精灵图总的宽
-@function mapW($sprite){
+@function map-width($sprite){
     @return map-get(map-get($sprite,size),width);    
 };
 
 //获取精灵图总的高
-@function mapH($sprite){
+@function map-height($sprite){
     @return map-get(map-get($sprite,size),height);
 };
 
@@ -20,35 +20,34 @@
 };
 
 //获取精灵图列表
-@function spriteL($sprite){
+@function sprite-list($sprite){
     @return map-get($sprite,spriteNames);
 };
 
 //获取精灵图元素宽
-@function spriteW($sprite,$element){
+@function sprite-width($sprite,$element){
     $es:map-get($sprite,element);
     $e:map-get($es,$element);
     @return map-get($e,width);
 };
 
 //获取精灵图元素高
-@function spriteH($sprite,$element){
+@function sprite-height($sprite,$element){
     $es:map-get($sprite,element);
     $e:map-get($es,$element);
     @return map-get($e,height);
 };
 
 //获取精灵图元素X坐标
-@function spriteX($sprite,$element){
+@function sprite-x($sprite,$element){
     $es:map-get($sprite,element);
     $e:map-get($es,$element);
     @return map-get($e,x);
 };
 
 //获取精灵图元素Y坐标
-@function spriteY($sprite,$element){
+@function sprite-y($sprite,$element){
     $es:map-get($sprite,element);
     $e:map-get($es,$element);
     @return map-get($e,y);
 };
-

@@ -98,7 +98,11 @@ if(pathInfo(path.join(__dirname,'/task')).type === 'dir'){
                     try {
                         new taskContent.action(name,options);
                     } catch (error) {
-                        taskContent.action(name,options);
+                        try {
+                            taskContent.action(name,options);
+                        } catch (err){
+                            tip.error(err);
+                        };
                     };                 
                 });
             }else{

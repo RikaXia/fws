@@ -1,36 +1,5 @@
 @charset "utf-8";
-@import "fws_function";     //公共函数
-@import "fws_mixin";		//公共类文件
+@import "fws";              //引入fws sass库
+@import "_fws/reset";		//浏览器样式重置
 
-@import "reset";		    //全局样式重置模块
-@import "fws_spriteData";	//精灵图数据，由fws自动更新，引入即可
-
-
-// .icon {
-//     background-image:url('../'+mapUrl($sprite));
-// }
-
-// //精灵列表
-// $iconList:spriteL($sprite);
-
-// //设置图元素大小和坐标
-// @each $i in $iconList {
-//     .icon__#{$i} {
-//         $w:spriteW($sprite,$i)+px;
-//         $h:spriteH($sprite,$i)+px;
-//         $x:- spriteX($sprite,$i)+px;
-//         $y:- spriteY($sprite,$i)+px;
-
-//         width:$w;
-//         height:$h;
-//         background-position:$x $y;        
-//     };
-// };
-
-// .test_size {
-//     @include sprite-size($sprite,b);
-// };
-
-// .test_position {
-//     @include sprite-position($sprite,b);
-// };
+//fws sass相关帮助
