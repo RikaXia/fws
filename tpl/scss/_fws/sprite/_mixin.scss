@@ -2,8 +2,8 @@
 
 //精灵图宽高设置方法
 @mixin sprite-size($sprite,$element){
-    $w:spriteW($sprite,$element)+px;
-    $h:spriteH($sprite,$element)+px;
+    $w:sprite-width($sprite,$element)+px;
+    $h:sprite-height($sprite,$element)+px;
     
     width:$w;
     height:$h;
@@ -11,14 +11,14 @@
 
 //精灵图背景坐标获取方法
 @mixin sprite-position($sprite,$element,$offectX:0,$offectY:0){    
-    $x:- spriteX($sprite,$element) + $offectX + px;
-    $y:- spriteY($sprite,$element) + $offectY + px;
+    $x:- sprite-x($sprite,$element) + $offectX + px;
+    $y:- sprite-y($sprite,$element) + $offectY + px;
     
     background-position:$x $y;
 };
 
 //精灵图资源
 @mixin sprite-url($sprite,$addedPath:'../'){
-    $url:mapUrl($sprite,$addedPath);
+    $url:map-url($sprite,$addedPath);
     background-image:url($url);
 };

@@ -44,10 +44,10 @@ class create{
 
         let exec = require('child_process').exec;
 
-        exec('rm -r -f ii',(err,out)=>{
-            if(err){
-                _ts.m.tip.error(err);
-            }else{
+        // exec('rm -r -f demo',(err,out)=>{
+        //     if(err){
+        //         _ts.m.tip.error(err);
+        //     }else{
                 if(name === undefined){
                     //如果没有输入项目名则不允许继续操作
                     _ts.m.tip.error('项目名称不允许为空');
@@ -70,8 +70,8 @@ class create{
                         
                     };
                 };
-            };
-        });
+        //     };
+        // });
     }
 
     /**
@@ -108,66 +108,56 @@ class create{
 
         //遍历对象，开始创建文件和目录
         let eachCreate,
-            starTime = new Date().valueOf(),
-            create = ()=>{
-                return new Promise((resolve,reject)=>{
-                    
-                });
-            };
-        
-        (eachCreate = () => {
-            
-        })()
-        
+            starTime = new Date().valueOf();
 
-        // (eachCreate = (o,p)=>{
-        //     for(let i in o){
+        (eachCreate = (o,p)=>{
+            for(let i in o){
                 
-        //         let currentPath = _ts.m.path.join(p);                                 //得到当前路径
+                let currentPath = _ts.m.path.join(p);                                 //得到当前路径
 
-        //         if(i === "__files__"){
-        //             /**创建文件开始 */
+                if(i === "__files__"){
+                    /**创建文件开始 */
 
-        //             let queue = o[i];                                                //创建队列
+                    let queue = o[i];                                                //创建队列
 
-        //             queue.forEach((item,index)=>{
-        //                 let _src = _ts.m.path.join(fws.tplPath,item[0]),             //母板
-        //                     _target = _ts.m.path.join(currentPath,item[1]),          //目标
-        //                     _srcInfo = _ts.m.pathInfo(_src);
+                    queue.forEach((item,index)=>{
+                        let _src = _ts.m.path.join(fws.tplPath,item[0]),             //母板
+                            _target = _ts.m.path.join(currentPath,item[1]),          //目标
+                            _srcInfo = _ts.m.pathInfo(_src);
                         
-        //                 //如果是目录，则将目录直接copy到对应的项目中
-        //                 if(_srcInfo.type === 'dir'){
-        //                     _target = _ts.m.path.join(_target,_srcInfo.name);
-        //                     fs.copy(_src,_target,err => {
-        //                         if(err){
-        //                             _ts.m.tip.error(err);
-        //                         }else{
-        //                             _ts.m.tip.success('拷贝目录 ' + _target);
-        //                             _ts.m.tip.gray(`用时：${new Date().valueOf() - starTime} ms`);
-        //                         };
-        //                     })
-        //                 }else if(_srcInfo.type === 'file'){
-        //                     let readAble = fs.createReadStream(_src),           //创建读取流
-        //                         writAble = fs.createWriteStream(_target);       //创建写入流
+                        //如果是目录，则将目录直接copy到对应的项目中
+                        if(_srcInfo.type === 'dir'){
+                            _target = _ts.m.path.join(_target,_srcInfo.name);
+                            fs.copy(_src,_target,err => {
+                                if(err){
+                                    _ts.m.tip.error(err);
+                                }else{
+                                    _ts.m.tip.success('拷贝目录 ' + _target);
+                                    _ts.m.tip.gray(`用时：${new Date().valueOf() - starTime} ms`);
+                                };
+                            })
+                        }else if(_srcInfo.type === 'file'){
+                            let readAble = fs.createReadStream(_src),           //创建读取流
+                                writAble = fs.createWriteStream(_target);       //创建写入流
                             
-        //                     readAble.pipe(writAble);                            //通过管道来传输
+                            readAble.pipe(writAble);                            //通过管道来传输
 
-        //                     _ts.m.tip.success(`创建文件 ${_target}`);
-        //                     _ts.m.tip.gray(`用时：${new Date().valueOf() - starTime} ms`);
-        //                 };
-        //             });
-        //         }else if(i !== '__name__'){
-        //             currentPath = _ts.m.path.join(currentPath,i);                     //设置当前路径为新的目录
-        //             fs.mkdirSync(_ts.m.path.join(currentPath));                       //创建目录
-        //             _ts.m.tip.success(`创建目录 ${_ts.m.path.join(currentPath)}`);;
-        //             _ts.m.tip.gray(`用时：${new Date().valueOf() - starTime} ms`);
+                            _ts.m.tip.success(`创建文件 ${_target}`);
+                            _ts.m.tip.gray(`用时：${new Date().valueOf() - starTime} ms`);
+                        };
+                    });
+                }else if(i !== '__name__'){
+                    currentPath = _ts.m.path.join(currentPath,i);                     //设置当前路径为新的目录
+                    fs.mkdirSync(_ts.m.path.join(currentPath));                       //创建目录
+                    _ts.m.tip.success(`创建目录 ${_ts.m.path.join(currentPath)}`);;
+                    _ts.m.tip.gray(`用时：${new Date().valueOf() - starTime} ms`);
                     
-        //             if(_ts.m.getType(o[i]) === 'object'){
-        //                 eachCreate(o[i],currentPath);                                 //如果是目录则无限级循环
-        //             };
-        //         };
-        //     };
-        // })(tplConfig,projectPath);
+                    if(_ts.m.getType(o[i]) === 'object'){
+                        eachCreate(o[i],currentPath);                                 //如果是目录则无限级循环
+                    };
+                };
+            };
+        })(tplConfig,projectPath);
     }
 
     /**
