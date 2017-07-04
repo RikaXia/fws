@@ -12,7 +12,6 @@ class Build{
            imagemin:require('imagemin'),
            imagemin_pngquant:require('imagemin-pngquant'),
            imagemin_jpegtran:require('imagemin-jpegtran'),
-           imagemin_gifsicle:require('imagemin-gifsicle'),
            imagemin_jpegrecompress:require('imagemin-jpeg-recompress'),
            pathInfo:require('../lib/getPathInfo')
         };
@@ -24,52 +23,64 @@ class Build{
     init(){
         const _ts = this;
 
-        let isFwsDir = _ts.check(),
-            dirPath = isFwsDir ? fws.srcPath : fws.cmdPath;     //如果是一个fws工程目录，则编译工程目录
-        
-        //设置输入&输出的文件数据
-        let oInFiles = _ts.traversalDir(dirPath),
-            oOutFiles = {
-                '.html':[],
-                '.css':[]
-            };
-        
-        //开始编译文件
-        for(let i in oInFiles){
-            let aFiles = oInFiles[i];
-            if(aFiles.length){
-                aFiles.forEach((item,index)=>{
-                    new _ts.m.compile({
-                        src:item,
-                        debug:false,
-                        callback:(obj)=>{
-                            //输出数据
-                            if(obj.status === 'success' && obj.path){
-                                let pathInfo = _ts.m.pathInfo(obj.path);
+        //编译开发文件到dist目录
+        let oSrcFiles = _ts.traversalDir(fws.srcPath);
 
-                                if(oOutFiles[pathInfo.extension]){
-                                    oOutFiles[pathInfo.extension].push(obj.path);
-                                }else{
-                                    oOutFiles[pathInfo.extension] = [];
-                                    oOutFiles[pathInfo.extension].push(obj.path);
-                                };
-                            };
-                        }
-                    });
+        //编译方法
+        let compile = (filePath)=>{
+            new _ts.m.compile({
+                src:filePath,
+                debug:false,
+                callback:(obj)=>{
+                    //回调处理文件，压缩、autoprefixer添加签名等
+                    if(obj.status === 'success' && obj.path){                        
+                        try {
+                            _ts.compression(obj.path);
+                        } catch (error) {
+                            _ts.m.tip.error(error);
+                        };                        
+                    };
+                }
+            });
+        };
+
+        //处理编译
+        for(let i in oSrcFiles){
+            if(oSrcFiles[i].length){
+                oSrcFiles[i].forEach((item,index)=>{
+                    compile(item);
                 });
             };
         };
-
-        //处理文件，压缩、autoprefixer添加签名等
-        //console.log(oOutFiles);
-
-
-        
     }
-
-    //字体提取
-    compression_font(){
+    
+    //遍历目录
+    traversalDir(dir){
         const _ts = this;
+        let oFiles = {},
+            eachDir;
+        (eachDir = (dir)=>{
+            let dirInfo = _ts.m.pathInfo(dir);
+            if(dirInfo.type === 'dir'){
+                let files = _ts.m.fs.readdirSync(dir);
+
+                files.forEach((item,index)=>{
+                    let filePath = _ts.m.path.join(dir,item),
+                        itemInfo = _ts.m.pathInfo(filePath);
+                    
+                    if(itemInfo.type === 'dir' && itemInfo.name != 'node_modules'){
+                        eachDir(filePath)
+                    }else if(itemInfo.type === 'file'){
+                        if(oFiles[itemInfo.extension] === undefined){
+                            oFiles[itemInfo.extension] = [];
+                        };
+                        oFiles[itemInfo.extension].push(filePath);
+                    };
+                });
+            };
+        })(dir);
+
+        return oFiles;
     }
 
     //压缩
@@ -77,7 +88,7 @@ class Build{
         const _ts = this;
         let fileInfo = _ts.m.pathInfo(filePath),
             fileContent = fileInfo.type === 'file' ? _ts.m.fs.readFileSync(filePath) : '';
-        
+
         switch (fileInfo.extension) {
             case '.html':
                 let html = _ts.compression_html(fileContent.toString());
@@ -102,21 +113,15 @@ class Build{
             case '.png':case '.jpg':case '.jpeg':
                 _ts.compression_img(filePath);
             break;
-            case '.gif':
-                _ts.compression_git(filePath);
-            break;
             case '.ttf':
 
             break;
         }
     }
-    //压缩git
-    compression_git(path){
-        const _ts = this;
-        //原始图片大小
-        let originalImg = _ts.m.fs.readFileSync(path).length;
-        console.log(originalImg)
 
+    //字体提取
+    compression_font(){
+        const _ts = this;
     }
 
     //压缩位图
@@ -132,13 +137,13 @@ class Build{
                             quality:'low',
                             accurate:true,
                             method:m,
-                            min:35,
-                            max:60,
+                            min:60,
+                            max:80,
                             loops:0
                         }),
                         _ts.m.imagemin_pngquant({
                             nofs:true,
-                            quality:'35-60'
+                            quality:'60-80'
                         })
                     ]
                 }).then(file => {                    
@@ -252,49 +257,6 @@ class Build{
             break;    
         };
         return s;
-    }
-
-    //检查当前目录是一个fws工程目录
-    check(){
-        const _ts = this;
-        let path = _ts.path;
-
-        return _ts.m.pathInfo(fws.srcPath).type === 'dir';
-    }
-    
-    //遍历目录
-    traversalDir(dir){
-        const _ts = this;
-        let oFiles = {
-                '.html':[],
-                '.pug':[],
-                '.css':[],
-                '.scss':[],                
-                '.sass':[]
-            },
-            eachDir;
-        (eachDir = (dir)=>{
-            let dirInfo = _ts.m.pathInfo(dir);
-            if(dirInfo.type === 'dir'){
-                let files = _ts.m.fs.readdirSync(dir);
-
-                files.forEach((item,index)=>{
-                    let filePath = _ts.m.path.join(dir,item),
-                        itemInfo = _ts.m.pathInfo(filePath);
-                    
-                    if(itemInfo.type === 'dir'){
-                        eachDir(filePath)
-                    }else if(itemInfo.type === 'file'){
-                        if(oFiles[itemInfo.extension] === undefined){
-                            oFiles[itemInfo.extension] = [];
-                        };
-                        oFiles[itemInfo.extension].push(filePath);
-                    };
-                });
-            };
-        })(dir);
-
-        return oFiles;
     }
 
 };
