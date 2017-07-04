@@ -16,7 +16,7 @@ const {fs,path,cwdPath,program,tip,pathInfo,getType,fwsConfig} = {
 program.version('0.0.1');
 
 //定义全局
-global.fws = {    
+global.fws = {
     'fwsPath':path.join(__dirname,'/'),                     //fws目录路径
     'taskPath':path.join(__dirname,'task/'),                //任务插件路径
     'tplPath':path.join(__dirname,'tpl/'),                  //内置tpl目录
@@ -70,7 +70,6 @@ if(pathInfo(path.join(__dirname,'/task')).type === 'dir'){
         
         //检查是否有注册任务
         if(taskContent){
-
             //任务主参数接收
             if(taskContent.command && getType(taskContent.command) === 'string'){
                 task[fileName] = program.command(`${fileName} ${taskContent.command}`);
@@ -93,17 +92,9 @@ if(pathInfo(path.join(__dirname,'/task')).type === 'dir'){
             
             //任务方法绑定
             if(taskContent.action && getType(taskContent.action) === 'function'){
-
                 task[fileName].action((name,options)=>{
-                    try {
-                        new taskContent.action(name,options);
-                    } catch (error) {
-                        try {
-                            taskContent.action(name,options);
-                        } catch (err){
-                            tip.error(err);
-                        };
-                    };                 
+                    let task = new taskContent.action(name,options);
+                    task.init();                                   
                 });
             }else{
                 tip.error(`任务 "${taskFile}" regTask.action 必须是一个函数`);
