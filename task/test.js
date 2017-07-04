@@ -21,6 +21,7 @@ class Test{
     }
 }
 
+
 function range(val) {
   return val.split('..').map(Number);
 };
