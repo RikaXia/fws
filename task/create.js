@@ -52,9 +52,11 @@ class create{
         // }).catch(err => {
         //     console.log(err);
         // });
-        
+
+
         let f = async ()=>{
             let pList = _ts.start();
+
             for(let i of pList){
                 await i;
             };
@@ -80,11 +82,26 @@ class create{
             config = _ts.config;
         
         //初始化相关目录
-        let initDir;
-        (initDir = ()=>{
+        let initDir,
+            initFilesData,
+            taskListData = [],
+            taskList = [];
+        
+        //定义初始化目录任务
+        initDir = new Promise((resolve,reject)=>{
+            //检查项目名称参数是否传入
+            if(config.name === undefined){
+                reject('项目名称不允许为空');
+            };
 
             //获取设置项目的相关目录信息
-            let projectPath = m.path.join(fws.cmdPath,config.name);
+            let projectPath = m.path.join(fws.cmdPath,config.name),
+                projectIsExist = m.pathInfo(projectPath).type === 'dir';                
+            
+            //检查项目目录是否已经存在
+            if(projectIsExist){
+                reject('警告：'+config.name+'目录已存在。请更换项目名称或删除原有项目之后重试。');
+            };
 
             fws.srcPath = m.path.join(projectPath,'src');
             fws.devPath = m.path.join(projectPath,'dev');
@@ -123,41 +140,46 @@ class create{
             fws_config = `module.exports = ${JSON.stringify(fws_config,null,4)};`;
 
             fs.writeFileSync(fwsConfigPath,fws_config);
-            m.tip.success('创建 '+fwsConfigPath);          
-        })();
+            m.tip.success('创建 '+fwsConfigPath);
 
-        //根据配置文件组织任务列表
-        let initFiles,
-            taskList = [];
-        (initFiles = (dirPath,configData)=>{
-            for(let i in configData){
+            //初始化项目文件结构数据
+            (initFilesData = (dirPath,configData)=>{
+                for(let i in configData){
 
-                //得到当前路径
-                let currentPath = m.path.join(dirPath);
+                    //得到当前路径
+                    let currentPath = m.path.join(dirPath);
 
-                if(i === '__files__'){
-                    configData[i].forEach((item,index)=>{
-                        taskList.push({
-                            src:m.path.join(fws.tplPath,item[0]),
-                            target:m.path.join(currentPath,item[1])
+                    if(i === '__files__'){
+                        configData[i].forEach((item,index)=>{
+                            taskListData.push({
+                                src:m.path.join(fws.tplPath,item[0]),
+                                target:m.path.join(currentPath,item[1])
+                            });
                         });
-                    });
-                }else if(i !== '__name__'){
-                    currentPath = m.path.join(currentPath,i);       //设置当前路径为新目录
-                    fs.mkdirSync(currentPath);                      //创建目录
-                    m.tip.success('创建 '+currentPath);
+                    }else if(i !== '__name__'){
+                        currentPath = m.path.join(currentPath,i);       //设置当前路径为新目录
+                        fs.mkdirSync(currentPath);                      //创建目录
+                        m.tip.success('创建 '+currentPath);
 
-                    if(m.getType(configData[i]) === 'object'){
-                        initFiles(currentPath,configData[i]);       //如果是目录则无限级循环
+                        if(m.getType(configData[i]) === 'object'){
+                            initFilesData(currentPath,configData[i]);   //如果是目录则无限级循环
+                        };
                     };
                 };
-            };
-        })(fws.srcPath,_ts.getTemplate());
+            })(fws.srcPath,_ts.getTemplate());
 
-        return taskList.map((item,index)=>{
-            return _ts.taskInit(item.src,item.target);
-        });       
+            resolve('项目目录结构初始成功');
+        });
 
+        //将初始化目录添加到任务列表
+        taskList.push(initDir);
+
+        //遍历项目文件结构数据，并将文件初始任务追加到任务列表
+        taskListData.forEach((item,index)=>{
+            taskList.push(_ts.taskInit(item.src,item.target));
+        });
+
+        return taskList;
     }
 
     /**
