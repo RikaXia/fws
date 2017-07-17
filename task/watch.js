@@ -16,6 +16,7 @@ class Watch{
         _ts.path = projectPath || _ts.m.path.join(fws.cmdPath,'src');
 
         _ts.nonPublic = {};                             //保存非"_"开始的文件
+        global.fws.localIP = _ts.getLocalIp();          //本机IP
         _ts.server = new _ts.m.autoRefresh();           //socket server
 
         _ts.init();
@@ -173,7 +174,7 @@ class Watch{
         });
 
         //开启server
-        _ts.m.openurl.open('http://'+_ts.getLocalIp()+':'+_ts.server.listenPort);
+        _ts.m.openurl.open('http://'+fws.localIP+':'+fws.listenPort);
     }
 
     //isData

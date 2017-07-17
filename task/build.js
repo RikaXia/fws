@@ -192,8 +192,12 @@ class Build{
 
         let js = _ts.m.UglifyJS.minify(content,{
             fromString:true,
+            compress:{
+                screw_ie8:false                         //支持ie6-8
+            },
             mangle:{
-                except:['$','require','exports']
+                except:['$','require','exports'],
+                screw_ie8:false                         //支持ie6-8
             }
         });
 

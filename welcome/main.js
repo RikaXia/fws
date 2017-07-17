@@ -1,7 +1,7 @@
 !(function(){
     var Fws = function(){
         var _ts = this;
-        _ts.socket = io();
+        _ts.socket = io(sockerUrl);
         _ts.socket.on('refresh',function(result){
             if(result && result.status === 'success'){
                 var pathInfo = _ts.getPathInfo(result.path);
