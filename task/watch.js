@@ -36,19 +36,110 @@ class Watch{
      */
     init(){
         const _ts = this,
-            config = _ts.config,
             m = _ts.m;
 
-        console.log(_ts.getLocalIp());    
+        let f = async ()=>{
+            let pList = _ts.start();
+
+            for(let i of pList){
+                i.then((v)=>{
+                    if(typeof v === 'string'){
+                        m.tip.success(v)
+                    };
+                },(e)=>{});
+                await i;
+            };
+
+            return '成功';
+        };
+
+        f().then(v => {
+            m.tip.highlight('========================================');
+            m.tip.highlight(v);
+            m.tip.highlight('========================================');
+        }).catch(err => {
+            m.tip.error(err);
+        });
     }
 
     /**
      * 创建方法
      */
     start(){
+        const _ts = this,
+            config = _ts.config,
+            m = _ts.m;
+
+        let taskList = [];
+
+        //检查项目目录
+        taskList.push(new Promise((resolve,reject)=>{
+            if(_ts.check()){
+                resolve('检查项目目录通过');
+            }else{
+                reject('不是有效的 FWS 项目目录');
+            };
+        }));
+
+        //清除dev目录并开启项目监听
+        taskList.push(new Promise((resolve,reject)=>{
+            _ts.m.fs.remove(fws.devPath,err => {
+                if(err){
+                    reject(err);
+                }else{             
+                    resolve('清空项目 dev 目录');
+                };
+            });
+        }));
+
+        taskList.push(new Promise((resolve,reject)=>{
+            _ts.changeWatch();
+            resolve('开启文件监听服务');
+        }));
+
+        //开启server
+        taskList.push(new Promise((resolve,reject)=>{
+            resolve(true);
+        }));
+
+        //浏览项目
+        taskList.push(new Promise((resolve,reject)=>{
+            if(config.browse){
+                _ts.m.openurl.open('http://'+_ts.getLocalIp()+':'+_ts.server.listenPort);
+            };
+            resolve('浏览页面')
+        }));
+
+        return taskList;
+    }
+
+    /**
+     * 文件修改监听
+     */
+    changeWatch(){
         const _ts = this;
+        
+        let m = _ts.m,
+            c = _ts.config,
+            w = m.chokidar.watch(c.path,{persistent:true}),
 
+            //检查类型是否可能存在公共文件引入的情况
+            isImportFile = (fileType)=>{
+                let importType = ['pug','scss','ts','tsx','jsx','es','es6'];
+                return importType.some((item,index)=>{
+                    return item === '.'+fileType;
+                });
+            },
 
+            //检查是否可能为pug数据
+            isPageData = (filePath)=>{
+                let dataDir = _ts.m.path.join(fws.srcPath,'data','/');
+                return filePath.indexOf(dataDir) === 0;
+            };
+
+        w.on('all',(stats,filePath)=>{
+            console.log(stats,filePath);
+        });
     }
 
     /**
@@ -105,10 +196,7 @@ class Watch{
             };
         };
         return ip ? ip : 'localhost';
-    }
-
-
-    
+    } 
 };
 
 
