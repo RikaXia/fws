@@ -110,6 +110,8 @@ class Watch{
             resolve('浏览页面')
         }));
 
+        //
+
         return taskList;
     }
 
@@ -136,10 +138,69 @@ class Watch{
                 let dataDir = _ts.m.path.join(fws.srcPath,'data','/');
                 return filePath.indexOf(dataDir) === 0;
             };
+        
+        
+        // w.on('all',(stats,filePath)=>{
+        //     console.log(_ts.getFileInfo(filePath))
+            
+        // });
 
-        w.on('all',(stats,filePath)=>{
-            console.log(stats,filePath);
-        });
+        console.time('a');
+        console.log(_ts.getDirFileData(c.path));
+        console.timeEnd('a');
+    }
+
+    /**
+     * 编译方法
+     */
+    compile(){
+
+    }
+
+    /**
+     * 获取路径文件信息
+     */
+    getFileInfo(filePath){
+        const _ts = this,
+            m = _ts.m,
+            tempObj = {};
+        
+        tempObj.path = filePath;
+        tempObj.type = m.path.extname(filePath).toLowerCase();                          //文件类型
+        tempObj.name = m.path.basename(filePath,tempObj.type);                          //文件名称
+        tempObj.isPublic = tempObj.name.substr(0,1) === '_';                            //取文件名第一个字符,判断是否为公共文件 
+        return tempObj; 
+    }
+
+    /**
+     * 获取目录文件结构
+     */
+    getDirFileData(dirPath){
+        const _ts = this;
+        let oFiles = {},
+            eachDir;
+        (eachDir = (dir)=>{
+            let dirInfo = _ts.m.pathInfo(dir);
+            if(dirInfo.type === 'dir'){
+                let files = _ts.m.fs.readdirSync(dir);
+
+                files.forEach((item,index)=>{
+                    let filePath = _ts.m.path.join(dir,item),
+                        itemInfo = _ts.m.pathInfo(filePath);
+                    
+                    if(itemInfo.type === 'dir' && itemInfo.name != 'node_modules'){
+                        eachDir(filePath)
+                    }else if(itemInfo.type === 'file'){
+                        if(oFiles[itemInfo.extension] === undefined){
+                            oFiles[itemInfo.extension] = [];
+                        };
+                        oFiles[itemInfo.extension].push(_ts.getFileInfo(filePath));
+                    };
+                });
+            };
+        })(dirPath);
+
+        return oFiles;
     }
 
     /**
