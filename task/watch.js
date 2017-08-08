@@ -107,7 +107,7 @@ class Watch{
             if(config.browse){
                 _ts.m.openurl.open('http://'+_ts.getLocalIp()+':'+_ts.server.listenPort);
             };
-            resolve('浏览页面')
+            resolve('浏览页面');    
         }));
 
         //
@@ -123,37 +123,137 @@ class Watch{
         
         let m = _ts.m,
             c = _ts.config,
-            w = m.chokidar.watch(c.path,{persistent:true}),
-
-            //检查类型是否可能存在公共文件引入的情况
-            isImportFile = (fileType)=>{
-                let importType = ['pug','scss','ts','tsx','jsx','es','es6'];
-                return importType.some((item,index)=>{
-                    return item === '.'+fileType;
-                });
-            },
-
-            //检查是否可能为pug数据
-            isPageData = (filePath)=>{
-                let dataDir = _ts.m.path.join(fws.srcPath,'data','/');
-                return filePath.indexOf(dataDir) === 0;
-            };
+            w,
+            initTasks = [],
+            isInitFinish;
+        
+        _ts.fileData = _ts.getFilesData(c.path,['data']);
         
         
-        // w.on('all',(stats,filePath)=>{
-        //     console.log(_ts.getFileInfo(filePath))
+        //初次编译
+        for(let i in _ts.fileData){
+            let files = _ts.fileData[i];
             
-        // });
+            //遍历所有类型的文件
+            for(let ii in files){
+                initTasks.push(new Promise((resolve,reject)=>{
+                    try {
+                        _ts.compile(ii,(obj)=>{
+                            if(obj.status === 'success'){
+                                resolve('编译成功');
+                            }else{
+                                reject('编译失败');
+                            };
+                        });
+                    } catch (error) {
+                        reject(error);
+                    };                    
+                }));
+            };
+        };
 
-        console.time('a');
-        console.log(_ts.getDirFileData(c.path));
-        console.timeEnd('a');
+        let f = async()=>{
+            for(let i of initTasks){
+                await i;
+            };
+            //初始化统计完成后将状态设为true
+            isInitFinish = true;
+            return '项目初始化成功';
+        };
+        f.then((v)=>{
+            console.log('初始化成功：',v);
+        }).catch((e)=>{
+            console.log('初始化失败：',e);
+        });
+
+        console.log(_ts.fileData)
+
+
+        
+        w = m.chokidar.watch(c.path,{persistent:true});
+        w.on('add',(path,stats)=>{
+            //当初始化完成，即不是第一次编译需要将新增加的文件添加到文件列表中
+            if(isInitFinish){
+
+            };        
+            //console.log('添加',path,stats);            
+        }).on('change',(path,stats)=>{
+            //console.log('编辑',path,stats);
+        });
     }
 
     /**
      * 编译方法
      */
-    compile(){
+    compile(filePath,callback){
+        const _ts = this;
+
+        let m = _ts.m,
+            fileInfo = _ts.getFileInfo(filePath),
+            fileType = fileInfo.type,
+            fileName = fileInfo.name,
+
+            //检查类型是否可能存在公共文件引入的情况
+            isImportFile = ((type)=>{
+                let importType = ['pug','scss','ts','tsx','jsx','es','es6'];
+                return importType.some((item,index)=>{
+                    return '.'+item === type;
+                });
+            })(fileType),
+
+            //检查是否可能为页面（pug）对应的数据
+            isPageData = ((path)=>{
+                let dataDir = _ts.m.path.join(fws.srcPath,'data','/');
+                return path.indexOf(dataDir) === 0;
+            })(filePath),
+            
+            //是否以“_”开始的文件名
+            isPublic = ((name)=>{
+                return name.substr(0,1) === '_';
+            })(fileName);
+        
+
+        //如果是数据文件，且是公共的，编译所有的jade文件
+        if(isPageData && isPublic){
+            //_ts.compileTypeFile('.pug');
+            return;
+        };
+
+        //编译与data所可能对应的页面
+        if(isPageData){            
+            // for(let i in _ts.nonPublic['.pug']){
+            //     let aPugName = i.split(_ts.m.path.sep),
+            //         pugName = aPugName[aPugName.length - 1].toLowerCase();
+                
+            //     if(pugName === fileName+'.pug'){
+            //         console.log(i);
+            //         new _ts.m.Compile({
+            //             'src':i,            //输入文件
+            //             'dist':undefined,   //输出模块，不指定由编译模块处理
+            //             'debug':true,       //开启debug模式，会生成map并编译到dev目录
+            //             'callback':(result)=>{
+            //                 _ts.server.io.broadcast('refresh',result);
+            //             }
+            //         });
+            //     };
+            // };
+            return;
+        };
+
+
+        // //文件首字母以"_"起始，且属于可能存在公共文件引入类型的，每次修改会编译项目内同类型所有文件
+        // if((filePrefix === '_') && isLinkedFile(fileType) && stats === 'change'){
+        //     _ts.compileTypeFile(fileType);
+        // }else{
+        //     new m.Compile({
+        //         'src':filePath,                 //输入文件
+        //         'dist':undefined,               //输出模块，不指定由编译模块处理
+        //         'debug':true,                   //开启debug模式，会生成map并编译到dev目录
+        //         'callback':(result)=>{
+        //             //_ts.server.io.broadcast('refresh',result);
+        //         }
+        //     });
+        // };
 
     }
 
@@ -173,12 +273,23 @@ class Watch{
     }
 
     /**
-     * 获取目录文件结构
+     * 获取目录下所有的非公共文件
      */
-    getDirFileData(dirPath){
-        const _ts = this;
+    getFilesData(dirPath,ignoreDir){
+        const _ts = this,
+            m = _ts.m;
         let oFiles = {},
-            eachDir;
+            eachDir,
+            
+            //是否为需要过滤的目录
+            isIgnoreDir = (filePath)=>{
+                ignoreDir = ignoreDir || [];
+                return ignoreDir.some((item,index)=>{
+                    //console.log('文件路径：',filePath);
+                    return filePath.indexOf(m.path.join(fws.srcPath,item,m.path.sep)) === 0;
+                });
+            };
+
         (eachDir = (dir)=>{
             let dirInfo = _ts.m.pathInfo(dir);
             if(dirInfo.type === 'dir'){
@@ -187,14 +298,19 @@ class Watch{
                 files.forEach((item,index)=>{
                     let filePath = _ts.m.path.join(dir,item),
                         itemInfo = _ts.m.pathInfo(filePath);
-                    
-                    if(itemInfo.type === 'dir' && itemInfo.name != 'node_modules'){
+
+                    if(itemInfo.type === 'dir' && itemInfo.name !== 'node_modules'){
                         eachDir(filePath)
-                    }else if(itemInfo.type === 'file'){
+                    }else if(itemInfo.type === 'file' && !isIgnoreDir(filePath)){
                         if(oFiles[itemInfo.extension] === undefined){
-                            oFiles[itemInfo.extension] = [];
+                            oFiles[itemInfo.extension] = {};
                         };
-                        oFiles[itemInfo.extension].push(_ts.getFileInfo(filePath));
+                        //oFiles[itemInfo.extension].push(_ts.getFileInfo(filePath));
+                        let fileInfo = _ts.getFileInfo(filePath);
+
+                        if(!fileInfo.isPublic){
+                            oFiles[itemInfo.extension][filePath] = null;
+                        };                        
                     };
                 });
             };
