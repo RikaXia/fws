@@ -147,39 +147,36 @@ class Watch{
                         });
                     } catch (error) {
                         reject(error);
-                    };                    
+                    };
                 }));
             };
         };
 
         let f = async()=>{
             for(let i of initTasks){
+                console.log(i);
                 await i;
             };
             //初始化统计完成后将状态设为true
             isInitFinish = true;
             return '项目初始化成功';
         };
-        f.then((v)=>{
+        f().then(v => {
             console.log('初始化成功：',v);
-        }).catch((e)=>{
+        }).catch(e => {
             console.log('初始化失败：',e);
         });
-
-        console.log(_ts.fileData)
-
-
         
-        w = m.chokidar.watch(c.path,{persistent:true});
-        w.on('add',(path,stats)=>{
-            //当初始化完成，即不是第一次编译需要将新增加的文件添加到文件列表中
-            if(isInitFinish){
+        // w = m.chokidar.watch(c.path,{persistent:true});
+        // w.on('add',(path,stats)=>{
+        //     //当初始化完成，即不是第一次编译需要将新增加的文件添加到文件列表中
+        //     if(isInitFinish){
 
-            };        
-            //console.log('添加',path,stats);            
-        }).on('change',(path,stats)=>{
-            //console.log('编辑',path,stats);
-        });
+        //     };        
+        //     //console.log('添加',path,stats);            
+        // }).on('change',(path,stats)=>{
+        //     //console.log('编辑',path,stats);
+        // });
     }
 
     /**
@@ -210,10 +207,27 @@ class Watch{
             //是否以“_”开始的文件名
             isPublic = ((name)=>{
                 return name.substr(0,1) === '_';
-            })(fileName);
+            })(fileName),
+            
+            //编译方法
+            CompileFn = ()=>{
+                new m.Compile({
+                    'src':filePath,                 //输入文件
+                    'dist':undefined,               //输出模块，不指定由编译模块处理
+                    'debug':true,                   //开启debug模式，会生成map并编译到dev目录
+                    'callback':(result)=>{
+                        
+                        //_ts.server.io.broadcast('refresh',result);
+
+                        if(typeof callback === 'function'){
+                            callback(result);
+                        };
+                    }
+                });
+            };
         
 
-        //如果是数据文件，且是公共的，编译所有的jade文件
+        //如果是数据文件，且是公共的，编译所有的pug文件
         if(isPageData && isPublic){
             //_ts.compileTypeFile('.pug');
             return;
@@ -221,40 +235,45 @@ class Watch{
 
         //编译与data所可能对应的页面
         if(isPageData){            
-            // for(let i in _ts.nonPublic['.pug']){
-            //     let aPugName = i.split(_ts.m.path.sep),
-            //         pugName = aPugName[aPugName.length - 1].toLowerCase();
+            for(let i in _ts.fileData['.pug']){
+                let aPugName = i.split(_ts.m.path.sep),
+                    pugName = aPugName[aPugName.length - 1].toLowerCase();
                 
-            //     if(pugName === fileName+'.pug'){
-            //         console.log(i);
-            //         new _ts.m.Compile({
-            //             'src':i,            //输入文件
-            //             'dist':undefined,   //输出模块，不指定由编译模块处理
-            //             'debug':true,       //开启debug模式，会生成map并编译到dev目录
-            //             'callback':(result)=>{
-            //                 _ts.server.io.broadcast('refresh',result);
-            //             }
-            //         });
-            //     };
-            // };
+                if(pugName === fileName+'.pug'){
+                    CompileFn();
+                };
+            };
             return;
         };
 
 
-        // //文件首字母以"_"起始，且属于可能存在公共文件引入类型的，每次修改会编译项目内同类型所有文件
-        // if((filePrefix === '_') && isLinkedFile(fileType) && stats === 'change'){
-        //     _ts.compileTypeFile(fileType);
-        // }else{
-        //     new m.Compile({
-        //         'src':filePath,                 //输入文件
-        //         'dist':undefined,               //输出模块，不指定由编译模块处理
-        //         'debug':true,                   //开启debug模式，会生成map并编译到dev目录
-        //         'callback':(result)=>{
-        //             //_ts.server.io.broadcast('refresh',result);
-        //         }
-        //     });
-        // };
+        //文件首字母以"_"起始，且属于可能存在公共文件引入类型的，每次修改会编译项目内同类型所有文件
+        if(isPublic && isImportFile){
+            //_ts.compileTypeFile(fileType);
+        }else{
+            CompileFn();
+        };
 
+    }
+
+    /**
+     * 编译项目指定类型的所有文件
+     */
+    compileTypeFile(type){
+        const _ts = this,
+            m = _ts.m;
+
+        for(let i in _ts.fileData[type]){
+            new m.Compile({
+                'src':i,            //输入文件
+                'dist':undefined,   //输出模块，不指定由编译模块处理
+                'debug':true,       //开启debug模式，会生成map并编译到dev目录
+                'callback':(result)=>{
+                    console.log(result);
+                    //_ts.server.io.broadcast('refresh',result);
+                }
+            });
+        };
     }
 
     /**
