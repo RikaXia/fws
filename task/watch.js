@@ -154,7 +154,6 @@ class Watch{
 
         let f = async()=>{
             for(let i of initTasks){
-                console.log(i);
                 await i;
             };
             //初始化统计完成后将状态设为true
