@@ -15,9 +15,9 @@ class Test{
         
         
         new api.OutSprite({
-            srcDir:m.path.join(fws.srcPath,'js'),
-            dist:m.path.join(fws.devPath,'js','main.js'),
-            debug:true
+            srcDir:m.path.join(fws.srcPath,'images','_spriteImg'),
+            distSpreiteDir:m.path.join(fws.srcPath,'images'),
+            distScssDir:m.path.join(fws.srcPath,'images')
         }).then(v => {
             tip.success(v.msg);
             //console.log(v);
