@@ -26,5 +26,9 @@ module.exports = {
     Ts2:require('./lib/Ts2'),
 
     
-    Pug2html:require('./lib/Pug2html')
+    Pug2html:require('./lib/Pug2html'),
+        
+    Jsx2js:require('./lib/Jsx2js'),
+
+    OutSprite:require('./lib/OutSprite')
 }

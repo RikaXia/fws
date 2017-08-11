@@ -14,13 +14,13 @@ class Test{
             tip = require('../lib/tip');
         
         
-        new api.Pug2html({
-            src:m.path.join(fws.srcPath,'index.pug'),
-            dist:m.path.join(fws.devPath,'index.html'),
-            debug:false
+        new api.OutSprite({
+            srcDir:m.path.join(fws.srcPath,'js'),
+            dist:m.path.join(fws.devPath,'js','main.js'),
+            debug:true
         }).then(v => {
             tip.success(v.msg);
-            console.log(v);
+            //console.log(v);
         }).catch(e => {
             tip.error('编译出错，详情：');
             console.log(e);
