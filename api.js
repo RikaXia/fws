@@ -11,7 +11,7 @@ module.exports = {
      * .then(v => {//成功})
      * .catch(e => {//失败})
      */
-    Sass2css:require('./lib/Sass2css'),
+    Sass2css:require('./lib/sass2css'),
 
     /**
      * ts、tsx、js、es、js6转为es5
@@ -23,12 +23,12 @@ module.exports = {
      * .then(v => {//成功})
      * .catch(e => {//失败})
      */
-    Ts2:require('./lib/Ts2'),
+    Ts2:require('./lib/ts2'),
 
     
-    Pug2html:require('./lib/Pug2html'),
+    Pug2html:require('./lib/pug2html'),
         
-    Jsx2js:require('./lib/Jsx2js'),
+    Jsx2js:require('./lib/jsx2js'),
 
-    OutSprite:require('./lib/OutSprite')
+    OutSprite:require('./lib/outSprite')
 }

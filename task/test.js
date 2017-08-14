@@ -13,17 +13,20 @@ class Test{
             api = require('../api'),
             tip = require('../lib/tip');
         
-        
         new api.OutSprite({
             srcDir:m.path.join(fws.srcPath,'images','_spritexxx'),
             distSpreiteDir:m.path.join(fws.srcPath,'images'),
             distScssDir:m.path.join(fws.srcPath,'css')
         }).then(v => {
-            tip.success(v.msg);
+            for(let i of v){
+                tip.success(i.msg);
+            };
+            //console.log(v);
+            // tip.success(v.msg);
             //console.log(v);
         }).catch(e => {
-            tip.error('编译出错，详情：');
-            console.log(e);
+            tip.error(e.msg);
+            console.log(e.info);
         });
         
 
