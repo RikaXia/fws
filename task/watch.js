@@ -213,15 +213,7 @@ class Watch{
                 new m.Compile({
                     'src':filePath,                 //输入文件
                     'dist':undefined,               //输出模块，不指定由编译模块处理
-                    'debug':true,                   //开启debug模式，会生成map并编译到dev目录
-                    'callback':(result)=>{
-                        
-                        //_ts.server.io.broadcast('refresh',result);
-
-                        if(typeof callback === 'function'){
-                            callback(result);
-                        };
-                    }
+                    'debug':true                    //开启debug模式，会生成map并编译到dev目录
                 });
             };
         
