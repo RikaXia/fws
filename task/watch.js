@@ -208,6 +208,7 @@ class Watch{
                 return name.substr(0,1) === '_';
             })(fileName),
             
+            
             //编译方法
             CompileFn = ()=>{
                 new m.Compile({
