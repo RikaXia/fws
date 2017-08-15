@@ -49,7 +49,8 @@ class Watch{
     taskList(){
         const _ts = this,
             m = _ts.m,
-            config = _ts.config;
+            config = _ts.config,
+            option = _ts.option;
         let tasks = [];
 
         //检查项目是否为一个fws项目
@@ -89,6 +90,34 @@ class Watch{
             });
         });
 
+        //清空清灵图目录
+        tasks.push(()=>{
+            return new Promise((resolve,reject)=>{
+                let fwsSpriteDataDir = m.path.join(fws.srcPath,'css','_fws','sprite','_spriteData');
+                if(m.pathInfo(fwsSpriteDataDir).type === 'dir'){
+                    m.fs.remove(fwsSpriteDataDir,err => {
+                        if(err){
+                            reject({
+                                status:'error',
+                                msg:`删除失败  ${fwsSpriteDataDir}`,
+                                info:err
+                            });
+                        }else{
+                            resolve({
+                                status:'success',
+                                msg:`清空 ${fwsSpriteDataDir}`
+                            });
+                        };
+                    });
+                }else{
+                    resolve({
+                        status:'success',
+                        msg:`清空 ${fwsSpriteDataDir}`
+                    });
+                };
+            });
+        });
+
         //初始化项目文件
         tasks.push(()=>{
             return new Promise((resolve,reject)=>{
@@ -102,9 +131,9 @@ class Watch{
 
                         //如果是精灵图需要设置其输入/输出目录/sass输出目录，其它类型文件只需要设置输入或是输出项目即可
                         if(i === '_sprite'){
-                            option.srcDir = ii;                                   //精灵图目录
-                            option.distSpreiteDir = m.path.resolve(ii,'..');      //精灵图输出目录
-                            option.distScssDir = m.path.join(fws.srcPath,'css');  //精灵图sass输出目录
+                            option.srcDir = ii;                                                                    //精灵图目录
+                            option.distSpreiteDir = m.path.resolve(ii.replace(fws.srcPath,fws.devPath),'..');      //精灵图输出目录
+                            option.distScssDir = m.path.join(fws.srcPath,'css','_fws','sprite');     //精灵图sass输出目录
                         }else{
                             option.src = ii;
                             option.dist = _ts.getDistPath(ii,true);
@@ -127,6 +156,13 @@ class Watch{
                 let f = async ()=>{
                     for(let i=0,len=taskList.length; i < len; i++){
                         let subTask = await taskList[i]();
+                        if(subTask instanceof Array){
+                            subTask.forEach((item,index)=>{
+                                if(item.status === 'success'){
+                                    m.tip.success(item.msg);
+                                };
+                            });
+                        };
                         if(subTask.status === 'success'){
                             m.tip.success(subTask.msg);
                         };
@@ -146,8 +182,19 @@ class Watch{
             });
         });
 
-        //开启监听任务
+        //开启http服务
+        if(option.server){
+            tasks.push(()=>{
+                return new Promise((resolve,reject)=>{
 
+                });
+            });
+        };
+
+        //开启浏览服务
+        if(option.browse){
+
+        };
         
         return tasks;
     }
@@ -231,8 +278,7 @@ class Watch{
             m = _ts.m;
             
         //先声明文件结构，以编译顺序能根据文件结构来
-        let oFiles = {
-                
+        let oFiles = {                
                 '.pug':{},
                 '.jade':{},
                 '.ts':{},
