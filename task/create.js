@@ -17,22 +17,20 @@ class create{
         const _ts = this;
 
         //任务依赖模块
-        _ts.m = {
-            path:require('path'),
-            tip:require('../lib/tip'),                  //文字提示
-            getType:require('../lib/getType'),          //获取数据类型
-            pathInfo:require('../lib/getPathInfo'),     //获取目标路径的相关信息
-            lineLog:require('single-line-log').stdout   //同一行打印文本
-        };
+        let m = _ts.m = {
+                path:require('path'),
+                tip:require('../lib/tip'),                  //文字提示
+                getType:require('../lib/getType'),          //获取数据类型
+                pathInfo:require('../lib/getPathInfo'),     //获取目标路径的相关信息
+                lineLog:require('single-line-log').stdout   //同一行打印文本
+            },
+            config = _ts.config = {
+                // name:'demo',                                //<string>,项目名称
+                // template:'default'                          //<string>,项目配置文件名
+            };
+        config.name = name;
 
-        //任务配置
-        _ts.config = {
-            // name:'demo',                                //<string>,项目名称
-            // template:'default'                          //<string>,项目配置文件名
-        };
-        _ts.config.name = name;
-
-        _ts.config.template = typeof options.template === 'string' ? options.template : 'default';
+        config.template = typeof options.template === 'string' ? options.template : 'default';
 
         _ts.starTime = new Date();
     }
