@@ -71,116 +71,122 @@ class Watch{
         });
 
         //清空开发目录文件
-        tasks.push(()=>{
-            return new Promise((resolve,reject)=>{
-                m.fs.remove(fws.devPath,err => {
-                    if(err){
-                        reject({
-                            status:'error',
-                            msg:`删除失败  ${fws.devPath}`,
-                            info:err
-                        });
-                    }else{
-                        resolve({
-                            status:'success',
-                            msg:`清空 ${fws.devPath}`
-                        });
-                    };
-                });
-            });
-        });
-
-        //清空清灵图目录
-        tasks.push(()=>{
-            return new Promise((resolve,reject)=>{
-                let fwsSpriteDataDir = m.path.join(fws.srcPath,'css','_fws','sprite','_spriteData');
-                if(m.pathInfo(fwsSpriteDataDir).type === 'dir'){
-                    m.fs.remove(fwsSpriteDataDir,err => {
+        if(!option.fast){
+            tasks.push(()=>{
+                return new Promise((resolve,reject)=>{
+                    m.fs.remove(fws.devPath,err => {
                         if(err){
                             reject({
                                 status:'error',
-                                msg:`删除失败  ${fwsSpriteDataDir}`,
+                                msg:`删除失败  ${fws.devPath}`,
                                 info:err
                             });
                         }else{
                             resolve({
                                 status:'success',
-                                msg:`清空 ${fwsSpriteDataDir}`
+                                msg:`清空 ${fws.devPath}`
                             });
                         };
                     });
-                }else{
-                    resolve({
-                        status:'success',
-                        msg:`清空 ${fwsSpriteDataDir}`
-                    });
-                };
-            });
-        });
-
-        //初始化项目文件
-        tasks.push(()=>{
-            return new Promise((resolve,reject)=>{
-                let taskList = [],
-                    data = _ts.getFilesData(fws.srcPath);
-
-                for(let i in data){
-                    for(let ii in data[i]){
-                        //编译选项
-                        let option = {};
-
-                        //如果是精灵图需要设置其输入/输出目录/sass输出目录，其它类型文件只需要设置输入或是输出项目即可
-                        if(i === '_sprite'){
-                            option.srcDir = ii;                                                                    //精灵图目录
-                            option.distSpreiteDir = m.path.resolve(ii.replace(fws.srcPath,fws.devPath),'..');      //精灵图输出目录
-                            option.distScssDir = m.path.join(fws.srcPath,'css','_fws','sprite');     //精灵图sass输出目录
-                        }else{
-                            option.src = ii;
-                            option.dist = _ts.getDistPath(ii,true);
-                        };
-                        
-                        //设置为开发模式
-                        option.debug = true;
-
-                        //获取与文件类型相对应的编译方法
-                        let compile = _ts.getCompileFn(i);
-
-                        //添加编译任务
-                        taskList.push(()=>{
-                            return new compile(option);
-                        });
-                    };
-                };
-
-                //将编译任务异步执行
-                let f = async ()=>{
-                    for(let i=0,len=taskList.length; i < len; i++){
-                        let subTask = await taskList[i]();
-                        if(subTask instanceof Array){
-                            subTask.forEach((item,index)=>{
-                                if(item.status === 'success'){
-                                    m.tip.success(item.msg);
-                                };
-                            });
-                        };
-                        if(subTask.status === 'success'){
-                            m.tip.success(subTask.msg);
-                        };
-                    };
-                    return {
-                        status:'success',
-                        msg:'项目初始化编译完成'
-                    };
-                };
-
-                f().then(v => {
-                    resolve(v);
-                }).catch(e => {
-                    m.tip.error(v.msg);
-                    reject(e);
                 });
             });
-        });
+        };
+
+        //清空清灵图目录
+        if(!option.fast){
+            tasks.push(()=>{
+                return new Promise((resolve,reject)=>{
+                    let fwsSpriteDataDir = m.path.join(fws.srcPath,'css','_fws','sprite','_spriteData');
+                    if(m.pathInfo(fwsSpriteDataDir).type === 'dir'){
+                        m.fs.remove(fwsSpriteDataDir,err => {
+                            if(err){
+                                reject({
+                                    status:'error',
+                                    msg:`删除失败  ${fwsSpriteDataDir}`,
+                                    info:err
+                                });
+                            }else{
+                                resolve({
+                                    status:'success',
+                                    msg:`清空 ${fwsSpriteDataDir}`
+                                });
+                            };
+                        });
+                    }else{
+                        resolve({
+                            status:'success',
+                            msg:`清空 ${fwsSpriteDataDir}`
+                        });
+                    };
+                });
+            });
+        };
+
+        //初始化项目文件
+        if(!option.fast){        
+            tasks.push(()=>{
+                return new Promise((resolve,reject)=>{
+                    let taskList = [],
+                        data = _ts.getFilesData(fws.srcPath);
+
+                    for(let i in data){
+                        for(let ii in data[i]){
+                            //编译选项
+                            let option = {};
+
+                            //如果是精灵图需要设置其输入/输出目录/sass输出目录，其它类型文件只需要设置输入或是输出项目即可
+                            if(i === '_sprite'){
+                                option.srcDir = ii;                                                                    //精灵图目录
+                                option.distSpreiteDir = m.path.resolve(ii.replace(fws.srcPath,fws.devPath),'..');      //精灵图输出目录
+                                option.distScssDir = m.path.join(fws.srcPath,'css','_fws','sprite');     //精灵图sass输出目录
+                            }else{
+                                option.src = ii;
+                                option.dist = _ts.getDistPath(ii,true);
+                            };
+                            
+                            //设置为开发模式
+                            option.debug = true;
+
+                            //获取与文件类型相对应的编译方法
+                            let compile = _ts.getCompileFn(i);
+
+                            //添加编译任务
+                            taskList.push(()=>{
+                                return new compile(option);
+                            });
+                        };
+                    };
+
+                    //将编译任务异步执行
+                    let f = async ()=>{
+                        for(let i=0,len=taskList.length; i < len; i++){
+                            let subTask = await taskList[i]();
+                            if(subTask instanceof Array){
+                                subTask.forEach((item,index)=>{
+                                    if(item.status === 'success'){
+                                        m.tip.success(item.msg);
+                                    };
+                                });
+                            };
+                            if(subTask.status === 'success'){
+                                m.tip.success(subTask.msg);
+                            };
+                        };
+                        return {
+                            status:'success',
+                            msg:'项目初始化编译完成'
+                        };
+                    };
+
+                    f().then(v => {
+                        resolve(v);
+                    }).catch(e => {
+                        m.tip.error(v.msg);
+                        reject(e);
+                    });
+                });
+            });
+        };
 
         //开启http服务
         if(option.server){
@@ -410,7 +416,8 @@ module.exports = {
         description:'项目监听编译',
         option:[
             ['-b, --browse','浏览器访问项目'],
-            ['-s, --server','开启http服务']
+            ['-s, --server','开启http服务'],
+            ['-f, --fast','快速模式，将不会预先编译项目']
         ],
         help:()=>{
             console.log('   补充说明:');
