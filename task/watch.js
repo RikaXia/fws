@@ -1,7 +1,7 @@
 /// <reference path="../typings/globals/node/index.d.ts" />
 'use strict';
 class Watch{
-    constructor(projectPath,options){
+    constructor(srcPath,options){
         const _ts = this;
         
         let m = _ts.m = {
@@ -18,8 +18,7 @@ class Watch{
             config = _ts.config = {},
             option = _ts.option = options;
         
-        
-        config.src = projectPath;
+        config.src = srcPath || fws.srcPath;
     }
     init(){
         const _ts = this,
@@ -70,8 +69,9 @@ class Watch{
             });
         });
 
-        //清空开发目录文件
+        //如果有开启快速模式，将不会预先编译项目
         if(!option.fast){
+            //清空开发目录文件
             tasks.push(()=>{
                 return new Promise((resolve,reject)=>{
                     m.fs.remove(fws.devPath,err => {
@@ -90,10 +90,8 @@ class Watch{
                     });
                 });
             });
-        };
 
-        //清空清灵图目录
-        if(!option.fast){
+            //清空清灵图目录
             tasks.push(()=>{
                 return new Promise((resolve,reject)=>{
                     let fwsSpriteDataDir = m.path.join(fws.srcPath,'css','_fws','sprite','_spriteData');
@@ -120,10 +118,8 @@ class Watch{
                     };
                 });
             });
-        };
 
-        //初始化项目文件
-        if(!option.fast){        
+            //初始化项目文件
             tasks.push(()=>{
                 return new Promise((resolve,reject)=>{
                     let taskList = [],
@@ -188,6 +184,37 @@ class Watch{
             });
         };
 
+        //监听文件
+        tasks.push(()=>{
+            return new Promise((resolve,reject)=>{
+                try {
+                    let w = m.chokidar.watch(config.src,{persistent:true});
+                    
+                    w.on('all',(stats,filePath)=>{
+                        switch (stats) {
+                            case 'add':
+                                
+                            break;
+                            case 'change':
+                                
+                            break;
+                        };                        
+                    });
+
+                    resolve({
+                        status:'success',
+                        msg:'开启文件监听服务'
+                    });
+                } catch (error) {
+                    reject({
+                        status:'error',
+                        msg:'',
+                        info:error
+                    });
+                };
+            });
+        });
+
         //开启http服务
         if(option.server){
             tasks.push(()=>{
@@ -199,7 +226,11 @@ class Watch{
 
         //开启浏览服务
         if(option.browse){
+            tasks.push(()=>{
+                return new Promise((resolve,reject)=>{
 
+                });
+            });
         };
         
         return tasks;
