@@ -124,7 +124,6 @@ class Watch{
                 return new Promise((resolve,reject)=>{
                     let taskList = [],
                         data = _ts.getFilesData(fws.srcPath);
-
                     for(let i in data){
                         for(let ii in data[i]){
                             //编译选项
@@ -138,6 +137,22 @@ class Watch{
                             }else{
                                 option.src = ii;
                                 option.dist = _ts.getDistPath(ii,true);
+                            };
+
+                            //如果是jade文件，需要试图从项目data目录中寻找对应的数据文件
+                            if(i === '.jade' || i === '.pug'){
+                                
+                                //得到文件的信息，文件名，文件类型，是否为公共文件
+                                let fileInfo = _ts.getFileInfo(ii),
+
+                                    //根据jade|pug文件路径得到相对应的数据文件路径
+                                    dataPath = ii.replace(fws.srcPath,m.path.join(fws.srcPath,'data'+m.path.sep));                                
+                                dataPath = m.path.join(m.path.dirname(dataPath),fileInfo.name+'.js');
+
+                                //检查对应的文件是否存在，如果存在则引入文件
+                                if(m.pathInfo(dataPath).extension === '.js'){
+                                    option.data = require(dataPath);
+                                };
                             };
                             
                             //设置为开发模式
@@ -188,17 +203,53 @@ class Watch{
         tasks.push(()=>{
             return new Promise((resolve,reject)=>{
                 try {
-                    let w = m.chokidar.watch(config.src,{persistent:true});
+                    let w = m.chokidar.watch(config.src,{persistent:true}),
+                        data = {};
                     
                     w.on('all',(stats,filePath)=>{
-                        switch (stats) {
-                            case 'add':
-                                
-                            break;
-                            case 'change':
-                                
-                            break;
-                        };                        
+                        //是否为需要过滤的文件
+                        let isFilter = _ts.isFilter(filePath);
+
+                        if(!isFilter){
+                            //是否为精灵图
+                            let isSprite = _ts.isSprite(filePath),
+                                isData = _ts.isData(filePath),
+                                fileInfo = _ts.getFileInfo(filePath),
+                                fileType = fileInfo.type,
+                                fileName = fileInfo.name,
+                                isPublic = fileInfo.isPublic,
+                                key = isSprite ? '_sprite' : fileType;
+
+                            switch (stats) {
+                                //文件添加，如果文件为非公共文件，则将文件保存到数据中
+                                case 'add':
+                                    if(data[key] === undefined){
+                                        data[key] = {};
+                                    };
+                                    if(!isPublic && !isData){
+                                        data[key][filePath] = null;
+                                    };
+                                break;
+                                //文件修改
+                                case 'change':
+                                    //如果是公共文件，那么则编译该类型的所有文件
+                                    if(isPublic && data[fileType]){
+                                        for(let i in data[fileType]){
+                                            console.log(i);
+                                        };
+                                    }else{
+
+                                    };
+                                break;
+    
+                                //文件删除
+                                case 'unlink':
+                                    try {
+                                        delete data[key][filePath];
+                                    } catch (error) {};
+                                break;
+                            }; 
+                        };                                               
                     });
 
                     resolve({
@@ -354,10 +405,11 @@ class Watch{
                     }else if(itemInfo.type === 'file' && !isIgnoreDir(filePath)){
 
                         //如果文件是精灵图，保存其所属目录
-                        let isSprite = _ts.isSprite(filePath);
+                        let isSprite = _ts.isSprite(filePath),
+                            isData = _ts.isData(filePath);
                         if(isSprite){
                             oFiles['_sprite'][m.path.dirname(filePath)] = null;
-                        }else{
+                        }else if(!isData){
                             //oFiles[itemInfo.extension].push(_ts.getFileInfo(filePath));
                             let fileInfo = _ts.getFileInfo(filePath);
 
@@ -400,6 +452,48 @@ class Watch{
     }
 
     /**
+     * 检查是否为需要过滤的文件
+     * 
+     * @param {string} filePath 文件路径
+     * @returns 
+     * 
+     * @memberOf Watch
+     */
+    isFilter(filePath){
+        const _ts = this,
+            m = _ts.m,
+            config = _ts.config,
+
+            //需要过滤的文件类型
+            filterTypes = ['tmp','_mp','syd','ftg','gid','---','bak','old','chk','ms','diz','wbk','xlk','cdr_','nch'],
+
+            //需要过滤需要包含的目录
+            filterDirs = ['node_modules','.vscode','.fwsbackup','.temp'];
+        
+        //检查是否为需要过滤的文件
+        let fileType = m.path.extname(filePath).toLowerCase();
+        let isFilterType = filterTypes.some((item,index)=>{
+            return '.'+item === fileType;
+        });
+        if(isFilterType){
+            return true;
+        };
+
+        //检查是否有需要过滤的目录
+        let filePathDirs = filePath.split(m.path.sep);
+        let isFilterDir = filterDirs.some((item,index)=>{
+            return filePathDirs.some((dir,i)=>{
+                return dir.toLowerCase() === item;
+            });
+        });
+        if(isFilterDir){
+            return true;
+        };
+
+        return false;
+    }
+
+    /**
      * 判断是否为精灵图
      * 
      * @param {string} filePath 图片路径
@@ -421,6 +515,23 @@ class Watch{
         isImg = fileType === '.png' || fileType === '.svg';
 
         return isSpriteDir && isImg;
+    }
+
+    /**
+     * 判断是否为pug对应的数据文件
+     * 
+     * @param {string} filePath 文件路径
+     * 
+     * @memberOf Watch
+     */
+    isData(filePath){
+        const _ts = this,
+            m = _ts.m,
+            config = _ts.config,
+            fileInfo = _ts.getFileInfo(filePath),
+            dataDir = m.path.join(fws.srcPath,'data'+m.path.sep);
+
+        return filePath.indexOf(dataDir) === 0 && fileInfo.type === '.js';
     }
 
     /**
