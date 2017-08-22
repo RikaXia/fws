@@ -203,7 +203,14 @@ class Watch{
         if(option.server){
             tasks.push(()=>{
                 return new Promise((resolve,reject)=>{
-
+                    _ts.server = new m.autoRefresh();
+                    _ts.server.then(v => {
+                        console.log(v.data.listenPort);
+                        resolve(v);
+                    }).catch(e => {
+                        reject(e);
+                    });
+                    
                 });
             });
         };
