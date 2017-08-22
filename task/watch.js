@@ -133,7 +133,7 @@ class Watch{
                             if(i === '_sprite'){
                                 option.srcDir = ii;                                                                    //精灵图目录
                                 option.distSpreiteDir = m.path.resolve(ii.replace(fws.srcPath,fws.devPath),'..');      //精灵图输出目录
-                                option.distScssDir = m.path.join(fws.srcPath,'css','_fws','sprite');     //精灵图sass输出目录
+                                option.distScssDir = m.path.join(fws.srcPath,'css','_fws','sprite');                   //精灵图sass输出目录
                             }else{
                                 option.src = ii;
                                 option.dist = _ts.getDistPath(ii,true);
@@ -232,13 +232,138 @@ class Watch{
                                 break;
                                 //文件修改
                                 case 'change':
-                                    //如果是公共文件，那么则编译该类型的所有文件
-                                    if(isPublic && data[fileType]){
-                                        for(let i in data[fileType]){
-                                            console.log(i);
-                                        };
-                                    }else{
+                                    let compile = _ts.getCompileFn(key),
+                                        option = {
+                                            debug:true
+                                        },
+                                        taskList = [];
+                                    
+                                    if(isSprite){
+                                        //如果是精灵图，编译该精灵图对应的目录
+                                        let srcDir = option.srcDir = m.path.dirname(filePath);
 
+                                        option.distSpreiteDir = m.path.resolve(srcDir.replace(fws.srcPath,fws.devPath),'..');
+                                        option.distScssDir = m.path.join(fws.srcPath,'css','_fws','sprite');
+                                        taskList.push(()=>{
+                                            return new compile(option);
+                                        });
+                                    }else if(isData){
+                                        compile = _ts.getCompileFn('.pug');
+                                        if(isPublic){
+                                            //如果是数据公共文件,则编译所有的jade|pug文件
+                                            let files = [],
+                                                pugFiles = data['.pug'],
+                                                jadeFiles = data['.jade'];
+                                            
+                                            //将pug和jade的文件添加到文件列表
+                                            if(pugFiles){
+                                                for(let i in pugFiles){
+                                                    files.push(i);
+                                                };
+                                            };
+
+                                            if(jadeFiles){
+                                                for(let i in jadeFiles){
+                                                    files.push(i);
+                                                };
+                                            };
+
+                                            files.forEach((item,index)=>{
+                                                option.src = item;
+                                                option.dist = _ts.getDistPath(ii,true);
+                                                
+                                                //根据jade|pug文件路径得到相对应的数据文件路径
+                                                let dataPath = item.replace(
+                                                        fws.srcPath,
+                                                        m.path.join(fws.srcPath,'data'+m.path.sep)
+                                                    );
+                                                dataPath = m.path.join(
+                                                        m.path.dirname(dataPath),
+                                                        fileInfo.name+'.js'
+                                                    );
+    
+                                                //检查对应的文件是否存在，如果存在则引入文件
+                                                if(m.pathInfo(dataPath).extension === '.js'){
+                                                    option.data = require(dataPath);
+                                                };
+    
+                                                taskList.push(()=>{
+                                                    return new compile(option);
+                                                });
+                                            });
+                                        }else{
+                                            //非公共的数据文件,内里只编译与之相对应的jade|pug文件                         
+                                            let files = [],
+
+                                                //将与之对应的jade|pug文件路径添加到文件列表
+                                                dirPath = filePath.replace(
+                                                        m.path.join(fws.srcPath,'data'+m.path.sep),
+                                                        fws.srcPath
+                                                    );                                                
+                                                files.push(m.path.join(
+                                                    m.path.dirname(dirPath),
+                                                    fileName+'.jade'
+                                                ));
+                                                files.push(m.path.join(
+                                                    m.path.dirname(dirPath),
+                                                    fileName+'.pug'
+                                                ));
+                                            
+                                            //循环文件列表,并检查文件是否有效,如果有效则将编译任务添加到任务列表
+                                            files.forEach((item,index)=>{
+                                                if(m.pathInfo(item).extension){
+                                                    option.src = item;
+                                                    option.dist = _ts.getDistPath(item,true);
+                                                    option.data = require(filePath);
+
+                                                    taskList.push(()=>{
+                                                        return new compile(option);
+                                                    });
+                                                };
+                                            });
+                                        };
+                                    }else if(isPublic && data[key]){
+                                        //如果公共文件,且有同类型的文件则编译同类型所有文件
+                                        for(let i in data[key]){
+                                            option.src = i;
+                                            option.dist = _ts.getDistPath(i,true);
+
+                                            taskList.push(()=>{
+                                                return new compile(option);
+                                            });
+                                        };
+
+                                    }else{
+                                        //只编译自身即可
+                                    };
+
+                                    //如果有可执行的任务
+                                    if(taskList.length){
+                                        let f = async ()=>{
+                                            for(let i=0,len=taskList.length; i<len; i++){
+                                                let subTask = await taskList[i]();
+                                                if(subTask instanceof Array){
+                                                    subTask.forEach((item,index)=>{
+                                                        if(item.status === 'success'){
+                                                            m.tip.success(item.msg);
+                                                        };
+                                                    })
+                                                };
+                                                if(subTask.status === 'success'){
+                                                    m.tip.success(subTask.msg);
+                                                };
+                                            };
+                                            return {
+                                                status:'success',
+                                                msg:'文件监听编译完成'
+                                            };
+                                        };
+
+                                        f().then(v => {
+                                            console.log('OK',v);
+                                        }).catch(e => {
+                                            console.log('Er',e);
+                                        });
                                     };
                                 break;
     
