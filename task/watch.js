@@ -199,6 +199,24 @@ class Watch{
             });
         };
 
+        //开启http服务
+        if(option.server){
+            tasks.push(()=>{
+                return new Promise((resolve,reject)=>{
+
+                });
+            });
+        };
+
+        //开启浏览服务
+        if(option.browse){
+            tasks.push(()=>{
+                return new Promise((resolve,reject)=>{
+
+                });
+            });
+        };
+
         //监听文件
         tasks.push(()=>{
             return new Promise((resolve,reject)=>{
@@ -335,7 +353,30 @@ class Watch{
 
                                     }else{
                                         //只编译自身即可
+                                        option.src = filePath;
+                                        option.dist = _ts.getDistPath(filePath,true);
                                         
+                                        if(fileType === '.pug' || fileType === '.jade'){
+
+                                            //根据jade|pug文件路径得到相对应的数据文件路径
+                                            let dataPath = filePath.replace(
+                                                    fws.srcPath,
+                                                    m.path.join(fws.srcPath,'data'+m.path.sep)
+                                                );
+                                            dataPath = m.path.join(
+                                                    m.path.dirname(dataPath),
+                                                    fileInfo.name + '.js'
+                                                );
+                                            
+                                            //检查对应的文件是否存在，如果存在则引入文件
+                                            if(m.pathInfo(dataPath).extension === '.js'){
+                                                option.data = require(dataPath);
+                                            };
+                                        };
+
+                                        taskList.push(()=>{
+                                            return new compile(option);
+                                        });                                        
                                     };
 
                                     //如果有可执行的任务
@@ -361,9 +402,12 @@ class Watch{
                                         };
 
                                         f().then(v => {
-                                            console.log('OK',v);
+                                            //编译完成，如果有开启server则需要往前台提供刷新服务
+                                            
                                         }).catch(e => {
-                                            console.log('Er',e);
+                                            //编译遇到出错
+                                            m.tip.error(e.msg);
+                                            console.log(e.info);
                                         });
                                     };
                                 break;
@@ -391,24 +435,6 @@ class Watch{
                 };
             });
         });
-
-        //开启http服务
-        if(option.server){
-            tasks.push(()=>{
-                return new Promise((resolve,reject)=>{
-
-                });
-            });
-        };
-
-        //开启浏览服务
-        if(option.browse){
-            tasks.push(()=>{
-                return new Promise((resolve,reject)=>{
-
-                });
-            });
-        };
         
         return tasks;
     }
