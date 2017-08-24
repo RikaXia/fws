@@ -200,12 +200,15 @@ class Watch{
         };
 
         //开启http服务
+        var listenPort;
         if(option.server){
             tasks.push(()=>{
                 return new Promise((resolve,reject)=>{
                     _ts.server = new m.autoRefresh();
                     _ts.server.then(v => {
-                        console.log(v.data.listenPort);
+                        //保存端口号
+                        listenPort = v.data.listenPort;
+
                         resolve(v);
                     }).catch(e => {
                         reject(e);
@@ -219,7 +222,27 @@ class Watch{
         if(option.browse){
             tasks.push(()=>{
                 return new Promise((resolve,reject)=>{
-
+                    try {
+                        if(listenPort){
+                            m.openurl.open('http://'+_ts.getLocalIp()+':'+listenPort);
+                            resolve({
+                                status:'success',
+                                msg:'浏览项目'
+                            });
+                        }else{
+                            reject({
+                                status:'error',
+                                msg:'获取不到端口号',
+                                info:listenPort
+                            });
+                        };                        
+                    } catch (error) {
+                        reject({
+                            status:'error',
+                            msg:'启动浏览器失败',
+                            info:error
+                        });
+                    };
                 });
             });
         };
@@ -444,6 +467,28 @@ class Watch{
         });
         
         return tasks;
+    }
+
+
+    getLocalIp(){
+        const _ts = this,
+            m = _ts.m,
+            config = _ts.config;
+
+        let networkInfo = m.os.networkInterfaces(),
+            ip;
+        for(let i in networkInfo){
+            let t = networkInfo[i].some((item,index)=>{
+                if(item.family === 'IPv4' && item.address !== '127.0.0.1' && item.address !== '0.0.0.0'){
+                    ip = item.address;
+                    return true;;
+                };
+            });
+            if(t){
+                break;
+            };
+        };
+        return ip ? ip : 'localhost';
     }
 
     /**

@@ -42,15 +42,6 @@ class create{
         const _ts = this,
             m = _ts.m,
             config = _ts.config;
-        
-        // let pList = Promise.all(_ts.start());
-
-        // pList.then(val => {
-        //     console.log(val);
-        // }).catch(err => {
-        //     console.log(err);
-        // });
-
 
         let f = async ()=>{
             let pList = _ts.start();
@@ -248,7 +239,7 @@ module.exports = {
         command:'[name]',
         description:'创建一个新的空项目',
         option:[
-            ['-t, --template [template]','可选，指定项目类型，默认pc。可选参数 '+aConfigList.toString()]
+            ['-t, --template [template]','项目模版。默认pc，可选参数 '+aConfigList.toString()]
         ],
         help:()=>{
             console.log('   补充说明:');
