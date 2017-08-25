@@ -16,30 +16,21 @@ class Build{
             m = _ts.m,
             config = _ts.config;
 
-        var postcss = require('postcss');
-        var cssnano = require('cssnano');
-        var autoprefixer = require('autoprefixer');
-        var sign = require('../lib/signature');
-        var htmlSign = sign('.js');
+        var file = m.path.join(fws.srcPath,'test.png');
 
-        var file = m.path.join(fws.srcPath,'test.css');
-        var css = m.fs.readFileSync(file).toString();
+        var compileHtml = require('../lib/compile_img');
 
-        var prefixer = postcss([ autoprefixer ]);
-        
-        postcss([cssnano,autoprefixer({ add: true, browsers: [] })]).process(css)
-        .then(result => {
-            return prefixer.process(result.css)
-            // fs.writeFile('dest/app.css', result.css);
-            // if ( result.map ) fs.writeFile('dest/app.css.map', result.map);
-        }).then(result => {
-            console.log(result)
+        var c = new compileHtml({
+            src:file,
+            dist:m.path.join(fws.srcPath,'testOut.png')
         });
         
+        c.then(v => {
+            console.log(v);
+        }).catch(e => {
+            console.log(e);
+        });
     }
-
-
-
 };
 
 
