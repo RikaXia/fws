@@ -50,7 +50,8 @@ class Watch{
             m = _ts.m,
             config = _ts.config,
             option = _ts.option;
-        let tasks = [];
+        let tasks = [],
+            isInitCompile;
 
         //检查项目是否为一个fws项目
         tasks.push(()=>{
@@ -190,6 +191,7 @@ class Watch{
                     };
 
                     f().then(v => {
+                        isInitCompile = true;
                         resolve(v);
                     }).catch(e => {
                         m.tip.error(v.msg);
@@ -266,20 +268,9 @@ class Watch{
                                 fileType = fileInfo.type,
                                 fileName = fileInfo.name,
                                 isPublic = fileInfo.isPublic,
-                                key = isSprite ? '_sprite' : fileType;
-
-                            switch (stats) {
-                                //文件添加，如果文件为非公共文件，则将文件保存到数据中
-                                case 'add':
-                                    if(data[key] === undefined){
-                                        data[key] = {};
-                                    };
-                                    if(!isPublic && !isData){
-                                        data[key][filePath] = null;
-                                    };
-                                break;
-                                //文件修改
-                                case 'change':
+                                key = isSprite ? '_sprite' : fileType,
+                                temp,
+                                compileFn = ()=>{
                                     let compile = _ts.getCompileFn(key),
                                         option = {
                                             debug:true
@@ -318,7 +309,7 @@ class Watch{
 
                                             files.forEach((item,index)=>{
                                                 option.src = item;
-                                                option.dist = _ts.getDistPath(ii,true);
+                                                option.dist = _ts.getDistPath(item,true);
                                                 
                                                 //根据jade|pug文件路径得到相对应的数据文件路径
                                                 let dataPath = item.replace(
@@ -329,12 +320,12 @@ class Watch{
                                                         m.path.dirname(dataPath),
                                                         fileInfo.name+'.js'
                                                     );
-    
+
                                                 //检查对应的文件是否存在，如果存在则引入文件
                                                 if(m.pathInfo(dataPath).extension === '.js'){
                                                     option.data = require(dataPath);
                                                 };
-    
+
                                                 taskList.push(()=>{
                                                     return new compile(option);
                                                 });
@@ -440,6 +431,34 @@ class Watch{
                                             console.log(e.info);
                                         });
                                     };
+                                };
+
+                            switch (stats) {
+                                //文件添加，如果文件为非公共文件，则将文件保存到数据中
+                                case 'add':
+                                    if(data[key] === undefined){
+                                        data[key] = {};
+                                    };
+                                    if(!isPublic && !isData){
+                                        data[key][filePath] = null;
+                                    };
+
+                                    //如果初始化状态已经完成，则添加的文件也会进行编译处理
+                                    if(isInitCompile){
+                                        compileFn();
+                                    };
+                                    
+                                    //如果有开启快速模式（即免初始化，且初始化状态为未完成，500ms添加无响应则将初始化状态设置为完成）
+                                    if(option.fast &&　!isInitCompile){
+                                        clearTimeout(temp);
+                                        temp = setTimeout(()=>{
+                                            isInitCompile = true;
+                                        },500);
+                                    };
+                                break;
+                                //文件修改
+                                case 'change':
+                                    compileFn();
                                 break;
     
                                 //文件删除
