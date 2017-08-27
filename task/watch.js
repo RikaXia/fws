@@ -191,7 +191,7 @@ class Watch{
                     };
 
                     f().then(v => {
-                        isInitCompile = true;
+                        //isInitCompile = true;
                         resolve(v);
                     }).catch(e => {
                         m.tip.error(v.msg);
@@ -448,8 +448,8 @@ class Watch{
                                         compileFn();
                                     };
                                     
-                                    //如果有开启快速模式（即免初始化，且初始化状态为未完成，500ms添加无响应则将初始化状态设置为完成）
-                                    if(option.fast &&　!isInitCompile){
+                                    //500ms内wacth无新增加文件响应将初始化状态设置为完成
+                                    if(!isInitCompile){
                                         clearTimeout(temp);
                                         temp = setTimeout(()=>{
                                             isInitCompile = true;

@@ -16,19 +16,16 @@ class Build{
             m = _ts.m,
             config = _ts.config;
 
-        var file = m.path.join(fws.srcPath,'test.png');
+        let es2 = require('../lib/es2');
 
-        var compileHtml = require('../lib/compile_img');
-
-        var c = new compileHtml({
-            src:file,
-            dist:m.path.join(fws.srcPath,'testOut.png')
-        });
-        
-        c.then(v => {
-            console.log(v);
+        new es2({
+            src:m.path.join(fws.srcPath,'js','app.tsx'),
+            dist:m.path.join(fws.srcPath,'js','appBuild.js'),
+            debug:true
+        }).then(v => {
+            //console.log(v);
         }).catch(e => {
-            console.log(e);
+            //console.log(e);
         });
     }
 };
