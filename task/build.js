@@ -16,17 +16,30 @@ class Build{
             m = _ts.m,
             config = _ts.config;
 
-        let es2 = require('../lib/es2');
+        let CompileJs = require('../lib/compile_js');
 
-        new es2({
-            src:m.path.join(fws.srcPath,'js','app.tsx'),
-            dist:m.path.join(fws.srcPath,'js','appBuild.js'),
-            debug:true
+        new CompileJs({
+            src:m.path.join(fws.devPath,'js','es6','app.js'),
+            dist:m.path.join(fws.devPath,'js','es6','app.min.js')
         }).then(v => {
-            //console.log(v);
+            console.log(v);
         }).catch(e => {
-            //console.log(e);
+            console.log(e); 
         });
+
+        // 测试编译到JS的文件
+
+        // let es2 = require('../lib/es2');
+
+        // new es2({
+        //     src:m.path.join(fws.srcPath,'js','ts','m1.ts'),
+        //     dist:m.path.join(fws.srcPath,'js','ts','appBuild.js'),
+        //     debug:false
+        // }).then(v => {
+        //     console.log('正确',v.msg);
+        // }).catch(e => {
+        //     console.log('错误',e.msg);
+        // });
     }
 };
 

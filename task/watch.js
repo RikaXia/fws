@@ -32,7 +32,6 @@ class Watch{
                     if(task.status === 'success'){
                         m.tip.success(task.msg);
                     };
-                    //console.log(task);
                 };
                 return '完成';
             };
@@ -129,7 +128,6 @@ class Watch{
                         for(let ii in data[i]){
                             //编译选项
                             let option = {};
-
                             //如果是精灵图需要设置其输入/输出目录/sass输出目录，其它类型文件只需要设置输入或是输出项目即可
                             if(i === '_sprite'){
                                 option.srcDir = ii;                                                                    //精灵图目录
@@ -139,6 +137,7 @@ class Watch{
                                 option.src = ii;
                                 option.dist = _ts.getDistPath(ii,true);
                             };
+                            
 
                             //如果是jade文件，需要试图从项目data目录中寻找对应的数据文件
                             if(i === '.jade' || i === '.pug'){
@@ -194,7 +193,7 @@ class Watch{
                         //isInitCompile = true;
                         resolve(v);
                     }).catch(e => {
-                        m.tip.error(v.msg);
+                        m.tip.error(e.msg);
                         reject(e);
                     });
                 });
@@ -528,7 +527,7 @@ class Watch{
                 '.pug':'.html',
                 '.scss':'.css',
                 '.ts':'.js',                
-                '.tsx':'.jsx',
+                '.tsx':'.js',
                 '.jsx':'.js',
                 '.es':'.js',
                 '.es6':'.js'
@@ -565,11 +564,12 @@ class Watch{
                 '.jade':api.Pug2html,
                 '.scss':api.Sass2css,
                 '.sass':api.Sass2css,
-                '.ts':api.Ts2,
-                '.tsx':api.Ts2,
-                '.es':api.Ts2,
-                '.es6':api.Ts2,
-                '.jsx':api.Jsx2js,
+                '.ts':api.Es2,
+                '.tsx':api.Es2,
+                '.es':api.Es2,
+                '.es6':api.Es2,
+                '.js':api.Es2,
+                '.jsx':api.Es2,
                 '_sprite':api.OutSprite
             };
         return fns[type] === undefined ? api.Copy : fns[type];
