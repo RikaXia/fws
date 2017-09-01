@@ -56,7 +56,7 @@ class Build{
             option = _ts.option,
             tasks = [];
         
-        //检查，如果不是fws项目目录且未强制启用不备份功能则需要备份文件
+        //备份文件，如果不是fws项目目录且未强制启用不备份功能则需要备份文件
         let projectDir = m.path.join(config.src,'..'),                                  //项目目录
             backupDirName = m.pathInfo(projectDir).name+'_fwsBackup'+(+new Date),       //备份目录名
             backupDirPath = m.path.join(projectDir,'..',backupDirName);                 //备份目录路径
