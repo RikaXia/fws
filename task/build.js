@@ -59,8 +59,9 @@ class Build{
         //备份文件，如果不是fws项目目录且未强制启用不备份功能则需要备份文件
         let projectDir = m.path.join(config.src,'..'),                                  //项目目录
             backupDirName = m.pathInfo(projectDir).name+'_fwsBackup'+(+new Date),       //备份目录名
-            backupDirPath = m.path.join(projectDir,'..',backupDirName);                 //备份目录路径
-        if(!m.isFwsDir(projectDir) && !option.noBackup){
+            backupDirPath = m.path.join(projectDir,'..',backupDirName),                 //备份目录路径
+            isFwsDir = m.isFwsDir(projectDir);                                          //是否为fws项目目录
+        if(!isFwsDir && !option.noBackup){
             tasks.push(()=>{
                 return new Promise((resolve,reject)=>{
                     //创建备份目录
@@ -90,13 +91,25 @@ class Build{
             });
         };
 
-        //初始化项目
-        tasks.push(()=>{
-            return new Promise((resolve,reject)=>{
-                console.log(m.dirFilePath(projectDir))
+        //如果是fws项目则需要先初始化项目
+        if(isFwsDir){
+            //将初始化项目任务添加到任务列表
+            let initCompileTasks = require('../lib/initCompile_dev')({
+                src:fws.srcPath,
+                dist:fws.devPath
             });
+
+            tasks.push(...initCompileTasks);
+        };
+
+        //项目文件压缩
+        let compressionTask = require('../lib/compressionTask')({
+            src:isFwsDir ? fws.devPath : backupDirPath,
+            dist:isFwsDir ? fws.distPath : projectDir
         });
         
+        tasks.push(...compressionTask);
+
         return tasks;
     }
     

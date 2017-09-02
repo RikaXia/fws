@@ -1,10 +1,15 @@
 /// <reference path="./typings/index.d.ts" />
 module.exports = {
-    Sass2css:require('./lib/sass2css'),
     //Ts2:require('./lib/ts2'),
-    Es2:require('./lib/es2'),  
-    Pug2html:require('./lib/pug2html'),        
     //Jsx2js:require('./lib/jsx2js'),
+    Sass2css:require('./lib/sass2css'),    
+    Es2:require('./lib/es2'),  
+    Pug2html:require('./lib/pug2html'),
     OutSprite:require('./lib/outSprite'),
+
+    compileImg:require('./lib/compile_img'),
+    compileJs:require('./lib/compile_js'),
+    compileHtml:require('./lib/compile_html'),
+    compileCss:require('./lib/compile_css'),
     Copy:require('./lib/copy')
-}
+};
