@@ -1,7 +1,0 @@
-﻿@charset "utf-8";
-
-//透明度兼容
-@mixin opacity($val){
-    opacity:$val;
-    filter:alpha(opacity=#{$val * 100});
-};
