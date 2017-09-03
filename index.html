@@ -25,6 +25,9 @@
 <script>
   EditOnGithubPlugin.create(
     'https://github.com/sbfkcel/fws/tree/gh-pages/'
-  )
+  );
+  if (typeof navigator.serviceWorker !== 'undefined') {
+    navigator.serviceWorker.register('sw.js')
+  };
 </script>
 </html>
