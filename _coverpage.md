@@ -1,6 +1,6 @@
 ![logo](_media/icon.svg)
 
-# docsify
+# fws(front-end Workspace)
 
 > A magical documentation site generator.
 
@@ -9,5 +9,5 @@
 - Not build static html files
 
 
-[GitHub](https://github.com/QingWei-Li/docsify/)
+[GitHub](https://github.com/sbfkcel/fws)
 [Get Started](#quick-start)
