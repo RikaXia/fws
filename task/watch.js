@@ -214,7 +214,7 @@ class Watch{
 
                                                 //检查对应的文件是否存在，如果存在则引入文件
                                                 if(m.pathInfo(dataPath).extension === '.js'){
-                                                    option.data = require(dataPath);
+                                                    option.data = fws.require(dataPath);
                                                 };
 
                                                 taskList.push(()=>{
