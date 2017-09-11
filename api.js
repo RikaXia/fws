@@ -6,6 +6,7 @@ module.exports = {
     Es2:require('./lib/es2'),  
     Pug2html:require('./lib/pug2html'),
     OutSprite:require('./lib/outSprite'),
+    html2html:require('./lib/html2html'),
 
     compileImg:require('./lib/compile_img'),
     compileJs:require('./lib/compile_js'),
