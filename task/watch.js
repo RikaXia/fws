@@ -214,6 +214,7 @@ class Watch{
                                                         m.path.dirname(dataPath),
                                                         srcInfo.name+'.js'
                                                     );
+                                                    
                                                 //检查对应的文件是否存在，如果存在则引入文件
                                                 if(m.pathInfo(dataPath).extension === '.js'){
                                                     option.data = fws.require(dataPath);
