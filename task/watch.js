@@ -44,11 +44,13 @@ class Watch{
                         m.tip.success(task.msg);
                     };
                 };
-                return '不要关闭此进程。从现在开始，修改的项目文件将会自动编译。';
+                return '已经启动文件监听服务';
             };
         
         f().then(v => {
-            console.log(v);
+            m.tip.highlight('========================================');
+            m.tip.highlight(v);
+            m.tip.highlight('========================================');
         }).catch(e => {
             m.tip.error(e.msg);
             console.log('error',e);
@@ -59,7 +61,8 @@ class Watch{
         const _ts = this,
             m = _ts.m,
             config = _ts.config,
-            option = _ts.option;
+            option = _ts.option,
+            tsOption = _ts.option;
         let tasks = [],
             isInitCompile,
             projectDir = m.path.join(config.src,'..');
@@ -98,7 +101,7 @@ class Watch{
             tasks.push(()=>{
                 return new Promise((resolve,reject)=>{
                     _ts.server = new m.autoRefresh();
-                    _ts.server.then(v => {
+                    _ts.server.init().then(v => {
                         //保存端口号
                         listenPort = v.data.listenPort;
 
@@ -112,7 +115,7 @@ class Watch{
         };
 
         //开启浏览服务
-        if(option.browse){
+        if(option.server && option.browse){
             tasks.push(()=>{
                 return new Promise((resolve,reject)=>{
                     try {
@@ -198,18 +201,19 @@ class Watch{
                                                 };
                                             };
 
-                                            files.forEach((item,index)=>{
+                                            files.forEach((item,index)=>{                                                
                                                 option.src = item;
                                                 option.dist = m.getDistPath(item,true);
                                                 
                                                 //根据jade|pug文件路径得到相对应的数据文件路径
-                                                let dataPath = item.replace(
+                                                let srcInfo = m.getFileInfo(item),
+                                                dataPath = item.replace(
                                                         config.src,
                                                         m.path.join(config.src,'data'+m.path.sep)
                                                     );
                                                 dataPath = m.path.join(
                                                         m.path.dirname(dataPath),
-                                                        fileInfo.name+'.js'
+                                                        srcInfo.name+'.js'
                                                     );
 
                                                 //检查对应的文件是否存在，如果存在则引入文件
@@ -294,8 +298,10 @@ class Watch{
                                     //如果有可执行的任务
                                     if(taskList.length){
                                         let f = async ()=>{
+                                            let data = [];
                                             for(let i=0,len=taskList.length; i<len; i++){
                                                 let subTask = await taskList[i]();
+                                                data.push(subTask);
                                                 if(subTask instanceof Array){
                                                     subTask.forEach((item,index)=>{
                                                         if(item.status === 'success'){
@@ -309,12 +315,22 @@ class Watch{
                                             };
                                             return {
                                                 status:'success',
-                                                msg:'文件监听编译完成'
+                                                msg:'文件监听编译完成',
+                                                data:data
                                             };
                                         };
 
                                         f().then(v => {
                                             //编译完成，如果有开启server则需要往前台提供刷新服务
+
+                                            if(tsOption.server){
+                                                v.data.forEach((item,index)=>{
+                                                    _ts.server.io.broadcast('refresh',{
+                                                        status:'success',
+                                                        path:item.distPath
+                                                    });
+                                                });
+                                            };
                                             
                                         }).catch(e => {
                                             //编译遇到出错
