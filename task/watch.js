@@ -170,7 +170,6 @@ class Watch{
                                             debug:true
                                         },
                                         taskList = [];
-                                    
                                     if(isSprite){
                                         //如果是精灵图，编译该精灵图对应的目录
                                         let srcDir = option.srcDir = m.path.dirname(filePath);
@@ -207,15 +206,14 @@ class Watch{
                                                 
                                                 //根据jade|pug文件路径得到相对应的数据文件路径
                                                 let srcInfo = m.getFileInfo(item),
-                                                dataPath = item.replace(
+	                                                dataPath = item.replace(
                                                         config.src,
                                                         m.path.join(config.src,'data'+m.path.sep)
                                                     );
-                                                dataPath = m.path.join(
+	                                                dataPath = m.path.join(
                                                         m.path.dirname(dataPath),
                                                         srcInfo.name+'.js'
                                                     );
-
                                                 //检查对应的文件是否存在，如果存在则引入文件
                                                 if(m.pathInfo(dataPath).extension === '.js'){
                                                     option.data = fws.require(dataPath);
@@ -226,7 +224,7 @@ class Watch{
                                                 });
                                             });
                                         }else{
-                                            //非公共的数据文件,内里只编译与之相对应的jade|pug文件                         
+                                            //非公共的数据文件,内里只编译与之相对应的jade|pug文件
                                             let files = [],
 
                                                 //将与之对应的jade|pug文件路径添加到文件列表
@@ -248,7 +246,7 @@ class Watch{
                                                 if(m.pathInfo(item).extension){
                                                     option.src = item;
                                                     option.dist = m.getDistPath(item,true);
-                                                    option.data = require(filePath);
+                                                    option.data = fws.require(filePath);
 
                                                     taskList.push(()=>{
                                                         return new compile(option);
@@ -286,7 +284,7 @@ class Watch{
                                             
                                             //检查对应的文件是否存在，如果存在则引入文件
                                             if(m.pathInfo(dataPath).extension === '.js'){
-                                                option.data = require(dataPath);
+                                                option.data = fws.require(dataPath);
                                             };
                                         };
 
