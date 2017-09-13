@@ -21,8 +21,7 @@ class create{
                 path:require('path'),
                 tip:require('../lib/tip'),                  //文字提示
                 getType:require('../lib/getType'),          //获取数据类型
-                pathInfo:require('../lib/getPathInfo'),     //获取目标路径的相关信息
-                lineLog:require('single-line-log').stdout   //同一行打印文本
+                pathInfo:require('../lib/getPathInfo')      //获取目标路径的相关信息
             },
             config = _ts.config = {
                 // name:'demo',                                //<string>,项目名称
@@ -115,11 +114,11 @@ class create{
                 mail:fws.config.mail,                               //邮箱
                 projectName:config.name,                            //项目名称
                 template:config.template,                           //模版
-                //projectType:config.name.split('_')[0],              //模版类型
+                //projectType:config.name.split('_')[0],            //模版类型
                 createTime:new Date().valueOf(),                    //创建时间
                 updater:undefined,                                  //更新者
                 updateTime:undefined,                               //更新时间
-                srcReplace:fws.config.srcReplace,                   //资源匹配对应关系
+                distReplace:fws.config.distReplace,                 //资源匹配对应关系
                 srcSync:fws.config.srcSync,                         //src同步目录配置
                 devSync:fws.config.devSync,                         //dev同步目录配置
                 distSync:fws.config.distSync                        //dist同步目录配置

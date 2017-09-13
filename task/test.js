@@ -13,21 +13,7 @@ class Test{
             api = require('../api'),
             tip = require('../lib/tip');
         
-        new api.OutSprite({
-            srcDir:m.path.join(fws.srcPath,'images','_spritexxx'),
-            distSpreiteDir:m.path.join(fws.srcPath,'images'),
-            distScssDir:m.path.join(fws.srcPath,'css')
-        }).then(v => {
-            for(let i of v){
-                tip.success(i.msg);
-            };
-            //console.log(v);
-            // tip.success(v.msg);
-            //console.log(v);
-        }).catch(e => {
-            tip.error(e.msg);
-            console.log(e.info);
-        });
+        console.log(fws);
         
 
     }

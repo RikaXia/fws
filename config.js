@@ -30,26 +30,31 @@ module.exports = {
     ignoreCompileDir:['node_modules'],
 
     //资源匹配替换
-    srcReplace:[
-        ["local-cdn.1x3x.com","pic.my4399.com/re/cms/feUtil"]
-    ],
+    distReplace:{
+        '*':[
+            {
+                find:'local-fe-util.com',
+                replace:'pic.my4399.com/re/cms'
+            }
+        ]
+    },
     
     //源文件目录同步路径
     srcSync:{
-        path:'',
-        fileType:'*.*'
+        targetPath:'',
+        fileType:'*'
     },
 
     //编译目录同步路径
     devSync:{
-        path:'',
-        fileType:'*.*'
+        targetPath:'',
+        fileType:'*'
     },
 
     //发布目录同步路径
     distSync:{
-        path:'',
-        fileType:'*.*'
+        targetPath:'',
+        fileType:'*'
     }
 
 };

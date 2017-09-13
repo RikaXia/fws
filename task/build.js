@@ -8,7 +8,8 @@ class Build{
                 tip:require('../lib/tip'),
                 pathInfo:require('../lib/getPathInfo'),
                 isFwsDir:require('../lib/isFwsDir'),
-                dirFilePath:require('../lib/getDirFilesPath')
+                dirFilePath:require('../lib/getDirFilesPath'),
+                replaceTask:require('../lib/replaceTask')
             },
             config = _ts.config = {},
             option = _ts.option = options;
@@ -41,9 +42,12 @@ class Build{
             };
         
         f().then(v => {
-            console.log(v);
+            m.tip.highlight('========================================');
+            m.tip.highlight(v);
+            m.tip.highlight('========================================');
         }).catch(e => {
-            console.log(e);
+            m.tip.error(e.msg);
+            console.log('error',e);
         });
     }
 
@@ -101,6 +105,56 @@ class Build{
 
             tasks.push(...initCompileTasks);
         };
+
+        //项目编译关键字替换
+        let replaceRule = fws.config.distReplace;
+        if(replaceRule){
+            //得到目录内的所有文件url路径
+            let data = m.dirFilePath({
+                srcDir:fws.devPath,
+                ignoreDir:[],           //不排除任何目录
+                ignore_:false           //不排除以"_"开始的文件
+            }),
+            replaceTask = [];
+
+            for(let i in replaceRule){
+                //如果类型为'*'则会匹配所有的`.js`、`.css`、`.html`、`.htm`、`.json`、`.xml`文件
+                if(i === '*'){
+                    let allType = ['js','css','html','htm','json','xml'];
+                    allType.forEach(item => {
+                        if(data['.'+item]){
+                            for(let file in data['.'+item]){
+                                replaceTask.push(
+                                    ()=>{
+                                        return m.replaceTask({
+                                            src:file,
+                                            dist:file,
+                                            rule:replaceRule[i]
+                                        })
+                                    }                                    
+                                );
+                            };
+                        };
+                    });
+                }
+                //只匹配替换指定类型的文件
+                else if(data[i]){
+                    for(let file in data[i]){
+                        replaceTask.push(
+                            ()=>{
+                                return m.replaceTask({
+                                    src:file,
+                                    dist:file,
+                                    rule:replaceRule[i]
+                                })
+                            }
+                        );
+                    };
+                };
+            };
+            tasks.push(...replaceTask);
+        };
+
 
         //项目文件压缩
         let compressionTask = require('../lib/compressionTask')({
