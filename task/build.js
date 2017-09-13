@@ -9,7 +9,7 @@ class Build{
                 pathInfo:require('../lib/getPathInfo'),
                 isFwsDir:require('../lib/isFwsDir'),
                 dirFilePath:require('../lib/getDirFilesPath'),
-                replaceTask:require('../lib/replaceTask')
+                ReplaceTask:require('../lib/replaceTask')
             },
             config = _ts.config = {},
             option = _ts.option = options;
@@ -17,11 +17,6 @@ class Build{
         config.src = fws.srcPath = typeof srcPath === 'string' ? m.path.join(fws.cmdPath,srcPath,'src'+m.path.sep) : fws.srcPath;
         config.dev = fws.devPath = m.path.join(config.src,'..','dev'+m.path.sep);
         config.dist = fws.distPath = m.path.join(config.src,'..','dist'+m.path.sep);
-
-        //判断是否fws目录
-        if(m.isFwsDir(config.src)){
-
-        };
     }
 
     //初始化
@@ -36,12 +31,17 @@ class Build{
                     let task = await tasks[i]();
                     if(task.status === 'success'){
                         m.tip.success(task.msg);
+                    }else if(task.status === 'part'){
+                        console.log('');
+                        console.log(task.msg);
+                        console.log('----------------------------------------');                        
                     };
                 };
                 return '编译完成。';
             };
         
         f().then(v => {
+            console.log('');
             m.tip.highlight('========================================');
             m.tip.highlight(v);
             m.tip.highlight('========================================');
@@ -97,6 +97,7 @@ class Build{
 
         //如果是fws项目则需要先初始化项目
         if(isFwsDir){
+            tasks.push(_ts.insertPart('初始化：'));
             //将初始化项目任务添加到任务列表
             let initCompileTasks = require('../lib/initCompile_dev')({
                 src:fws.srcPath,
@@ -109,62 +110,41 @@ class Build{
         //项目编译关键字替换
         let replaceRule = fws.config.distReplace;
         if(replaceRule){
+            tasks.push(_ts.insertPart('关键字匹配替换：'));
+
             //得到目录内的所有文件url路径
-            let data = m.dirFilePath({
-                srcDir:fws.devPath,
-                ignoreDir:[],           //不排除任何目录
-                ignore_:false           //不排除以"_"开始的文件
-            }),
-            replaceTask = [];
-
-            for(let i in replaceRule){
-                //如果类型为'*'则会匹配所有的`.js`、`.css`、`.html`、`.htm`、`.json`、`.xml`文件
-                if(i === '*'){
-                    let allType = ['js','css','html','htm','json','xml'];
-                    allType.forEach(item => {
-                        if(data['.'+item]){
-                            for(let file in data['.'+item]){
-                                replaceTask.push(
-                                    ()=>{
-                                        return m.replaceTask({
-                                            src:file,
-                                            dist:file,
-                                            rule:replaceRule[i]
-                                        })
-                                    }                                    
-                                );
-                            };
-                        };
-                    });
-                }
-                //只匹配替换指定类型的文件
-                else if(data[i]){
-                    for(let file in data[i]){
-                        replaceTask.push(
-                            ()=>{
-                                return m.replaceTask({
-                                    src:file,
-                                    dist:file,
-                                    rule:replaceRule[i]
-                                })
-                            }
-                        );
-                    };
-                };
-            };
-            tasks.push(...replaceTask);
+            let replaceTask = new m.ReplaceTask({
+                src:fws.devPath,
+                rule:replaceRule
+            });
+            tasks.push(replaceTask);
         };
-
-
+        
         //项目文件压缩
+        tasks.push(_ts.insertPart('压缩文件：'));
         let compressionTask = require('../lib/compressionTask')({
             src:isFwsDir ? fws.devPath : backupDirPath,
             dist:isFwsDir ? fws.distPath : projectDir
-        });
-        
+        });        
         tasks.push(...compressionTask);
 
+        //字体文件精简
+        
+
+
         return tasks;
+    }
+
+    //insertPart
+    insertPart(partTitle){
+        return ()=>{
+            return new Promise((resolve,reject)=>{
+                resolve({
+                    status:'part',
+                    msg:partTitle
+                })
+            });
+        }
     }
     
 };
