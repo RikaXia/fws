@@ -1,6 +1,6 @@
 # 安装
 
-1. 克隆或下载`fws`到你的硬盘
+1. 克隆或下载`fws`到硬盘
 
 ```bash
 git clone https://github.com/sbfkcel/fws.git
