@@ -9,7 +9,9 @@ class Build{
                 pathInfo:require('../lib/getPathInfo'),
                 isFwsDir:require('../lib/isFwsDir'),
                 dirFilePath:require('../lib/getDirFilesPath'),
-                ReplaceTask:require('../lib/replaceTask')
+                ReplaceTask:require('../lib/replaceTask'),
+                compressionTask:require('../lib/compressionTask'),
+                simplifyFont:require('../lib/simplifyFont')
             },
             config = _ts.config = {},
             option = _ts.option = options;
@@ -121,15 +123,19 @@ class Build{
         };
         
         //项目文件压缩
-        tasks.push(_ts.insertPart('压缩文件：'));
-        let compressionTask = require('../lib/compressionTask')({
+        tasks.push(_ts.insertPart('文件压缩处理：'));
+        let compressionTask = m.compressionTask({
             src:isFwsDir ? fws.devPath : backupDirPath,
             dist:isFwsDir ? fws.distPath : projectDir
         });        
         tasks.push(...compressionTask);
 
         //字体文件精简
-        
+        tasks.push(_ts.insertPart('字体文件精简：'));
+        // let simplifyFont = m.simplifyFont({
+        //     src:fws.distPath
+        // });
+        // tasks.push(simplifyFont);
 
 
         return tasks;
