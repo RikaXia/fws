@@ -6,7 +6,7 @@
 git clone https://github.com/sbfkcel/fws.git
 ```
 
-2. 使用`cmd`、`bash`...进入克隆下来的目录
+2. 使用命令行工具进入克隆下来的目录
 
 ```bash
 cd fws
@@ -18,7 +18,7 @@ cd fws
 npm install
 ```
 
-4. 注册`fws`到`node`环境
+4. 注册`fws`到`node`环境（勿使用`cnpm`）
 
 ```bash
 npm link
