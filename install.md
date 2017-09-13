@@ -12,7 +12,7 @@ git clone https://github.com/sbfkcel/fws.git
 cd fws
 ```
 
-3. 安装依赖（国内建议用cnpm）
+3. 安装依赖（国内建议用`cnpm`）
 
 ```bash
 npm install
