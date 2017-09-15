@@ -11,7 +11,8 @@ class Build{
                 dirFilePath:require('../lib/getDirFilesPath'),
                 ReplaceTask:require('../lib/replaceTask'),
                 compressionTask:require('../lib/compressionTask'),
-                simplifyFont:require('../lib/simplifyFont')
+                simplifyFont:require('../lib/simplifyFont'),
+                fontmin:require('fontmin')
             },
             config = _ts.config = {},
             option = _ts.option = options;
@@ -131,13 +132,16 @@ class Build{
         tasks.push(...compressionTask);
 
         //字体文件精简
-        tasks.push(_ts.insertPart('字体文件精简：'));
-        // let simplifyFont = m.simplifyFont({
-        //     src:fws.distPath
-        // });
-        // tasks.push(simplifyFont);
+        tasks.push(_ts.insertPart('字体文件精简：'));        
+        let simplifyFont = require('../lib/fontMin');
+        tasks.push(
+            simplifyFont({
+                src:fws.devPath,
+                dist:fws.distPath
+            })
+        );
 
-
+        
         return tasks;
     }
 
