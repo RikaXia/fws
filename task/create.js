@@ -241,6 +241,7 @@ module.exports = {
             ['-t, --template [template]','项目模版。默认pc，可选参数 '+aConfigList.toString()]
         ],
         help:()=>{
+            console.log('');
             console.log('   补充说明:');
             console.log('   ------------------------------------------------------------');
             console.log('   如何自定义项目模版见 '+fws.tplPath);

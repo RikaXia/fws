@@ -128,7 +128,8 @@ class Build{
         tasks.push(_ts.insertPart('文件压缩处理：'));
         let compressionTask = m.compressionTask({
             src:isFwsDir ? fws.devPath : backupDirPath,
-            dist:isFwsDir ? fws.distPath : projectDir
+            dist:isFwsDir ? fws.distPath : projectDir,
+            isMobile:option.mobile                     //是否为移动端
         });        
         tasks.push(...compressionTask);
         
@@ -168,9 +169,10 @@ module.exports = {
         command:'[name]',
         description:'编译项目',
         option:[
-            ['-n, --noBackup','不备份源文件']
+            ['-m, --mobile','移动端模式，css样式将不会添加全部前缀']
         ],
         help:()=>{
+            console.log('');
             console.log('   补充说明:');
             console.log('   ------------------------------------------------------------');
             console.log('   暂无');

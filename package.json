@@ -73,6 +73,9 @@
   "devDependencies": {
     "mocha": "^3.4.2"
   },
+  "engines": {
+    "node": ">= 7.6.0"
+  },
   "bugs": {
     "url": "https://github.com/sbfkcel/fws/issues"
   },
