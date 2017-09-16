@@ -37,7 +37,7 @@
     "clean-css": "^4.0.8",
     "commander": "^2.9.0",
     "cssnano": "^3.10.0",
-    "font-face-extract": "^0.5.2",
+    "font-face-extract": "^0.5.3",
     "fontmin": "^0.9.6",
     "fs-extra": "^3.0.1",
     "imagemin": "^5.2.2",
@@ -65,6 +65,7 @@
     "svgo": "^0.7.2",
     "svgstore": "^2.0.2",
     "uglify-js": "^2.6.4",
+    "uglify-es": "^3.1.0",
     "yazl": "^2.4.2",
     "typescript": "^2.4.2",
     "chalk": "^1.1.3"

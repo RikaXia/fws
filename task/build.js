@@ -68,7 +68,9 @@ class Build{
             backupDirName = m.pathInfo(projectDir).name+'_fwsBackup'+(+new Date),       //备份目录名
             backupDirPath = m.path.join(projectDir,'..',backupDirName),                 //备份目录路径
             isFwsDir = m.isFwsDir(projectDir);                                          //是否为fws项目目录
-        if(!isFwsDir && !option.noBackup){
+        
+        //非fws项目需要先备份目录
+        if(!isFwsDir){
             tasks.push(()=>{
                 return new Promise((resolve,reject)=>{
                     //创建备份目录
@@ -96,31 +98,30 @@ class Build{
                     });                    
                 });
             });
-        };
-
-        //如果是fws项目则需要先初始化项目
-        if(isFwsDir){
+        }else{
+            //初始化项目
             tasks.push(_ts.insertPart('初始化：'));
+
             //将初始化项目任务添加到任务列表
             let initCompileTasks = require('../lib/initCompile_dev')({
                 src:fws.srcPath,
                 dist:fws.devPath
             });
-
             tasks.push(...initCompileTasks);
-        };
 
-        //项目编译关键字替换
-        let replaceRule = fws.config.distReplace;
-        if(replaceRule){
-            tasks.push(_ts.insertPart('关键字匹配替换：'));
 
-            //得到目录内的所有文件url路径
-            let replaceTask = new m.ReplaceTask({
-                src:fws.devPath,
-                rule:replaceRule
-            });
-            tasks.push(replaceTask);
+            //项目编译关键字替换
+            let replaceRule = fws.config.distReplace;
+            if(replaceRule){
+                tasks.push(_ts.insertPart('关键字匹配替换：'));
+
+                //得到目录内的所有文件url路径
+                let replaceTask = new m.ReplaceTask({
+                    src:fws.devPath,
+                    rule:replaceRule
+                });
+                tasks.push(replaceTask);
+            };
         };
         
         //项目文件压缩
@@ -130,18 +131,20 @@ class Build{
             dist:isFwsDir ? fws.distPath : projectDir
         });        
         tasks.push(...compressionTask);
+        
 
         //字体文件精简
-        tasks.push(_ts.insertPart('字体文件精简：'));        
-        let simplifyFont = require('../lib/fontMin');
-        tasks.push(
-            simplifyFont({
-                src:fws.devPath,
-                dist:fws.distPath
-            })
-        );
-
-        
+        if(isFwsDir){
+            tasks.push(_ts.insertPart('字体文件精简：'));        
+            let simplifyFont = require('../lib/fontMin');
+            tasks.push(
+                simplifyFont({
+                    src:isFwsDir ? fws.devPath : backupDirPath,
+                    dist:isFwsDir ? fws.distPath : projectDir
+                })
+            ); 
+        };
+               
         return tasks;
     }
 
