@@ -33,7 +33,7 @@ module.exports = {
     distReplace:{
         '*':[
             {
-                find:'local-fe-util.com',
+                find:'feutil.localstatic.com',
                 replace:'pic.my4399.com/re/cms'
             }
         ]
