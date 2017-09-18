@@ -34,7 +34,7 @@ module.exports = {
         '*':[
             {
                 find:'feutil.localstatic.com',
-                replace:'pic.my4399.com/re/cms'
+                replace:'pic.my4399.com/re/cms/feUtil'
             }
         ]
     },
