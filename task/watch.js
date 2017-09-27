@@ -258,11 +258,15 @@ class Watch{
                                     }else if(isPublic && data[key]){
                                         //如果公共文件,且有同类型的文件则编译同类型所有文件
                                         for(let i in data[key]){
-                                            option.src = i;
-                                            option.dist = m.getDistPath(i,true);
+                                            // option.src = i;
+                                            // option.dist = m.getDistPath(i,true);
 
                                             taskList.push(()=>{
-                                                return new compile(option);
+                                                return new compile({
+                                                    src:i,
+                                                    dist:m.getDistPath(i,true),
+                                                    debug:true
+                                                });
                                             });
                                         };
 
