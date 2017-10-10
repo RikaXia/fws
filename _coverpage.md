@@ -7,7 +7,7 @@
 - Not build static html files
 
 
-[Get Started](#install)
+[Get Started](zh-cn/install)
 
 <!-- 背景色 -->
 ![color](#ececec)
