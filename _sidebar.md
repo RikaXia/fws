@@ -1,6 +1,6 @@
 
 - 关于
-  - [简述](zh-cn/about)
+  - [简述](zh-cn/about)
   
 - 入门
   - [安装](zh-cn/install)
