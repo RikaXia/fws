@@ -9,5 +9,5 @@
 
 [Get Started](#install)
 
-<!-- 背景图片 -->
-![](_media/coverBg.png)
+<!-- 背景色 -->
+![color](#e3e3e3)
