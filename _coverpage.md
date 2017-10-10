@@ -1,8 +1,8 @@
 ![logo](_media/icon.svg)
 
-# fws(front-end Workspace)
+# FWS
 
-> A magical documentation site generator.
+> 简单容易上手的前端脚手架工具
 
 - Simple and lightweight (~12kb gzipped)
 - Multiple themes
@@ -10,4 +10,4 @@
 
 
 [GitHub](https://github.com/sbfkcel/fws)
-[Get Started](#quick-start)
+[Get Started](#install)
