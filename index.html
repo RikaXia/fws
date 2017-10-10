@@ -15,7 +15,47 @@
 <body>
   <div id="app"></div>
 </body>
-<script src="vendor/docsify.js"></script>
+<script src="//unpkg.com/docsify-edit-on-github@1.0.1/index.js"></script>
+<script>
+  window.$docsify = {
+    name: 'FWS',
+    repo: 'sbfkcel/fws',
+    coverpage:true,
+    loadSidebar:true,
+    themeColor: '#f8458a',
+    homepage:'zh-cn/about.md',
+    search: {
+      noData: {
+        '/de-de/': 'Keine Ergebnisse!',
+        '/zh-cn/': '没有结果!',
+        '/': 'No results!'
+      },
+      paths: 'auto',
+      placeholder: {
+        '/de-de/': 'Suche',
+        '/zh-cn/': '搜索',
+        '/': 'Search'
+      }
+    },
+    //插件
+    plugins:[
+      EditOnGithubPlugin.create(
+        'https://github.com/sbfkcel/fws/tree/gh-pages/',
+        '',
+        'Edit'
+      )
+    ]
+  };
+</script>
+<script src="//unpkg.com/docsify/lib/docsify.js"></script>
+<script src="//unpkg.com/docsify/lib/plugins/search.js"></script>
+<script src="//unpkg.com/docsify/lib/plugins/emoji.js"></script>
+<script src="//unpkg.com/prismjs/components/prism-bash.js"></script>
 
-
+<script>
+  //离线模式支持
+  if (typeof navigator.serviceWorker !== 'undefined') {
+    navigator.serviceWorker.register('sw.js')
+  };
+</script>
 </html>

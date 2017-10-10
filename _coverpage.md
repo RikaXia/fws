@@ -1,13 +1,13 @@
 ![logo](_media/logo.svg)
 
-> 简单容易上手的前端脚手架工具
+# - FWS -
+> 集成式前端脚手架
 
-- Simple and lightweight (~12kb gzipped)
-- Multiple themes
-- Not build static html files
+- 简单高效，无需复杂配置
+- 可灵活扩展
 
 
 [Get Started](zh-cn/install)
 
 <!-- 背景色 -->
-![color](#ececec)
+![color](#fff)

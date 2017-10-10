@@ -1,10 +1,10 @@
 # 安装
 
-fws需要**node 7.6.0**或以上版本，以支持`async`语法
+FWS需要**node 7.6.0**或以上版本（需要支持`async`语法）。
 
 ## 安装cnpm
 
-国内网络环境建议安装`cnpm`，当然这不是必须的
+国内网络环境建议安装`cnpm`（当然这不是必须的）。
 
 ```bash
 npm install -g cnpm --registry=https://registry.npm.taobao.org
