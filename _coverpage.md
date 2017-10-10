@@ -9,5 +9,4 @@
 - Not build static html files
 
 
-[GitHub](https://github.com/sbfkcel/fws)
 [Get Started](#install)
