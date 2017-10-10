@@ -1,6 +1,6 @@
 ![logo](_media/logo.svg)
 
-# FWS <small>4.3.8</small>
+# 
 
 > 简单容易上手的前端脚手架工具
 
