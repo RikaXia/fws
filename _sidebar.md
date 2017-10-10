@@ -8,7 +8,7 @@
   - [自定义任务](zh-cn/task)
   
 - API
-- [API](zh-cn/api)
+  - [API](zh-cn/api)
 
 - 其它
   - [计划](zh-cn/plan)
