@@ -10,4 +10,4 @@
 [Get Started](#install)
 
 <!-- 背景色 -->
-![color](#e3e3e3)
+![color](#ececec)
