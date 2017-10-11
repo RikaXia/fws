@@ -6,9 +6,10 @@
   - [2.2 上手](zh-cn/start)
 
 - 进阶
-  - [3.0 项目目录约定](zh-cn/dir)
+  - [3.0 文件命名空间](zh-cn/promise)
   - [3.1 精灵图合并](zh-cn/sprite)
   - [3.2 Pug数据对应](zh-cn/pug)
+  - [3.3 Font-face](zh-cn/fontface)
   
 - 深入
   - [4.1 配置文件](zh-cn/config)
