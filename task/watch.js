@@ -3,25 +3,6 @@
 class Watch{
     constructor(srcPath,options){
         const _ts = this;
-<<<<<<< HEAD
-        _ts.m = {
-           path:require('path'),
-           chokidar:require('chokidar'),
-           os:require('os'),
-           fs:require('fs-extra'),
-           autoRefresh:require('../lib/autoRefresh'),   //自动刷新
-           openurl:require('openurl'),                  //打开前台页面
-           tip:require('../lib/tip'),                   //文字提示
-           pathInfo:require('../lib/getPathInfo'),      //判断文件或目录是否存在
-           Compile:require('../lib/compile')            //编译文件
-        };
-
-        _ts.path = projectPath || _ts.m.path.join(fws.cmdPath,'src');
-
-        _ts.nonPublic = {};                             //保存非"_"开始的文件
-        global.fws.localIP = _ts.getLocalIp();          //本机IP
-        _ts.server = new _ts.m.autoRefresh();           //socket server
-=======
         
         let m = _ts.m = {
                 path:require('path'),
@@ -48,7 +29,6 @@ class Watch{
         config.src = fws.srcPath = typeof srcPath === 'string' ? m.path.join(fws.cmdPath,srcPath,'src'+m.path.sep) : fws.srcPath;
         config.dev = fws.devPath = m.path.join(config.src,'..','dev'+m.path.sep);
         config.dist = fws.distPath = m.path.join(config.src,'..','dist'+m.path.sep);
->>>>>>> dev
 
     }
     init(){
@@ -414,14 +394,8 @@ class Watch{
                 };
             });
         });
-<<<<<<< HEAD
-
-        //开启server
-        _ts.m.openurl.open('http://'+fws.localIP+':'+fws.listenPort);
-=======
         
         return tasks;
->>>>>>> dev
     }
 
 

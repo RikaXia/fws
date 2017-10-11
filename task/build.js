@@ -133,48 +133,6 @@ class Build{
         });        
         tasks.push(...compressionTask);
         
-<<<<<<< HEAD
-    }
-
-    //压缩svg
-    compression_svg(content){
-        const _ts = this;
-
-        let svgo = new _ts.m.Svgo({}),
-            svg;
-        svgo.optimize(content,(result)=>{
-            svg = result.data;
-        });
-
-        return svg;       
-    }
-
-    //压缩js
-    compression_js(content){
-        const _ts = this;
-
-        let js = _ts.m.UglifyJS.minify(content,{
-            fromString:true,
-            compress:{
-                screw_ie8:false                         //支持ie6-8
-            },
-            mangle:{
-                except:['$','require','exports'],
-                screw_ie8:false                         //支持ie6-8
-            }
-        });
-
-        return _ts.signature('.js') + '\r\n'+js.code;
-    }
-
-    //压缩css
-    compression_css(content){
-        const _ts = this;
-        let css = new _ts.m.clean_css({
-            compatibility:'ie7'
-        }).minify(content);
-=======
->>>>>>> dev
 
         //字体文件精简
         if(isFwsDir){
