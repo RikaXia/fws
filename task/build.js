@@ -1,176 +1,139 @@
 class Build{
-    constructor(projectPath,options){
+    constructor(srcPath,options){
         const _ts = this;
-        _ts.m = {
-           fs:require('fs-extra'),
-           path:require('path'),
-           compile:require('../lib/compile'),
-           tip:require('../lib/tip'),
-           clean_css:require('clean-css'),
-           UglifyJS:require('uglify-js'),
-           Svgo:require('svgo'),
-           imagemin:require('imagemin'),
-           imagemin_pngquant:require('imagemin-pngquant'),
-           imagemin_jpegtran:require('imagemin-jpegtran'),
-           imagemin_jpegrecompress:require('imagemin-jpeg-recompress'),
-           pathInfo:require('../lib/getPathInfo')
-        };
 
-        _ts.init();
+        let m = _ts.m = {
+                fs:require('fs-extra'),
+                path:require('path'),
+                tip:require('../lib/tip'),
+                pathInfo:require('../lib/getPathInfo'),
+                isFwsDir:require('../lib/isFwsDir'),
+                dirFilePath:require('../lib/getDirFilesPath'),
+                ReplaceTask:require('../lib/replaceTask'),
+                compressionTask:require('../lib/compressionTask'),
+                simplifyFont:require('../lib/simplifyFont'),
+                fontmin:require('fontmin')
+            },
+            config = _ts.config = {},
+            option = _ts.option = options;
+        
+        config.src = fws.srcPath = typeof srcPath === 'string' ? m.path.join(fws.cmdPath,srcPath,'src'+m.path.sep) : fws.srcPath;
+        config.dev = fws.devPath = m.path.join(config.src,'..','dev'+m.path.sep);
+        config.dist = fws.distPath = m.path.join(config.src,'..','dist'+m.path.sep);
     }
 
     //初始化
     init(){
         const _ts = this;
 
-        //编译开发文件到dist目录
-        let oSrcFiles = _ts.traversalDir(fws.srcPath);
-
-        //编译方法
-        let compile = (filePath)=>{
-            new _ts.m.compile({
-                src:filePath,
-                debug:false,
-                callback:(obj)=>{
-                    //回调处理文件，压缩、autoprefixer添加签名等
-                    if(obj.status === 'success' && obj.path){                        
-                        try {
-                            _ts.compression(obj.path);
-                        } catch (error) {
-                            _ts.m.tip.error(error);
-                        };                        
+        let m = _ts.m,
+            config = _ts.config,
+            tasks = _ts.taskList(),
+            f = async ()=>{
+                for(let i=0,len=tasks.length; i<len; i++){
+                    let task = await tasks[i]();
+                    if(task.status === 'success'){
+                        m.tip.success(task.msg);
+                    }else if(task.status === 'part'){
+                        console.log('');
+                        console.log(task.msg);
+                        console.log('----------------------------------------');                        
                     };
-                }
-            });
-        };
-
-        //处理编译
-        for(let i in oSrcFiles){
-            if(oSrcFiles[i].length){
-                oSrcFiles[i].forEach((item,index)=>{
-                    compile(item);
-                });
-            };
-        };
-    }
-    
-    //遍历目录
-    traversalDir(dir){
-        const _ts = this;
-        let oFiles = {},
-            eachDir;
-        (eachDir = (dir)=>{
-            let dirInfo = _ts.m.pathInfo(dir);
-            if(dirInfo.type === 'dir'){
-                let files = _ts.m.fs.readdirSync(dir);
-
-                files.forEach((item,index)=>{
-                    let filePath = _ts.m.path.join(dir,item),
-                        itemInfo = _ts.m.pathInfo(filePath);
-                    
-                    if(itemInfo.type === 'dir' && itemInfo.name != 'node_modules'){
-                        eachDir(filePath)
-                    }else if(itemInfo.type === 'file'){
-                        if(oFiles[itemInfo.extension] === undefined){
-                            oFiles[itemInfo.extension] = [];
-                        };
-                        oFiles[itemInfo.extension].push(filePath);
-                    };
-                });
-            };
-        })(dir);
-
-        return oFiles;
-    }
-
-    //压缩
-    compression(filePath){
-        const _ts = this;
-        let fileInfo = _ts.m.pathInfo(filePath),
-            fileContent = fileInfo.type === 'file' ? _ts.m.fs.readFileSync(filePath) : '';
-
-        switch (fileInfo.extension) {
-            case '.html':
-                let html = _ts.compression_html(fileContent.toString());
-                _ts.m.fs.writeFileSync(filePath,html);
-                _ts.m.tip.success(filePath + '压缩完成');
-            break;
-            case '.css':
-                let css = _ts.compression_css(fileContent.toString());
-                _ts.m.fs.writeFileSync(filePath,css);
-                _ts.m.tip.success(filePath + '压缩完成');
-            break;
-            case '.js':
-                let js = _ts.compression_js(fileContent.toString());
-                _ts.m.fs.writeFileSync(filePath,js);
-                _ts.m.tip.success(filePath + '压缩完成');
-            break;
-            case '.svg':
-                let svg = _ts.compression_svg(fileContent.toString());
-                _ts.m.fs.writeFileSync(filePath,svg);
-                _ts.m.tip.success(filePath + '压缩完成');
-            break;
-            case '.png':case '.jpg':case '.jpeg':
-                _ts.compression_img(filePath);
-            break;
-            case '.ttf':
-
-            break;
-        }
-    }
-
-    //字体提取
-    compression_font(){
-        const _ts = this;
-    }
-
-    //压缩位图
-    compression_img(path){
-        const _ts = this;
-
-        //原始图片大小
-        let originalImg = _ts.m.fs.readFileSync(path).length,
-            imgmini = (m,callback)=>{
-                _ts.m.imagemin([path],'',{
-                    plugins:[
-                        _ts.m.imagemin_jpegrecompress({
-                            quality:'low',
-                            accurate:true,
-                            method:m,
-                            min:60,
-                            max:80,
-                            loops:0
-                        }),
-                        _ts.m.imagemin_pngquant({
-                            nofs:true,
-                            quality:'60-80'
-                        })
-                    ]
-                }).then(file => {                    
-                    if(typeof callback === 'function'){
-                        callback(file);
-                    };
-                });
+                };
+                return '编译完成。';
             };
         
-        imgmini('ssim',(file)=>{
-            let img = file[0].data;
-
-            if(img.length < originalImg){
-                _ts.m.fs.writeFileSync(path,img);
-                _ts.m.tip.success(path + '压缩完成');
-            }else{
-                 imgmini('ms-ssim',(file)=>{
-                    let img = file[0].data;
-
-                    if(img.length < originalImg){
-                        _ts.m.fs.writeFileSync(path,img);
-                        _ts.m.tip.success(path + '深层压缩完成');
-                    };
-                });
-            };
+        f().then(v => {
+            console.log('');
+            m.tip.highlight('========================================');
+            m.tip.highlight(v);
+            m.tip.highlight('========================================');
+        }).catch(e => {
+            m.tip.error(e.msg);
+            console.log('error',e);
         });
+    }
+
+    //taskList
+    taskList(){
+        const _ts = this;
         
+        let m = _ts.m,
+            config = _ts.config,
+            option = _ts.option,
+            tasks = [];
+        
+        //备份文件，如果不是fws项目目录且未强制启用不备份功能则需要备份文件
+        let projectDir = m.path.join(config.src,'..'),                                  //项目目录
+            backupDirName = m.pathInfo(projectDir).name+'_fwsBackup'+(+new Date),       //备份目录名
+            backupDirPath = m.path.join(projectDir,'..',backupDirName),                 //备份目录路径
+            isFwsDir = m.isFwsDir(projectDir);                                          //是否为fws项目目录
+        
+        //非fws项目需要先备份目录
+        if(!isFwsDir){
+            tasks.push(()=>{
+                return new Promise((resolve,reject)=>{
+                    //创建备份目录
+                    m.fs.ensureDir(backupDirPath).then(v => {
+                        //开始复制文件
+                        m.fs.copy(projectDir,backupDirPath).then(v => {
+                            resolve({
+                                status:'success',
+                                msg:`备份 ${projectDir} -> ${backupDirPath}`,
+                                data:backupDirPath
+                            });
+                        }).catch(e => {
+                            reject({
+                                status:'error',
+                                msg:`${projectDir} 备份失败`,
+                                info:e
+                            });
+                        });
+                    }).catch(e => {
+                        reject({
+                            status:'error',
+                            msg:`${backupDirPath} 创建失败`,
+                            infor:e
+                        });
+                    });                    
+                });
+            });
+        }else{
+            //初始化项目
+            tasks.push(_ts.insertPart('初始化：'));
+
+            //将初始化项目任务添加到任务列表
+            let initCompileTasks = require('../lib/initCompile_dev')({
+                src:fws.srcPath,
+                dist:fws.devPath
+            });
+            tasks.push(...initCompileTasks);
+
+
+            //项目编译关键字替换
+            let replaceRule = fws.config.distReplace;
+            if(replaceRule){
+                tasks.push(_ts.insertPart('关键字匹配替换：'));
+
+                //得到目录内的所有文件url路径
+                let replaceTask = new m.ReplaceTask({
+                    src:fws.devPath,
+                    rule:replaceRule
+                });
+                tasks.push(replaceTask);
+            };
+        };
+        
+        //项目文件压缩
+        tasks.push(_ts.insertPart('文件压缩处理：'));
+        let compressionTask = m.compressionTask({
+            src:isFwsDir ? fws.devPath : backupDirPath,
+            dist:isFwsDir ? fws.distPath : projectDir,
+            isMobile:option.mobile                     //是否为移动端
+        });        
+        tasks.push(...compressionTask);
+        
+<<<<<<< HEAD
     }
 
     //压缩svg
@@ -210,70 +173,48 @@ class Build{
         let css = new _ts.m.clean_css({
             compatibility:'ie7'
         }).minify(content);
+=======
+>>>>>>> dev
 
-        return _ts.signature('.css') + '\r\n'+css.styles;
-    }
-
-    //压缩html
-    compression_html(content){
-        const _ts = this;
-        let re = /<title>.*<\/title>/;
-        let html = '',
-            stitle = content.match(re);
-
-        html = content.replace(re,stitle[0] + '\r\n    ' + _ts.signature('.html'));
-
-        return html;
-
-        //return _ts.signature('.html') + '\r\n'+content;
-    }
-
-    //文件签名
-    signature(extension){
-        const _ts = this;
-
-        let createDate = new Date(fws.config.createTime),
-            formatDate = (date)=>{
-                return date.getFullYear()+'.'+(date.getMonth() + 1)+'.'+date.getDate()+' '+date.getHours()+':'+date.getMinutes();
-            },
-            sCreateDate = formatDate(createDate),       //项目创建时间
-            sUpdateDate = formatDate(new Date()),       //项目更新时间
-            sCreateAuthor = fws.config.author,
-            sCreateMail = fws.config.mail,
-            sUpateAuthor = fws.config.update_author,
-            sUpateMail = fws.config.update_mail,
-            sSignature = (()=>{
-                //let s = `代号：${fws.config.projectName},  时间：${sCreateAuthor}(${sCreateMail}) ${sCreateDate},  更新：${sUpateAuthor}(${sUpateMail}) ${sUpdateDate}`;
-                let s = `代号：${fws.config.projectName},  创建：${sCreateAuthor} ${sCreateDate},  更新：${sUpateAuthor} ${sUpdateDate}`;
-                return s;
-            })();
-    
-        let s = '';
-        switch (extension) {
-            case '.html':
-                //s = `<!--${sSignature}-->`
-                s = `<meta name="signature" content="${sSignature}">`
-                //s = `<!--[if ${sSignature}]><![endif]-->`;
-            break;
-            case '.css':
-            case '.js':
-                s = `/*! ${sSignature} */`
-            break;    
+        //字体文件精简
+        if(isFwsDir){
+            tasks.push(_ts.insertPart('字体文件精简：'));        
+            let simplifyFont = require('../lib/fontMin');
+            tasks.push(
+                simplifyFont({
+                    src:isFwsDir ? fws.devPath : backupDirPath,
+                    dist:isFwsDir ? fws.distPath : projectDir
+                })
+            ); 
         };
-        return s;
+               
+        return tasks;
     }
 
+    //insertPart
+    insertPart(partTitle){
+        return ()=>{
+            return new Promise((resolve,reject)=>{
+                resolve({
+                    status:'part',
+                    msg:partTitle
+                })
+            });
+        }
+    }
+    
 };
 
 
 module.exports = {
     regTask:{
         command:'[name]',
-        description:'项目编译',
+        description:'编译项目',
         option:[
-            ['-s, --server','开启http server']
+            ['-m, --mobile','移动端模式，css样式将不会添加全部前缀']
         ],
         help:()=>{
+            console.log('');
             console.log('   补充说明:');
             console.log('   ------------------------------------------------------------');
             console.log('   暂无');

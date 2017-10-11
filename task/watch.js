@@ -1,6 +1,9 @@
+/// <reference path="../typings/globals/node/index.d.ts" />
+'use strict';
 class Watch{
-    constructor(projectPath,options){
+    constructor(srcPath,options){
         const _ts = this;
+<<<<<<< HEAD
         _ts.m = {
            path:require('path'),
            chokidar:require('chokidar'),
@@ -18,170 +21,410 @@ class Watch{
         _ts.nonPublic = {};                             //保存非"_"开始的文件
         global.fws.localIP = _ts.getLocalIp();          //本机IP
         _ts.server = new _ts.m.autoRefresh();           //socket server
-
-        _ts.init();
-    }
-
-    init(){
-        const _ts = this;
-        let path = _ts.path;
-
-        //检查"src"目录是否存在，有则进行文件监听
-        if(_ts.check()){
-            //先清除dev目录再监听
-            _ts.m.fs.remove(fws.devPath,err => {
-                if(!err){
-                    _ts.changeWatch();
-                };
-            });
-        }else{
-            _ts.m.tip.error(`错误， "${path}" 不是一个有效的fws项目目录，必须有一个"src"目录存在`);
-        };
-    }
-
-    //检查当前目录是一个fws工程目录
-    check(){
-        const _ts = this;
-        let path = _ts.path;
-
-        return _ts.m.pathInfo(fws.srcPath).type === 'dir';
-    }
-
-    //编译项目指定类型的所有文件
-    compileTypeFile(type){
-        const _ts = this;
-        for(let i in _ts.nonPublic[type]){
-            new _ts.m.Compile({
-                'src':i,            //输入文件
-                'dist':undefined,   //输出模块，不指定由编译模块处理
-                'debug':true,       //开启debug模式，会生成map并编译到dev目录
-                'callback':(result)=>{
-                    _ts.server.io.broadcast('refresh',result);
-                }
-            });
-        };
-    }
-
-    //获取本机IP
-    getLocalIp(){
-        const _ts = this;
-
-        let networkInfo = _ts.m.os.networkInterfaces();
-
-        let ip;
-        for(let i in networkInfo){
-            let t = networkInfo[i].some((item,index)=>{
-                if(item.family === 'IPv4' && item.address !== '127.0.0.1' && item.address !== '0.0.0.0'){
-                    ip = item.address;
-                    return true;;
-                };
-            });
-            if(t){
-                break;
-            };
-        };
-        return ip ? ip : 'localhost';
-    }
-
-    //文件修改监听
-    changeWatch(){
-        const _ts = this;
-        let _path = _ts.path,
-            w = _ts.m.chokidar.watch(_path,{persistent:true}),
-
-            //检查类型是否可能存在公共文件引入的情况
-            isLinkedFile = (fileType)=>{                
-                let aLinked = ['.pug','.scss','.ts','.tsx','.jsx','.es','.es6'];
-                return aLinked.some((item,index)=>{
-                    return item === fileType;
-                });
+=======
+        
+        let m = _ts.m = {
+                path:require('path'),
+                chokidar:require('chokidar'),
+                fs:require('fs-extra'),
+                autoRefresh:require('../lib/autoRefresh'),              //自动刷新
+                openurl:require('openurl'),                             //打开前台页面
+                tip:require('../lib/tip'),                              //文字提示
+                pathInfo:require('../lib/getPathInfo'),                 //判断文件或目录是否存在
+                Compile:require('../lib/compile'),                      //编译文件
+                isFwsDir:require('../lib/isFwsDir'),                    //判断是否为fws项目目录
+                getDirFilesPath:require('../lib/getDirFilesPath'),      //获取目录文件数据
+                isData:require('../lib/isData'),                        //判断是否为页面数据文件
+                isSprite:require('../lib/isSprite'),                    //判断是否为精灵图数据
+                getFileInfo:require('../lib/getFileInfo'),              //获取指定文件的相关信息
+                getLocalIp:require('../lib/getLocalIp'),                //获取本机ip地址
+                isFilter:require('../lib/isFilter'),                    //判断是否为需要忽略的文件
+                getCompileFn:require('../lib/getCompileFn'),            //根据文件类型来获取编译方法
+                getDistPath:require('../lib/getDistPath')
             },
+            config = _ts.config = {},
+            option = _ts.option = options;
+        
+        config.src = fws.srcPath = typeof srcPath === 'string' ? m.path.join(fws.cmdPath,srcPath,'src'+m.path.sep) : fws.srcPath;
+        config.dev = fws.devPath = m.path.join(config.src,'..','dev'+m.path.sep);
+        config.dist = fws.distPath = m.path.join(config.src,'..','dist'+m.path.sep);
+>>>>>>> dev
 
-            //检查是否可能为pug数据
-            isPageData = (filePath)=>{
-                let dataDir = _ts.m.path.join(fws.srcPath,'data','/');
-                return filePath.indexOf(dataDir) === 0;
+    }
+    init(){
+        const _ts = this,
+            m = _ts.m,
+            config = _ts.config;
+        
+        let tasks = _ts.taskList(),
+            f = async ()=>{
+                for(let i=0,len=tasks.length; i<len; i++){
+                    let task = await tasks[i]();
+                    if(task.status === 'success'){
+                        m.tip.success(task.msg);
+                    };
+                };
+                return '已经启动文件监听服务';
             };
         
+        f().then(v => {
+            m.tip.highlight('========================================');
+            m.tip.highlight(v);
+            m.tip.highlight('========================================');
+        }).catch(e => {
+            m.tip.error(e.msg);
+            console.log('error',e);
+        });
+        
+    }
+    taskList(){
+        const _ts = this,
+            m = _ts.m,
+            config = _ts.config,
+            option = _ts.option,
+            tsOption = _ts.option;
+        let tasks = [],
+            isInitCompile,
+            projectDir = m.path.join(config.src,'..');
 
-        w.on('all',(stats,filePath)=>{            
-            let fileType = _ts.m.path.extname(filePath).toLowerCase(),            //文件类型
-                fileName = _ts.m.path.basename(filePath,fileType),                //文件名称
-                filePrefix = fileName ? fileName.substr(0,1) : undefined;   //得取文件第一个字符，用于决定是否为公共文件
-            
-            //将非"_"开始的文件归类保存起来，监听到有"_"开始的公共文件有改动，则编译同类型所有文件
-            if(stats === 'add' && filePrefix !== '_'){
-                if(_ts.nonPublic[fileType] === undefined){
-                    _ts.nonPublic[fileType] = {};
-                };
-                _ts.nonPublic[fileType][filePath] = null;
-            };
-
-            //声明编译方法
-            let compileFn = ()=>{
-                //如果是数据文件，且是公共的，编译所有的jade文件
-                if(isPageData(filePath) && (filePrefix === '_') && stats === 'change'){
-                    _ts.compileTypeFile('.pug');
-                    return;
-                };
-                if(isPageData(filePath) && stats === 'change'){
-                    //编译与data所可能对应的页面
-                    for(let i in _ts.nonPublic['.pug']){
-                        let aPugName = i.split(_ts.m.path.sep),
-                            pugName = aPugName[aPugName.length - 1].toLowerCase();
-                        
-                        if(pugName === fileName+'.pug'){
-                            console.log(i);
-                            new _ts.m.Compile({
-                                'src':i,            //输入文件
-                                'dist':undefined,   //输出模块，不指定由编译模块处理
-                                'debug':true,       //开启debug模式，会生成map并编译到dev目录
-                                'callback':(result)=>{
-                                    _ts.server.io.broadcast('refresh',result);
-                                }
-                            });
-                        };
-                    };
-                    return;
-                };
-                
-                //文件首字母以"_"起始，且属于可能存在公共文件引入类型的，每次修改会编译项目内同类型所有文件
-                if((filePrefix === '_') && isLinkedFile(fileType) && stats === 'change'){
-                    _ts.compileTypeFile(fileType);
+        //检查项目是否为一个fws项目
+        tasks.push(()=>{
+            return new Promise((resolve,reject)=>{
+                if(m.isFwsDir(projectDir)){
+                    resolve({
+                        status:'success',
+                        msg:'检查目录为有效的 【FWS】 项目'
+                    });
                 }else{
-                    new _ts.m.Compile({
-                        'src':filePath,     //输入文件
-                        'dist':undefined,   //输出模块，不指定由编译模块处理
-                        'debug':true,       //开启debug模式，会生成map并编译到dev目录
-                        'callback':(result)=>{
-                            _ts.server.io.broadcast('refresh',result);
-                        }
+                    reject({
+                        status:'error',
+                        msg:`${projectDir} 不是有效的fws项目目录`
                     });
                 };
-            }
-                       
-            if(stats === 'add'){
-                compileFn();                
-            }else if(stats === 'change'){
-                //延迟编译，以避免某些 IDE 的safe write功能导致编译不能成功
-                setTimeout(compileFn,350);
-            }else if(stats === 'unlink'){
-                //删除_ts.noPublic的文件，避免不必要的编译处理
-                delete _ts.nonPublic[fileType][filePath];
-            };
-
-            
+            });
         });
+
+        //如果有开启快速模式，将不会预先编译项目
+        if(!option.fast){
+            //将初始化项目任务添加到任务列表
+            let initCompileTasks = require('../lib/initCompile_dev')({
+                src:fws.srcPath,
+                dist:fws.devPath
+            });
+
+            tasks.push(...initCompileTasks);
+        };
+
+        //开启http服务
+        var listenPort;
+        if(option.server){
+            tasks.push(()=>{
+                return new Promise((resolve,reject)=>{
+                    _ts.server = new m.autoRefresh();
+                    _ts.server.init().then(v => {
+                        //保存端口号
+                        listenPort = v.data.listenPort;
+
+                        resolve(v);
+                    }).catch(e => {
+                        reject(e);
+                    });
+                    
+                });
+            });
+        };
+
+        //开启浏览服务
+        if(option.server && option.browse){
+            tasks.push(()=>{
+                return new Promise((resolve,reject)=>{
+                    try {
+                        if(listenPort){
+                            m.openurl.open('http://'+m.getLocalIp()+':'+listenPort);
+                            resolve({
+                                status:'success',
+                                msg:'浏览项目'
+                            });
+                        }else{
+                            reject({
+                                status:'error',
+                                msg:'获取不到端口号',
+                                info:listenPort
+                            });
+                        };                        
+                    } catch (error) {
+                        reject({
+                            status:'error',
+                            msg:'启动浏览器失败',
+                            info:error
+                        });
+                    };
+                });
+            });
+        };
+
+        //监听文件
+        tasks.push(()=>{
+            return new Promise((resolve,reject)=>{
+                try {
+                    let w = m.chokidar.watch(config.src,{persistent:true}),
+                        data = {};
+                    
+                    w.on('all',(stats,filePath)=>{
+                        //是否为需要过滤的文件
+                        let isFilter = m.isFilter(filePath);
+
+                        if(!isFilter){
+                            //是否为精灵图
+                            let isSprite = m.isSprite(filePath),
+                                isData = m.isData(filePath),
+                                fileInfo = m.getFileInfo(filePath),
+                                fileType = fileInfo.type,
+                                fileName = fileInfo.name,
+                                isPublic = fileInfo.isPublic,
+                                key = isSprite ? '_sprite' : fileType,
+                                temp,
+                                compileFn = ()=>{
+                                    let compile = m.getCompileFn(key),
+                                        option = {
+                                            debug:true
+                                        },
+                                        taskList = [];
+                                    if(isSprite){
+                                        //如果是精灵图，编译该精灵图对应的目录
+                                        let srcDir = option.srcDir = m.path.dirname(filePath);
+
+                                        option.distSpreiteDir = m.path.resolve(srcDir.replace(config.src,config.dev),'..');
+                                        option.distScssDir = m.path.join(config.src,'css','_fws','sprite');
+                                        taskList.push(()=>{
+                                            return new compile(option);
+                                        });
+                                    }else if(isData){
+                                        compile = m.getCompileFn('.pug');
+                                        if(isPublic){
+                                            //如果是数据公共文件,则编译所有的jade|pug文件
+                                            let files = [],
+                                                pugFiles = data['.pug'],
+                                                jadeFiles = data['.jade'];
+                                            
+                                            //将pug和jade的文件添加到文件列表
+                                            if(pugFiles){
+                                                for(let i in pugFiles){
+                                                    files.push(i);
+                                                };
+                                            };
+
+                                            if(jadeFiles){
+                                                for(let i in jadeFiles){
+                                                    files.push(i);
+                                                };
+                                            };
+
+                                            files.forEach((item,index)=>{                                                
+                                                option.src = item;
+                                                option.dist = m.getDistPath(item,true);
+                                                
+                                                //根据jade|pug文件路径得到相对应的数据文件路径
+                                                let srcInfo = m.getFileInfo(item),
+	                                                dataPath = item.replace(
+                                                        config.src,
+                                                        m.path.join(config.src,'data'+m.path.sep)
+                                                    );
+	                                                dataPath = m.path.join(
+                                                        m.path.dirname(dataPath),
+                                                        srcInfo.name+'.js'
+                                                    );
+                                                    
+                                                //检查对应的文件是否存在，如果存在则引入文件
+                                                if(m.pathInfo(dataPath).extension === '.js'){
+                                                    option.data = fws.require(dataPath);
+                                                };
+
+                                                taskList.push(()=>{
+                                                    return new compile(option);
+                                                });
+                                            });
+                                        }else{
+                                            //非公共的数据文件,内里只编译与之相对应的jade|pug文件
+                                            let files = [],
+
+                                                //将与之对应的jade|pug文件路径添加到文件列表
+                                                dirPath = filePath.replace(
+                                                        m.path.join(config.src,'data'+m.path.sep),
+                                                        config.src
+                                                    );                                                
+                                                files.push(m.path.join(
+                                                    m.path.dirname(dirPath),
+                                                    fileName+'.jade'
+                                                ));
+                                                files.push(m.path.join(
+                                                    m.path.dirname(dirPath),
+                                                    fileName+'.pug'
+                                                ));
+                                            
+                                            //循环文件列表,并检查文件是否有效,如果有效则将编译任务添加到任务列表
+                                            files.forEach((item,index)=>{
+                                                if(m.pathInfo(item).extension){
+                                                    option.src = item;
+                                                    option.dist = m.getDistPath(item,true);
+                                                    option.data = fws.require(filePath);
+
+                                                    taskList.push(()=>{
+                                                        return new compile(option);
+                                                    });
+                                                };
+                                            });
+                                        };
+                                    }else if(isPublic && data[key]){
+                                        //如果公共文件,且有同类型的文件则编译同类型所有文件
+                                        for(let i in data[key]){
+                                            // option.src = i;
+                                            // option.dist = m.getDistPath(i,true);
+
+                                            taskList.push(()=>{
+                                                return new compile({
+                                                    src:i,
+                                                    dist:m.getDistPath(i,true),
+                                                    debug:true
+                                                });
+                                            });
+                                        };
+
+                                    }else{
+                                        //只编译自身即可
+                                        option.src = filePath;
+                                        option.dist = m.getDistPath(filePath,true);
+                                        
+                                        if(fileType === '.pug' || fileType === '.jade'){
+
+                                            //根据jade|pug文件路径得到相对应的数据文件路径
+                                            let dataPath = filePath.replace(
+                                                    config.src,
+                                                    m.path.join(config.src,'data'+m.path.sep)
+                                                );
+                                            dataPath = m.path.join(
+                                                    m.path.dirname(dataPath),
+                                                    fileInfo.name + '.js'
+                                                );
+                                            
+                                            //检查对应的文件是否存在，如果存在则引入文件
+                                            if(m.pathInfo(dataPath).extension === '.js'){
+                                                option.data = fws.require(dataPath);
+                                            };
+                                        };
+
+                                        taskList.push(()=>{
+                                            return new compile(option);
+                                        });                                        
+                                    };
+
+                                    //如果有可执行的任务
+                                    if(taskList.length){
+                                        let f = async ()=>{
+                                            let data = [];
+                                            for(let i=0,len=taskList.length; i<len; i++){
+                                                let subTask = await taskList[i]();
+                                                data.push(subTask);
+                                                if(subTask instanceof Array){
+                                                    subTask.forEach((item,index)=>{
+                                                        if(item.status === 'success'){
+                                                            m.tip.success(item.msg);
+                                                        };
+                                                    })
+                                                };
+                                                if(subTask.status === 'success'){
+                                                    m.tip.success(subTask.msg);
+                                                };
+                                            };
+                                            return {
+                                                status:'success',
+                                                msg:'文件监听编译完成',
+                                                data:data
+                                            };
+                                        };
+
+                                        f().then(v => {
+                                            //编译完成，如果有开启server则需要往前台提供刷新服务
+
+                                            if(tsOption.server){
+                                                v.data.forEach((item,index)=>{
+                                                    _ts.server.io.broadcast('refresh',{
+                                                        status:'success',
+                                                        path:item.distPath
+                                                    });
+                                                });
+                                            };
+                                            
+                                        }).catch(e => {
+                                            //编译遇到出错
+                                            m.tip.error(e.msg);
+                                            console.log(e.info);
+                                        });
+                                    };
+                                };
+
+                            switch (stats) {
+                                //文件添加，如果文件为非公共文件，则将文件保存到数据中
+                                case 'add':
+                                    if(data[key] === undefined){
+                                        data[key] = {};
+                                    };
+                                    if(!isPublic && !isData){
+                                        data[key][filePath] = null;
+                                    };
+
+                                    //如果初始化状态已经完成，则添加的文件也会进行编译处理
+                                    if(isInitCompile){
+                                        compileFn();
+                                    };
+                                    
+                                    //500ms内wacth无新增加文件响应将初始化状态设置为完成
+                                    if(!isInitCompile){
+                                        clearTimeout(temp);
+                                        temp = setTimeout(()=>{
+                                            isInitCompile = true;
+                                        },500);
+                                    };
+                                break;
+                                //文件修改
+                                case 'change':
+                                    compileFn();
+                                break;
+    
+                                //文件删除
+                                case 'unlink':
+                                    try {
+                                        delete data[key][filePath];
+                                    } catch (error) {};
+                                break;
+                            }; 
+                        };                                               
+                    });
+
+                    resolve({
+                        status:'success',
+                        msg:'开启文件监听服务'
+                    });
+                } catch (error) {
+                    reject({
+                        status:'error',
+                        msg:'',
+                        info:error
+                    });
+                };
+            });
+        });
+<<<<<<< HEAD
 
         //开启server
         _ts.m.openurl.open('http://'+fws.localIP+':'+fws.listenPort);
+=======
+        
+        return tasks;
+>>>>>>> dev
     }
 
-    //isData
-    // isData(path){
-    //     const _ts = this;
-    //     return path.indexOf(_ts.m.path.join(fws.cmdPath,'data/')) === 0;
-    // }
+
 };
 
 
@@ -190,9 +433,12 @@ module.exports = {
         command:'[name]',
         description:'项目监听编译',
         option:[
-            //['-s, --server','开启http server']
+            ['-b, --browse','浏览器访问项目'],
+            ['-s, --server','开启http服务'],
+            ['-f, --fast','快速模式，将不会预先编译项目']
         ],
         help:()=>{
+            console.log('');
             console.log('   补充说明:');
             console.log('   ------------------------------------------------------------');
             console.log('   暂无');

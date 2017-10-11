@@ -1,46 +1,42 @@
 class Test{
-    constructor(){
+    constructor(name,options){
         const _ts = this;
+
+        //自定义模块
         _ts.m = {
-            //path:require('path'),
-            openurl:require('openurl'),
-            //getType:require('../lib/getType'),
-            //tip:require('../lib/tip'),
-            //outSprite:require('../lib/outSprite'),
-            autoRefresh:require('../lib/autoRefresh')
+            path:require('path'),
+            fs:require('fs-extra')
         };
-        _ts.init();
+
+        _ts.name = name;
+        _ts.option = options;
     }
 
     init(){
         const _ts = this;
-        new _ts.m.autoRefresh();
 
-        _ts.m.openurl.open('http://web.4399.com')
+        console.log(_ts.name,_ts.option.param);
+
+        console.log('============================')
+        console.log(fws);
+        
 
     }
 }
 
-function range(val) {
-  return val.split('..').map(Number);
-};
-
-function list(val) {
-    return val.split(',');
-};
-
 module.exports = {
     regTask:{
         command:'[name]',
-        description:'Task测试样本',
+        description:'这是一个测试任务。（任务描述）',
         option:[
-            ['-r, --range <a>..<b>', '阈值区间', range],
-            ['-l, --list <items>','一个列表',list]
+            //['-p, --param [type]','任务参数（可选）']
+            ['-p, --param <type>','任务参数（必选）']
         ],
         help:()=>{
+            console.log('');
             console.log('   补充说明:');
             console.log('   ------------------------------------------------------------');
-            console.log('   描述信息');
+            console.log('   暂无');
         },
         action:Test
     },

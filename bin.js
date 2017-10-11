@@ -13,18 +13,18 @@ const {fs,path,cwdPath,program,tip,pathInfo,getType,fwsConfig} = {
 };
 
 //声明版本号
-program.version('0.0.1');
+program.version('0.5.3');
 
 //定义全局
-global.fws = {    
-    'fwsPath':path.join(__dirname,'/'),                     //fws目录路径
-    'taskPath':path.join(__dirname,'task/'),                //任务插件路径
-    'tplPath':path.join(__dirname,'tpl/'),                  //内置tpl目录
-    'tplConfigPath':path.join(__dirname,'tpl/','_config/'), //内置tpl配置目录    
+global.fws = {
+    'fwsPath':path.join(__dirname,path.sep),                     //fws目录路径
+    'taskPath':path.join(__dirname,'task'+path.sep),                //任务插件路径
+    'tplPath':path.join(__dirname,'tpl'+path.sep),                  //内置tpl目录
+    'tplConfigPath':path.join(__dirname,'tpl','_config'+path.sep), //内置tpl配置目录    
     'cmdPath':cwdPath,                                      //当前进程所在的目录
-    'srcPath':path.join(cwdPath,'src/'),                    //当前进程下的src目录
-    'devPath':path.join(cwdPath,'dev/'),                    //当前进程下的dev目录
-    'distPath':path.join(cwdPath,'dist/'),                  //当前进程下的dist目录
+    'srcPath':path.join(cwdPath,'src'+path.sep),                    //当前进程下的src目录
+    'devPath':path.join(cwdPath,'dev'+path.sep),                    //当前进程下的dev目录
+    'distPath':path.join(cwdPath,'dist'+path.sep),                  //当前进程下的dist目录
     'config':fwsConfig,
     'require':(module)=>{                                   //引入模块并且不缓存
         delete require.cache[require.resolve(module)];
@@ -70,7 +70,6 @@ if(pathInfo(path.join(__dirname,'/task')).type === 'dir'){
         
         //检查是否有注册任务
         if(taskContent){
-
             //任务主参数接收
             if(taskContent.command && getType(taskContent.command) === 'string'){
                 task[fileName] = program.command(`${fileName} ${taskContent.command}`);
@@ -93,17 +92,9 @@ if(pathInfo(path.join(__dirname,'/task')).type === 'dir'){
             
             //任务方法绑定
             if(taskContent.action && getType(taskContent.action) === 'function'){
-
                 task[fileName].action((name,options)=>{
-                    try {
-                        new taskContent.action(name,options);
-                    } catch (error) {
-                        try {
-                            taskContent.action(name,options);
-                        } catch (err){
-                            tip.error(err);
-                        };
-                    };                 
+                    let task = new taskContent.action(name,options);
+                    task.init();                                   
                 });
             }else{
                 tip.error(`任务 "${taskFile}" regTask.action 必须是一个函数`);

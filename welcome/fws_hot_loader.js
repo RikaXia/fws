@@ -1,7 +1,12 @@
 !(function(){
     var Fws = function(){
         var _ts = this;
+<<<<<<< HEAD:welcome/main.js
         _ts.socket = io(sockerUrl);
+=======
+        _ts.socket = io();
+        
+>>>>>>> dev:welcome/fws_hot_loader.js
         _ts.socket.on('refresh',function(result){
             if(result && result.status === 'success'){
                 var pathInfo = _ts.getPathInfo(result.path);
@@ -23,6 +28,9 @@
                 };                
             };
             // _ts.socket.emit('my other event',{my:'data'});
+        });
+        _ts.socket.emit('pageLoad',{
+            url:location.href
         });
     };
 

@@ -18,9 +18,21 @@
     },
     "js":{
         "__files__":[
-            ["ts/main.ts","main.ts"]
+            ["ts/main.ts","main.ts"],
+            ["js/seajs_config.js","config.js"]
         ]
     },
     "media":{},
-    "images":{}
+    "images":{
+        "_spritexxx":{
+            "__files__":[
+                ["images/fws_f.png","f.png"],
+                ["images/fws_w.png","w.png"],
+                ["images/fws_s.png","s.png"]
+            ]
+        },
+        "__files__":[
+            ["images/fws_f.png","test.png"]
+        ]
+    }
 }
