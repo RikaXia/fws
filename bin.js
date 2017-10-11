@@ -13,7 +13,7 @@ const {fs,path,cwdPath,program,tip,pathInfo,getType,fwsConfig} = {
 };
 
 //声明版本号
-program.version('0.5.3');
+program.version('1.0.1');
 
 //定义全局
 global.fws = {
