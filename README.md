@@ -1,62 +1,40 @@
-# What is fws?
+<div align="center"><img width="240" src="https://rawcdn.githack.com/sbfkcel/fws/gh-pages/_media/logo.svg"/></div>
 
-Fws is short for front-end Workspace
+# 关于FWS
 
-![schedule](https://img.shields.io/badge/schedule-20%25-brightgreen.svg)
+[![npm version](https://badge.fury.io/js/fws.svg)](https://badge.fury.io/js/fws)
+
+FWS是一个高效、便捷的前端开发工作流脚手架。
+
+随着前端技术的发展，逐渐改变了front-end Web developer的代码编写习惯，顺之也成为推动前端工程化的基础。
+
+前端脚手架工具有很多（yeoman、Grunt、Gulp、Webpack...），但多少都有一堆烦杂的配置。且经常在脚手架搭建的过程中因为再次被包装过的插件会造成一些奇奇怪怪的问题。
+
+FWS希望能解决一些烦琐的过程（脚手架环境搭建、项目配置等...），尽可能最大限度的照顾到主流的工作习惯。
+
+由于FWS是基于Node.js的，所以跨平台支持是理所应当的了。FWS具有较强的可扩展性，也可根据团队需要自行定义任务流。
+
+> FWS向外提供常见的API，某些编译或压缩策略也可以用于部署到服务器。
+
+[中文文档](https://sbfkcel.github.io/fws/)
+
+## 功能
+
+**自动化**
+
+- Sass -> css 编译
+- Pug -> html 编译
+- Typescript/Es6/Es/Jsx -> javascript 编译
+- javascript文件全并打包
+- CSS Autoprefixer 前缀自动补全
+- CSS Sprite 雪碧图自动合成
+- CSS Option 透明度自动兼容
+- 文件压缩（css、javascript、png、jpg、 gif）
+- 文件签名（css、javascript、html）
+- CSS Font-face 特殊字体精简
 
 
+**开发调试**
 
-## 一、快速上手
-
-### 1.1 安装fws
-```
-# 克隆项目
-git clone https://github.com/sbfkcel/fws.git
-
-# 进入fws目录
-cd fws
-
-# 安装依赖
-npm install
-
-# 注册工具
-npm link
-
-# 检查是否安装成功
-fws -V
-```
-
-### 1.2 创建项目
-```
-fws create <项目名称>
-```
-
-### 1.3 监听项目
-
-```
-cd <项目目录>
-
-fws watch
-```
-
-## 二、扩展阅读（待整理）
-- 如何自定义任务插件
-- [如何自定义项目模版](https://github.com/sbfkcel/fws/blob/master/docs/%E9%A1%B9%E7%9B%AE%E6%A8%A1%E7%89%88%E5%AE%9A%E4%B9%89.md)
-- 文件命名约定
-
-## 三、API
-稍后……
-
-## 四、后续计划
-
-- 页面同步刷新 20%
-- React模块热更
-- ~~jsx编译支持~~
-- 任务串联机制
-- api开放
-- 字体精简支持
-- 发布策略
-
----
-
-web fe workspace
+- 开发过程中。脚手架会自动监听文件改动，自动刷新页面或热更页面资源
+- 开发模式下完整的调集信息
