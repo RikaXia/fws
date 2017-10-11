@@ -1,16 +1,19 @@
 # 安装
 
-FWS需要**node 7.6.0**或以上版本（需要支持`async`语法）。
+FWS依赖于**node 7.6.0**或以上版本（需支持`async`语法）。
 
-## 安装cnpm
 
-国内网络环境建议安装`cnpm`（当然这不是必须的）。
+
+!> 国内网络环境建议安装`cnpm`（当然这不是必须的）。
 
 ```bash
 npm install -g cnpm --registry=https://registry.npm.taobao.org
 ```
 
 ## 映射安装（推荐）
+
+> 可能很多时候有需要对FWS进行扩展，所以不太建议在本地开发阶段将FWS安装到Node全局。
+安装到平时习惯的工作目录，再映射到Node全局应该会来得舒坦些。
 
 ```bash
 # 克隆项目到本地
