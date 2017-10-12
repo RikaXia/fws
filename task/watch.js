@@ -328,6 +328,7 @@ class Watch{
 
                                             if(tsOption.server){
                                                 v.data.forEach((item,index)=>{
+                                                    console.log('输出',item);
                                                     _ts.server.io.broadcast('refresh',{
                                                         status:'success',
                                                         path:item.distPath
