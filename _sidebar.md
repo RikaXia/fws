@@ -8,8 +8,9 @@
 - 进阶
   - [3.0 文件结构及命名空间](zh-cn/promise)
   - [3.1 精灵图合并](zh-cn/sprite)
-  - [3.2 Pug数据对应](zh-cn/pug)
-  - [3.3 Font-face](zh-cn/fontface)
+  - [3.2 Pug 编译策略](zh-cn/pug)
+  - [3.3 Font-face 字体压缩](zh-cn/fontface)
+  - [3.4 Es6 编译策略](zh-cn/es6)
   
 - 深入
   - [4.1 配置文件](zh-cn/config)
