@@ -2,8 +2,6 @@
 <img width="320" src="https://rawcdn.githack.com/sbfkcel/fws/gh-pages/_media/logo.svg"/>
 <br/><br/>
 <a href="https://badge.fury.io/js/fws"><img src="https://badge.fury.io/js/fws.svg"></a>
-<img src="https://img.shields.io/github/issues/sbfkcel/fws.svg">
-<img src="https://img.shields.io/github/forks/sbfkcel/fws.svg">
 <img src="https://img.shields.io/github/license/mashape/apistatus.svg">
 </div>
 
