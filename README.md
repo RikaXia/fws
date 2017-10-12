@@ -19,9 +19,10 @@ FWS希望能解决一些烦琐的过程（脚手架环境搭建、项目配置�
 
 > FWS向外提供常见的API，某些编译或压缩策略也可以用于部署到服务器。
 
----
 
-[中文文档 https://sbfkcel.github.io/fws](https://sbfkcel.github.io/fws/)
+## 使用文档
+
+- [中文文档 https://sbfkcel.github.io/fws](https://sbfkcel.github.io/fws/)
 
 
 
@@ -31,14 +32,14 @@ FWS希望能解决一些烦琐的过程（脚手架环境搭建、项目配置�
 
 - Sass -> css 编译
 - Pug -> html 编译
-- Typescript/Es6/Es/Jsx -> javascript 编译
-- javascript文件全并打包
+- Typescript、Es6、Es、Jsx -> javascript 编译
+- javascript 文件打包合并，统一封装规范
 - CSS Autoprefixer 前缀自动补全
-- CSS Sprite 雪碧图自动合成
-- CSS Option 透明度自动兼容
-- 文件压缩（css、javascript、png、jpg、 gif）
+- CSS Sprite 雪碧图自动合并，并生成sass数据
+- CSS Opacity 透明度自动兼容
+- 文件压缩（css、javascript、png、jpg、gif）
 - 文件签名（css、javascript、html）
-- CSS Font-face 特殊字体精简
+- 字体精简（css Font-face）
 
 
 **开发调试**

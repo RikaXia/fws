@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-const {fs,path,cwdPath,program,tip,pathInfo,getType,fwsConfig} = {
+const {fs,path,cwdPath,program,tip,pathInfo,getType,fwsConfig,npmPackage} = {
     fs:require('fs'),
     path:require('path'),
     cwdPath:process.cwd(),                                  //当前路径
@@ -9,11 +9,13 @@ const {fs,path,cwdPath,program,tip,pathInfo,getType,fwsConfig} = {
     tip:require('./lib/tip'),                               //文字提示
     pathInfo:require('./lib/getPathInfo'),                  //获取目标路径的相关信息
     getType:require('./lib/getType'),                       //获取数据类型
-    fwsConfig:require('./config')
+    fwsConfig:require('./config'),
+    npmPackage:require('./package.json')
 };
 
+
 //声明版本号
-program.version('1.0.1');
+program.version(npmPackage.version);
 
 //定义全局
 global.fws = {
