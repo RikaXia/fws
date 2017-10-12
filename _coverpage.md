@@ -8,7 +8,7 @@
 - ...
 
 
-[GET STARTED](zh-cn/install)
+[GET STARTED](zh-cn/about)
 
 <!-- 背景色 -->
 ![color](#fff)
