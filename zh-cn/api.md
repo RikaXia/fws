@@ -13,7 +13,7 @@ FWS目前提供了文件编译及压缩的接口。可根据团队需要自定�
 const fws = require('fws');
 ```
 
-### 图片压缩
+## 图片压缩
 ```javascript
 let imgCompile = new fws.compileImg({
     src:'/demo/src/logo.png',                   //<string> 源文件路径
@@ -29,7 +29,7 @@ imgCompile.then(r => {
 });
 ```
 
-### js文件压缩
+## js文件压缩
 ```javascript
 let jsCompile = new fws.compileJs({
     src:'/demo/src/main.js',                    //<string> 源文件路径
@@ -45,7 +45,7 @@ jsCompile.then(r => {
 });
 ```
 
-### css文件压缩
+## css文件压缩
 ```javascript
 let cssCompile = new fws.compileCss({
     src:'/demo/src/style.css',                  //<string> 源文件路径
@@ -62,7 +62,7 @@ cssCompile.then(r => {
 });
 ```
 
-<!-- ### html文件压缩
+<!-- ## html文件压缩
 ```javascript
     let htmlCompile = new fws.compileHtml({
 
@@ -77,7 +77,7 @@ cssCompile.then(r => {
     });
 ``` -->
 
-### 文件拷贝
+## 文件拷贝
 ```javascript
 let copy = new fws.Copy({
     src:'/demo/src/main.js',                //<string> 复件的文件路径
@@ -93,7 +93,7 @@ copy.then(r => {
 });
 ```
 
-### sass文件编译：
+## sass文件编译：
 ```javascript
 let sassCompile = new fws.Sass2css({
     src:'/demo/src/style.scss',             //<string> 源文件路径
@@ -110,7 +110,7 @@ sassCompile.then(r => {
 });
 ```
 
-### ts、tsx、jsx、es、es6文件编译
+## ts、tsx、jsx、es、es6文件编译
 ```javascript
 let esCompile = new fws.Es2({
     src:'/demo/src/main.es6',               //<string> 源文件路径
@@ -127,7 +127,7 @@ esCompile.then(r => {
 });
 ```
 
-### Pug文件编译
+## Pug文件编译
 ```javascript
 let pugCompile = new fws.Pug2html({
     src:'/demo/src/index.pug',              //<string> 源文件路径
@@ -145,7 +145,7 @@ pugCompile.then(r => {
 });
 ```
 
-### 精灵图合并
+## 精灵图合并
 ```javascript
 let sprite = new fws.OutSprite({
     srcDir:'/demo/src/images/_spritexxx/',                  //<string> 精灵图源图目录
@@ -162,7 +162,7 @@ sprite.then(r => {
 });
 ```
 
-<!-- ### html签名添加
+<!-- ## html签名添加
 ```javascript
     let htmlCompile = new fws.html2html({
 
