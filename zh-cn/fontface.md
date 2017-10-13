@@ -59,6 +59,6 @@ FWS 的Sass库已经内置了 WebFont Mixn。下方的scss代码与前面示例�
  * @param   {string} $fontName         <必填> 字体名称，无需扩展名
  * @param   {string} $addedPath        [选填] 字体文件的相对路径，默认'../images/'
  */
-font-face($fontName,$addedPath)
+@include font-face($fontName,$addedPath)
 ```
 
