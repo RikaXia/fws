@@ -2,10 +2,11 @@
 <img width="320" src="https://rawcdn.githack.com/sbfkcel/fws/gh-pages/_media/logo.svg"/>
 <br/><br/>
 <a href="https://badge.fury.io/js/fws"><img src="https://badge.fury.io/js/fws.svg"></a>
+<img src="https://img.shields.io/badge/license-MIT License-f8458a.svg">
 </div>
 
 
-## 关于FWS
+## 关于
 
 FWS是一个高效、便捷的前端开发工作流脚手架。
 
@@ -20,7 +21,7 @@ FWS希望能解决一些烦琐的过程（脚手架环境搭建、项目配置�
 > FWS向外提供常见的API，某些编译或压缩策略也可以用于部署到服务器。
 
 
-## 使用文档
+## 文档
 
 - [中文文档 https://sbfkcel.github.io/fws](https://sbfkcel.github.io/fws/)
 
