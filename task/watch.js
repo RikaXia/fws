@@ -260,13 +260,41 @@ class Watch{
                                         for(let i in data[key]){
                                             // option.src = i;
                                             // option.dist = m.getDistPath(i,true);
+                                            
+                                            let fileInfo = m.getFileInfo(i),
+                                                fileType = fileInfo.type,
+                                                pugData;
+                                            //如果文件是pug或jade扩展名，则尝试获取页面的数据
+                                            if(fileType === '.pug' || fileType === '.jade'){
+                                                let dataPath = i.replace(
+                                                    config.src,
+                                                    m.path.join(config.src,'data'+m.path.sep)
+                                                );
+                                                dataPath = m.path.join(
+                                                    m.path.dirname(dataPath),
+                                                    fileInfo.name + '.js'
+                                                );
+
+                                                //检查对应的文件是否存在，如果存在则引入文件
+                                                if(m.pathInfo(dataPath).extension === '.js'){
+                                                    pugData = fws.require(dataPath);
+                                                };
+                                            };
 
                                             taskList.push(()=>{
-                                                return new compile({
+                                                //编译选项
+                                                let op = {
                                                     src:i,
-                                                    dist:m.getDistPath(i,true),
+                                                    dist:m.getDistPath(i,true),                                                    
                                                     debug:true
-                                                });
+                                                };
+
+                                                //pug或jade数据有的话，需要增加该项
+                                                if(pugData){
+                                                    op.data = pugData;
+                                                };
+
+                                                return new compile(op);
                                             });
                                         };
 
@@ -282,7 +310,7 @@ class Watch{
                                                     config.src,
                                                     m.path.join(config.src,'data'+m.path.sep)
                                                 );
-                                            dataPath = m.path.join(
+                                                dataPath = m.path.join(
                                                     m.path.dirname(dataPath),
                                                     fileInfo.name + '.js'
                                                 );
@@ -328,7 +356,6 @@ class Watch{
 
                                             if(tsOption.server){
                                                 v.data.forEach((item,index)=>{
-                                                    console.log('输出',item);
                                                     _ts.server.io.broadcast('refresh',{
                                                         status:'success',
                                                         path:item.distPath

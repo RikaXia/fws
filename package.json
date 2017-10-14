@@ -52,7 +52,7 @@
     "node-sass": "^4.5.3",
     "openurl": "^1.1.1",
     "postcss-opacity": "^5.0.0",
-    "pug": "^2.0.0-beta11",
+    "pug": "^2.0.0-rc.4",
     "rollup": "^0.49.2",
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-commonjs": "^8.2.0",
