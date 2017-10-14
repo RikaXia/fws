@@ -1,9 +1,8 @@
 @charset "utf-8";
 @import "fws";              //引入fws sass库
-@import "_fws/reset";		//浏览器样式重置
 
+@include font-face('hello');
 
-
-//fws内置函数帮助
-
-//精灵图
+body {text-align:center;}
+.hello {font-family:'hello'; font-size:rem(120);}
+.footer {font-size:rem(24);}

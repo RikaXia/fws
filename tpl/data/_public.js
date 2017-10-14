@@ -1,4 +1,9 @@
-exports.copyText = "power by 4399.com &copy; 2017-2022";
-exports.header = {
-    "title":"页面标题"
-}
+module.exports = {
+    config:{
+        isMobile:false,
+        isFullScreen:false,
+        showIosIcon:false
+    },
+    title:'页面标题',
+    copyText:'Power by fws &copy;'
+};

@@ -2,5 +2,5 @@
 
 //rem单位转换
 @function rem($px){
-    @return $px / 2 / 100 + rem;
+    @return $px / 2 / 50 + rem;
 };

@@ -5,8 +5,8 @@ seajs.config({
     base: './',
     //路径配置
     paths: {
-        'feUtil': '//localcdn.4399.com',
-        'seajs': '//localcdn.4399.com/seajs/3.0.0',
+        'feUtil': '//feutil.localstatic.com',
+        'seajs': '//feutil.localstatic.com/seajs/3.0.0',
         'js': window.cdnPath ? window.cdnPath + 'js' : 'js'
     },
     //别名配置
@@ -26,4 +26,3 @@ seajs.config({
         window.JSON ? '' : 'json2'
     ]
 });
-seajs.use('js/main');
