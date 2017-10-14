@@ -7,8 +7,8 @@
 例如：`fws安装目录/tpl/_config/demo.json`，内容如下：
 
 ```text
-{	
-	"__name__":"模版名称",                      # 该名称在查看创建帮助任务时（`fws create -h`）出现
+{
+    "__name__":"模版名称",                      # 该名称在查看创建帮助任务时（`fws create -h`）出现
     "__files__":[                              # key为`__files__`脚手架将识别为创建文件操作
         ["pug/index.pug","home.pug"]           # 复制fws安装目录/tpl/pug/index.pug文件到根目录，并改名为home.pug
     ],
