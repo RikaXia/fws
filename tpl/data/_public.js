@@ -5,5 +5,5 @@ module.exports = {
         showIosIcon:false
     },
     title:'页面标题',
-    copyText:'Power by fws &copy;'
+    copyText:'Power by fws'
 };
