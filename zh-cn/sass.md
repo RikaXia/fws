@@ -173,5 +173,115 @@ background-image:url('../images/_spritexxx.png');
 
 示例结果：
 ```css
-background-image:url('../images/_spritexxx.png');
+@font-face {
+  font-family: "hello";
+  src: url("../images/hello.eot");
+  src: url("../images/hello.eot?#images-spider") format("embedded-opentype"), url("../images/hello.woff") format("woff"), url("../images/hello.ttf") format("truetype"), url("../images/hello.svg") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
 ```
+
+** 渐变 **
+```scss
+/**
+ * 用于快速定义渐变
+ * @param   {string} $colorFrom   <必填> 开始颜色，例如"#ff0000"
+ * @param   {string} $colorTo     <必填> 结束颜色，例如"#00ff00"
+ * @param   {string} $addedPath   [选填] 渐变方式（'vertical'、'horizontal'、'diagonal1'、'diagonal2'）
+ */
+@include linear-gradient($colorFrom,$colorTo,$type);
+```
+
+** inline-block **
+
+```scss
+/**
+ * 用于设置元素为inline-block
+ */
+@include inline-block();
+```
+
+示例结果：
+```css
+display:inline-block; _zoom:1; _display:inline; *display:inline;
+```
+
+
+** 设置同宽大小 **
+```scss
+/**
+ * 用于一个正方形元素
+ * @param   {string} $size        <必填> 元素大小，例如"24px"
+ */
+@include size($size);
+```
+
+示例结果：
+```css
+width:24px; height:24px;
+```
+
+
+** 等高设置 **
+```scss
+/**
+ * 用于设置元素高&行高
+ * @param   {string} $height      <必填> 元素大小，例如"24px"
+ */
+@include hl($height);
+```
+
+示例结果：
+```css
+height:24px; line-height:24px;
+```
+
+
+**  水平翻转&垂直翻转  **
+```scss
+/**
+ * 用于设置元素水平/垂直翻转
+ * @param   {string} $mode        <必填> 翻转方式，(x、y)
+ */
+@include flip(x);
+```
+
+示例结果：
+```css
+-moz-transform:scaleX(-1); -webkit-transform:scaleX(-1); -o-transform:scaleX(-1); transform:scaleX(-1); filter:FlipH;
+```
+
+**  清除浮动  **
+```scss
+/**
+ * 清除浮动
+ */
+@include clearfix();
+```
+
+示例结果：
+```css
+zoom:1;
+&:after {
+  content: "."; display: block; height: 0; clear: both; visibility: hidden;
+};
+```
+
+
+**  CSS小箭头  **
+```scss
+/**
+ * CSS小箭头
+ * @param   {object} $color       <必填> 箭头颜色
+ * @param   {object} $size        <必填> 大小
+ * @param   {string} $mode        [选填] 箭头指向，默认：b。（t、r、b、l）分别为上、右、下、左
+ */
+@include arrow($color,$size,$mode);
+```
+
+示例结果：
+```css
+width:0px; height:0px; font-size:0; overflow:hidden; border-width:$size; vertical-align:middle; border-color:transparent transparent $color transparent; border-style:dashed dashed solid dashed;
+```
+
