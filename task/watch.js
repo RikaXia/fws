@@ -84,6 +84,26 @@ class Watch{
             });
         });
 
+        //开启http服务
+        //var listenPort;
+        if(option.server){
+            tasks.push(()=>{
+                return new Promise((resolve,reject)=>{
+                    _ts.server = new m.autoRefresh();
+                    _ts.server.init().then(v => {
+                        //保存端口号
+                        global.fws.listenPort = v.data.listenPort;
+                        global.fws.localIp = m.getLocalIp();
+
+                        resolve(v);
+                    }).catch(e => {
+                        reject(e);
+                    });
+                    
+                });
+            });
+        };
+
         //如果有开启快速模式，将不会预先编译项目
         if(!option.fast){
             //将初始化项目任务添加到任务列表
@@ -95,32 +115,13 @@ class Watch{
             tasks.push(...initCompileTasks);
         };
 
-        //开启http服务
-        var listenPort;
-        if(option.server){
-            tasks.push(()=>{
-                return new Promise((resolve,reject)=>{
-                    _ts.server = new m.autoRefresh();
-                    _ts.server.init().then(v => {
-                        //保存端口号
-                        listenPort = v.data.listenPort;
-
-                        resolve(v);
-                    }).catch(e => {
-                        reject(e);
-                    });
-                    
-                });
-            });
-        };
-
         //开启浏览服务
         if(option.server && option.browse){
             tasks.push(()=>{
                 return new Promise((resolve,reject)=>{
                     try {
-                        if(listenPort){
-                            m.openurl.open('http://'+m.getLocalIp()+':'+listenPort);
+                        if(fws.listenPort){
+                            m.openurl.open('http://'+fws.localIp+':'+fws.listenPort);
                             resolve({
                                 status:'success',
                                 msg:'浏览项目'
