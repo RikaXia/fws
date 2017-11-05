@@ -83,6 +83,8 @@
     "svgstore": "^2.0.2",
     "uglify-js": "^2.6.4",
     "uglify-es": "^3.1.0",
+    "vue": "^2.5.3",
+    "vue-template-compiler": "^2.5.3",
     "typescript": "^2.6.1",
     "chalk": "^1.1.3"
   },
