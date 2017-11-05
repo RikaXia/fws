@@ -20,7 +20,17 @@
     },
     "js":{
         "__files__":[
+            ["js/vue@2.5.3.js","vue.js"]
+        ]
+    },
+    "app":{
+        "__files__":[
             ["es/vue_index.es6","index.es6"]
+        ]
+    },
+    "public":{
+        "__files__":[
+            ["vue/footer.vue","footer.vue"]
         ]
     },
     "index":{
@@ -29,17 +39,7 @@
         ]
     },
     "images":{
-        "_spriteHello":{
-            "__files__":[
-                ["images/h1.png","h1.png"],
-                ["images/e1.png","e1.png"],
-                ["images/l1.png","l1.png"],
-                ["images/l2.png","l2.png"],
-                ["images/o1.png","o1.png"]
-            ]
-        },
         "__files__":[
-            ["images/hello.ttf","hello.ttf"],
             ["images/favicon.ico","favicon.ico"]
         ]
     },
