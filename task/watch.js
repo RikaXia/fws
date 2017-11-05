@@ -94,7 +94,8 @@ class Watch{
                         //保存端口号
                         global.fws.listenPort = v.data.listenPort;
                         global.fws.localIp = m.getLocalIp();
-
+                        
+                        v.msg = v.msg + ` ${global.fws.localIp}:${global.fws.listenPort}`;
                         resolve(v);
                     }).catch(e => {
                         reject(e);
@@ -163,6 +164,8 @@ class Watch{
                                 fileType = fileInfo.type,
                                 fileName = fileInfo.name,
                                 isPublic = fileInfo.isPublic,
+                                isVue = fileType === '.vue',
+                                isPug = fileType === '.jade' || fileType === '.pug',
                                 key = isSprite ? '_sprite' : fileType,
                                 temp,
                                 compileFn = ()=>{
@@ -299,13 +302,36 @@ class Watch{
                                             });
                                         };
 
-                                    }else{
-                                        //只编译自身即可
-                                        option.src = filePath;
-                                        option.dist = m.getDistPath(filePath,true);
+                                    }else if(isVue){
+                                        let esList = [],
+                                            isEs = (type)=>{
+                                                return type === '.es' || type === '.es6' || type === '.ts';
+                                            };
                                         
-                                        if(fileType === '.pug' || fileType === '.jade'){
+                                        //遍历项目目录文件，如果是es、es6、ts文件则添加到文件编译列表
+                                        for(let i in data){
+                                            if(isEs(i)){
+                                                for(let ii in data[i]){
+                                                    esList.push(ii);
+                                                };
+                                            };
+                                        };
 
+                                        //遍历所有的文件列表
+                                        esList.forEach((item)=>{
+                                            option.src = item;
+                                            option.dist = m.getDistPath(item,true);
+
+                                            //重新得到文件编译方法
+                                            let fileInfo = m.getFileInfo(item);
+                                            compile = m.getCompileFn(fileInfo.type);
+
+                                            taskList.push(()=>{
+                                                return new compile(option);
+                                            });  
+                                        });
+                                    }else{
+                                        if(isPug){
                                             //根据jade|pug文件路径得到相对应的数据文件路径
                                             let dataPath = filePath.replace(
                                                     config.src,
@@ -320,6 +346,10 @@ class Watch{
                                             if(m.pathInfo(dataPath).extension === '.js'){
                                                 option.data = fws.require(dataPath);
                                             };
+                                        }else{
+                                            //只编译自身即可
+                                            option.src = filePath;
+                                            option.dist = m.getDistPath(filePath,true);
                                         };
 
                                         taskList.push(()=>{

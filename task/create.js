@@ -108,21 +108,34 @@ class create{
             fs.mkdirSync(fws.distPath);
             m.tip.success('创建 '+fws.distPath);
 
+            (()=>{})()
+
             //创建项目配置文件
-            let fws_config = {
-                author:fws.config.author,                           //作者
-                mail:fws.config.mail,                               //邮箱
-                projectName:config.name,                            //项目名称
-                template:config.template,                           //模版
-                //projectType:config.name.split('_')[0],            //模版类型
-                createTime:new Date().valueOf(),                    //创建时间
-                updater:undefined,                                  //更新者
-                updateTime:undefined,                               //更新时间
-                distReplace:fws.config.distReplace,                 //资源匹配对应关系
-                srcSync:fws.config.srcSync,                         //src同步目录配置
-                devSync:fws.config.devSync,                         //dev同步目录配置
-                distSync:fws.config.distSync                        //dist同步目录配置
-            },
+            let projectType = (()=>{
+                    let type = config.template.split('_')[0],
+                        list = ['vue','react'];
+                    for(let i=0,len=list.length; i<len; i++){
+                        let item = list[i];
+                        if(item === type){
+                            return item;
+                        };
+                    };
+                    return undefined;
+                })(),
+                fws_config = {
+                    author:fws.config.author,                           //作者
+                    mail:fws.config.mail,                               //邮箱
+                    projectName:config.name,                            //项目名称
+                    template:config.template,                           //模版
+                    projectType:projectType,        //模版类型
+                    createTime:new Date().valueOf(),                    //创建时间
+                    updater:undefined,                                  //更新者
+                    updateTime:undefined,                               //更新时间
+                    distReplace:fws.config.distReplace,                 //资源匹配对应关系
+                    srcSync:fws.config.srcSync,                         //src同步目录配置
+                    devSync:fws.config.devSync,                         //dev同步目录配置
+                    distSync:fws.config.distSync                        //dist同步目录配置
+                },
                 fwsConfigPath = m.path.join(projectPath,'fws_config.js');
 
             fws_config = `module.exports = ${JSON.stringify(fws_config,null,4)};`;
