@@ -331,6 +331,10 @@ class Watch{
                                             });  
                                         });
                                     }else{
+                                        //只编译自身即可
+                                        option.src = filePath;
+                                        option.dist = m.getDistPath(filePath,true);
+                                        
                                         if(isPug){
                                             //根据jade|pug文件路径得到相对应的数据文件路径
                                             let dataPath = filePath.replace(
@@ -346,10 +350,6 @@ class Watch{
                                             if(m.pathInfo(dataPath).extension === '.js'){
                                                 option.data = fws.require(dataPath);
                                             };
-                                        }else{
-                                            //只编译自身即可
-                                            option.src = filePath;
-                                            option.dist = m.getDistPath(filePath,true);
                                         };
 
                                         taskList.push(()=>{

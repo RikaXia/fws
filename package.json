@@ -1,6 +1,6 @@
 {
   "name": "fws",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Fws is a workflow management tool that focuses on global automation tasks.",
   "main": "index.js",
   "bin": {
