@@ -1,6 +1,6 @@
 {
   "name": "fws",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Fws is a workflow management tool that focuses on global automation tasks.",
   "main": "index.js",
   "bin": {
@@ -57,7 +57,7 @@
     "chokidar": "^1.7.0",
     "clean-css": "^4.0.8",
     "commander": "^2.9.0",
-    "font-face-extract": "^0.5.6",
+    "font-face-extract": "^0.5.7",
     "fontmin": "^0.9.6",
     "fs-extra": "^4.0.2",
     "imagemin": "^5.2.2",
