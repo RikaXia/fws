@@ -129,7 +129,8 @@ class Build{
         let compressionTask = m.compressionTask({
             src:isFwsDir ? fws.devPath : backupDirPath,
             dist:isFwsDir ? fws.distPath : projectDir,
-            isMobile:option.mobile                     //是否为移动端
+            isMobile:option.mobile,                     //是否为移动端
+            isBeautify:option.beautify                  //是否格式化代码
         });        
         tasks.push(...compressionTask);
         
@@ -169,7 +170,8 @@ module.exports = {
         command:'[name]',
         description:'编译项目',
         option:[
-            ['-m, --mobile','移动端模式，css样式将不会添加全部前缀']
+            ['-m, --mobile','移动端模式，css样式将不会添加全部前缀'],
+            ['-b, --beautify','css、js文件格式化，不被压缩 ']
         ],
         help:()=>{
             console.log('');
