@@ -4,13 +4,13 @@ Vue的编译策略与普通的项目有所差异，因此需要在`fws_config.js
 
 FWS的项目创建任务内置了Vue项目创建模版，见后续说明。
 
-## 创建一个Vue项目
+## 创建Vue项目
 
 ```bash
 fws create <项目名称> -t vue
 ```
 
-## 项目监听编译
+## 监听编译
 
 ```bash
 # 进入到项目目录
@@ -25,3 +25,4 @@ fws watch -b -s
 ```bash
 fws build
 ```
+
