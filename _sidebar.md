@@ -12,8 +12,8 @@
   - [3.3 WebFont 字体压缩](zh-cn/fontface)
   - [3.4 Es6 编译策略](zh-cn/es6)
   - [3.5 Sass 扩展](zh-cn/sass)
-  - [3.6 配置文件](zh-cn/config)
-  - [3.7 Vue支持](zh-cn/vue)
+  - [3.6 Vue支持](zh-cn/vue)
+  - [3.7 配置文件](zh-cn/config)
   
 - 深入
   - [4.1 自定义项目模版](zh-cn/template)
