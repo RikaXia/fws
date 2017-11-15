@@ -1,9 +1,10 @@
 # Vue 支持
 
 Vue的编译策略与普通的项目有所差异，因此需要在`fws_config.js`中指定项目类型为`vue`。
+
 FWS的项目创建任务内置了Vue项目创建模版，见后续说明。
 
-## 创建一个`Vue`项目
+## 创建一个Vue项目
 
 ```bash
 fws create <项目名称> -t vue
