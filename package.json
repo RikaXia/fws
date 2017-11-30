@@ -1,6 +1,6 @@
 {
   "name": "fws",
-  "version": "1.0.13",
+  "version": "1.0.17",
   "description": "Fws is a workflow management tool that focuses on global automation tasks.",
   "main": "index.js",
   "bin": {
@@ -56,7 +56,7 @@
     "autoprefixer": "^7.1.2",
     "chokidar": "^1.7.0",
     "clean-css": "^4.0.8",
-    "commander": "^2.9.0",
+    "commander": "^2.12.0",
     "font-face-extract": "^0.5.7",
     "fontmin": "^0.9.6",
     "fs-extra": "^4.0.2",
@@ -68,7 +68,7 @@
     "koa-router": "^7.1.1",
     "koa-socket": "^4.4.0",
     "koa-static": "^3.0.0",
-    "node-sass": "^4.6.0",
+    "node-sass": "^4.7.0",
     "openurl": "^1.1.1",
     "postcss-opacity": "^5.0.0",
     "postcss-filter-gradient": "^1.0.0",
