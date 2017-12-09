@@ -4,3 +4,34 @@
 @function rem($px){
     @return $px / 2 / 50 + rem;
 };
+
+
+//=========================
+//图片引用信息获取
+//=========================
+
+//项目图片数据
+@import "../imagesData";
+
+//根据路径获取图片宽度
+@function image-width($imgPath){
+    $imgInfo:map-get($_imagesData,$imgPath);
+    @return map-get($imgInfo,width);
+};
+
+//根据图片路径获取图片高度
+@function image-height($imgPath){
+    $imgInfo:map-get($_imagesData,$imgPath);
+    @return map-get($imgInfo,height);
+};
+
+//根据图片路径获取图片base64信息
+@function inline-image($imgPath){
+    $imgInfo:map-get($_imagesData,$imgPath);
+    $base64:map-get($imgInfo,base64);
+    $imgType:map-get($imgInfo,type);
+    @if $imgType == 'jpg' {
+        $imgType:'jpeg'
+    };
+    @return url('data:image/'+$imgType+';base64,'+$base64);
+};

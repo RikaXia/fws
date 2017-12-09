@@ -5,7 +5,7 @@ class Test{
         //自定义模块
         _ts.m = {
             path:require('path'),
-            fs:require('fs-extra')
+            getImgInfo:require('../lib/getImgInfo')
         };
 
         _ts.name = name;
@@ -13,12 +13,10 @@ class Test{
     }
 
     init(){
-        const _ts = this;
+        const _ts = this,
+            m = _ts.m;
 
-        console.log(_ts.name,_ts.option.param);
-
-        console.log('============================')
-        console.log(fws);
+        let data = {};
         
 
     }

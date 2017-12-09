@@ -108,8 +108,6 @@ class create{
             fs.mkdirSync(fws.distPath);
             m.tip.success('创建 '+fws.distPath);
 
-            (()=>{})()
-
             //创建项目配置文件
             let projectType = (()=>{
                     let type = config.template.split('_')[0],
@@ -127,7 +125,7 @@ class create{
                     mail:fws.config.mail,                               //邮箱
                     projectName:config.name,                            //项目名称
                     template:config.template,                           //模版
-                    projectType:projectType,        //模版类型
+                    projectType:projectType,                            //模版类型
                     createTime:new Date().valueOf(),                    //创建时间
                     updater:undefined,                                  //更新者
                     updateTime:undefined,                               //更新时间

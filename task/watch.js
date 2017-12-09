@@ -21,7 +21,8 @@ class Watch{
                 getLocalIp:require('../lib/getLocalIp'),                //获取本机ip地址
                 isFilter:require('../lib/isFilter'),                    //判断是否为需要忽略的文件
                 getCompileFn:require('../lib/getCompileFn'),            //根据文件类型来获取编译方法
-                getDistPath:require('../lib/getDistPath')
+                getDistPath:require('../lib/getDistPath'),              //获取输出路径
+                updateImgData:require('../lib/updateImgData')           //更新sass图片数据文件
             },
             config = _ts.config = {},
             option = _ts.option = options;
@@ -154,7 +155,8 @@ class Watch{
                     
                     w.on('all',(stats,filePath)=>{
                         //是否为需要过滤的文件
-                        let isFilter = m.isFilter(filePath);
+                        let isFilter = m.isFilter(filePath),
+                            taskList = [];
 
                         if(!isFilter){
                             //是否为精灵图
@@ -166,14 +168,23 @@ class Watch{
                                 isPublic = fileInfo.isPublic,
                                 isVue = fileType === '.vue',
                                 isPug = fileType === '.jade' || fileType === '.pug',
-                                key = isSprite ? '_sprite' : fileType,
+
+                                //是否为图片目录内图片（排除精灵图）
+                                isImgDirImgs = (()=>{
+                                    let isImgDir = filePath.indexOf(m.path.join(fws.srcPath,'images',m.path.sep)) === 0,
+                                        isImg = ['jpg','jpeg','png','gif'].some((item)=>{
+                                            return '.'+item === fileType;
+                                        });
+
+                                    return isImgDir && isImg && !isSprite;
+                                })(),
+                                key = isSprite ? '_sprite' : isImgDirImgs ? '_img' : fileType,
                                 temp,
                                 compileFn = ()=>{
                                     let compile = m.getCompileFn(key),
                                         option = {
                                             debug:true
-                                        },
-                                        taskList = [];
+                                        };
                                     if(isSprite){
                                         //如果是精灵图，编译该精灵图对应的目录
                                         let srcDir = option.srcDir = m.path.dirname(filePath);
@@ -352,53 +363,18 @@ class Watch{
                                             };
                                         };
 
+                                        //如果是图片需要同步
+                                        if(isImgDirImgs){
+                                            taskList.push(()=>{
+                                                let cp = m.getCompileFn('copy');
+                                                return new cp(option);
+                                            }); 
+                                        };
+
+                                        //使用与文件对应的方法进行处理
                                         taskList.push(()=>{
                                             return new compile(option);
                                         });                                        
-                                    };
-
-                                    //如果有可执行的任务
-                                    if(taskList.length){
-                                        let f = async ()=>{
-                                            let data = [];
-                                            for(let i=0,len=taskList.length; i<len; i++){
-                                                let subTask = await taskList[i]();
-                                                data.push(subTask);
-                                                if(subTask instanceof Array){
-                                                    subTask.forEach((item,index)=>{
-                                                        if(item.status === 'success'){
-                                                            m.tip.success(item.msg);
-                                                        };
-                                                    })
-                                                };
-                                                if(subTask.status === 'success'){
-                                                    m.tip.success(subTask.msg);
-                                                };
-                                            };
-                                            return {
-                                                status:'success',
-                                                msg:'文件监听编译完成',
-                                                data:data
-                                            };
-                                        };
-
-                                        f().then(v => {
-                                            //编译完成，如果有开启server则需要往前台提供刷新服务
-
-                                            if(tsOption.server){
-                                                v.data.forEach((item,index)=>{
-                                                    _ts.server.io.broadcast('refresh',{
-                                                        status:'success',
-                                                        path:item.distPath
-                                                    });
-                                                });
-                                            };
-                                            
-                                        }).catch(e => {
-                                            //编译遇到出错
-                                            m.tip.error(e.msg);
-                                            console.log(e.info);
-                                        });
                                     };
                                 };
 
@@ -432,11 +408,74 @@ class Watch{
     
                                 //文件删除
                                 case 'unlink':
+
+                                    
                                     try {
+                                        if(isImgDirImgs && fws.ImgsData){
+                                            let key = filePath.replace(fws.srcPath,'../').replace(/\\/g,'/');
+                                            if(fws.ImgsData[key]){
+                                                delete fws.ImgsData[key];
+                                                console.log(fws.ImgsData);
+                                                taskList.push((resolve,reject)=>{
+                                                    return new Promise(()=>{
+                                                        m.updateImgData(fws.ImgsData).then(v => {
+                                                            resolve(v);
+                                                        }).catch(e => {
+                                                            reject(e);
+                                                        });
+                                                    });
+                                                });
+                                            };
+                                        };
+
                                         delete data[key][filePath];
                                     } catch (error) {};
                                 break;
-                            }; 
+                            };
+
+                            //如果有可执行的任务
+                            if(taskList.length){
+                                let f = async ()=>{
+                                    let data = [];
+                                    for(let i=0,len=taskList.length; i<len; i++){
+                                        let subTask = await taskList[i]();
+                                        data.push(subTask);
+                                        if(subTask instanceof Array){
+                                            subTask.forEach((item,index)=>{
+                                                if(item.status === 'success'){
+                                                    m.tip.success(item.msg);
+                                                };
+                                            })
+                                        };
+                                        if(subTask.status === 'success'){
+                                            m.tip.success(subTask.msg);
+                                        };
+                                    };
+                                    return {
+                                        status:'success',
+                                        msg:'文件监听编译完成',
+                                        data:data
+                                    };
+                                };
+
+                                f().then(v => {
+                                    //编译完成，如果有开启server则需要往前台提供刷新服务
+
+                                    if(tsOption.server){
+                                        v.data.forEach((item,index)=>{
+                                            _ts.server.io.broadcast('refresh',{
+                                                status:'success',
+                                                path:item.distPath
+                                            });
+                                        });
+                                    };
+                                    
+                                }).catch(e => {
+                                    //编译遇到出错
+                                    m.tip.error(e.msg);
+                                    console.log(e.info);
+                                });
+                            };
                         };                                               
                     });
 
