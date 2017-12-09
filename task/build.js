@@ -8,12 +8,9 @@ class Build{
                 tip:require('../lib/tip'),
                 pathInfo:require('../lib/getPathInfo'),
                 isFwsDir:require('../lib/isFwsDir'),
-                dirFilePath:require('../lib/getDirFilesPath'),
                 ReplaceTask:require('../lib/replaceTask'),
                 compressionTask:require('../lib/compressionTask'),
                 simplifyFont:require('../lib/simplifyFont'),
-                getDirFilesPath:require('../lib/getDirFilesPath'),
-                getImgInfo:require('../lib/getImgInfo'),
                 fontmin:require('fontmin')
             },
             config = _ts.config = {},
@@ -136,139 +133,13 @@ class Build{
         });        
         tasks.push(...compressionTask);
 
-        //css Base6压缩
+        //css Base64压缩
         tasks.push(_ts.insertPart('CSS inline-image Base64编码压缩'));
-        tasks.push(()=>{
-            return new Promise((resolve,reject)=>{
-                //读取目录中所有文件
-                let distDirFiles = m.getDirFilesPath({
-                    srcDir:config.dist,
-                    ignoreDir:[],           //不排除任何目录
-                    ignore_:false           //不排除以"_"开始的文件
-                }),
-                distImgsData = {},          //dist/images目录图片数据
-                cssFiles = (()=>{
-                    let cssListObj = distDirFiles['.css'],
-                        temp = [];
-                    if(cssListObj){
-                        for(let i in cssListObj){
-                            temp.push(i);
-                        };
-                    };
-                    return temp;
-                })(),
-                imgFiles = (()=>{
-                    let temp = [];
-
-                    //遍历以几类图片列表，将文件属于dist/images目录中的图片筛选出来
-                    ['jpg','jpeg','png','gif'].forEach((item)=>{
-                        item = distDirFiles['.'+item];
-                        if(item){
-                            for(let i in item){
-                                if(i.indexOf(m.path.join(config.dist,'images',m.path.sep)) === 0){
-                                    temp.push(i);
-                                };  
-                            };
-                        };
-                    });
-                    return temp;    
-                })(),
-                getImgsDataTask = (()=>{
-                    let task = [];
-                    if(imgFiles.length){
-                        imgFiles.forEach((item)=>{
-                            task.push(m.getImgInfo(item));
-                        });
-                        return Promise.all(task);
-                    }else{
-                        return undefined;
-                    };
-                })();
-
-                if(!cssFiles.length){
-                    resolve({
-                        status:'success',
-                        msg:'无有效的CSS文件需要进行压缩'
-                    });
-                };
-
-                if(getImgsDataTask){
-                    getImgsDataTask.then(v => {
-                        //将dist/images目录内图片数据组织到成为JSON格式
-                        v.forEach((item)=>{
-                            if(item.status === 'success'){
-                                let data = item.data,
-                                    key = data.path.replace(config.dist,'../').replace(/\\/g,'/');
-                                distImgsData[key] = data;
-                            };
-                        });
-
-                        cssFiles.forEach((item)=>{
-                            let css = m.fs.readFileSync(item).toString(),
-                                newCss;
-                            
-                            for(let i in distImgsData){
-                                //将src/images中的数据(base64)替换为dist/images中优化过后的数据(base64)
-                                if(fws.ImgsData[i] && distImgsData[i] && fws.ImgsData[i]['base64'] && distImgsData[i]['base64']){
-
-                                    //使用数据分开再合并法，拼接新的CSS
-                                    newCss = (()=>{
-                                        let c = css.split(fws.ImgsData[i]['base64']),
-                                            temp = '';
-                                        c.forEach((item,index)=>{
-                                            if(index < c.length - 1){
-                                                //temp += item + distImgsData[i]['base64'];
-                                                temp += item + distImgsData[i]['base64'];
-                                            }else{
-                                                temp += item;
-                                            }; 
-                                        });
-                                        return temp;
-                                    })();
-                                };
-                            };
-
-                            //如果新压缩的CSS小于
-                            if(newCss.length < css.length){
-                                //创建目录并写入文件
-                                let distDir = m.path.dirname(item);
-                                m.fs.ensureDir(distDir,err => {
-                                    if(err){
-                                        reject({
-                                            status:'error',
-                                            msg:`创建失败 ${distDir}`,
-                                            info:err
-                                        });
-                                    };
-                                    
-                                    //写入css文件
-                                    try {
-                                        m.fs.writeFileSync(item,newCss);
-                                    } catch (err) {
-                                        reject({
-                                            status:'error',
-                                            msg:`写入失败 ${item}`,
-                                            distPath:item,
-                                            info:err
-                                        });
-                                    };
-                                });
-                            };
-                        });
-                        resolve({
-                            status:'success',
-                            msg:'项目CSS inline-image 压缩处理完成'
-                        }); 
-                    });
-                }else{
-                    resolve({
-                        status:'success',
-                        msg:config.dist+'目录无有效图片需要进行base64转换'
-                    });
-                };
-            });
-        })
-        
+        let cssBase64Simplify = require('../lib/cssBase64Simplify');
+        tasks.push(cssBase64Simplify({
+            src:isFwsDir ? fws.distPath : projectDir,
+            dist:isFwsDir ? fws.distPath : projectDir
+        }));
 
         //字体文件精简
         if(isFwsDir){
