@@ -14,15 +14,27 @@
 @import "../imagesData";
 
 //根据路径获取图片宽度
-@function image-width($imgPath){
+@function image-width($imgPath,$unit:'px'){
     $imgInfo:map-get($_imagesData,$imgPath);
-    @return map-get($imgInfo,width);
+    $result:map-get($imgInfo,width);
+    @if $unit == 'px' {
+        $result:$result + px;
+    } @else if $unit == 'rem' {
+        $result:rem($result);
+    };
+    @return $result;
 };
 
 //根据图片路径获取图片高度
-@function image-height($imgPath){
+@function image-height($imgPath,$unit:'px'){
     $imgInfo:map-get($_imagesData,$imgPath);
-    @return map-get($imgInfo,height);
+    $result:map-get($imgInfo,height);
+    @if $unit == 'px' {
+        $result:$result + px;
+    } @else if $unit == 'rem' {
+        $result:rem($result);
+    };
+    @return $result;
 };
 
 //根据图片路径获取图片base64信息
