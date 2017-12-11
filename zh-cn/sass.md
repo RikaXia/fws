@@ -3,8 +3,7 @@
 FWS内置了一些sass函数和mixin。
 
 
-## 函数
-
+## rem单位转换
 
 ** `rem` REM单位转换 **
 
@@ -17,6 +16,7 @@ FWS内置了一些sass函数和mixin。
 rem($size)
 ```
 
+## 精灵图
 
 ** `map-url` 获取精灵图路径 **
 
@@ -111,6 +111,61 @@ sprite-x($sprite,$element)
  * @returns {number}              精灵元素水平起始坐标。如：128
  */
 sprite-y($sprite,$element)
+```
+
+## 图片相关
+
+** `image-width` 获取图片宽度 **
+```scss
+/**
+ * 获取图片宽度（仅限于src/images内非精灵图图片）
+ * @param   {string} $imgPath     <必填> 图片路径
+ * @param   {string} $unit        [选填] 返回的单位，默认'px'，选项'px'、'rem'、'number'
+ * @returns {string}              图片宽度
+ */
+image-width($imgPath,$unit)
+```
+示例：
+```scss
+width:image-width('../images/logo.png','rem');
+```
+```css
+width:1rem;
+```
+
+** `image-height` 获取图片高度 **
+```scss
+/**
+ * 获取图片高度（仅限于src/images/内非精灵图目录图片）
+ * @param   {string} $imgPath     <必填> 图片路径
+ * @param   {string} $unit        [选填] 返回的单位，默认'px'，选项'px'、'rem'、'number'
+ * @returns {string}              图片高度
+ */
+image-height($imgPath,$unit)
+```
+示例：
+```scss
+height:image-height('../images/logo.png','rem');
+```
+```css
+height:1rem;
+```
+
+** `inline-image` 将图片转换为base64 **
+```scss
+/**
+ * 将图片转换为base64（仅限于src/images/内非精灵图目录图片）
+ * @param   {string} $imgPath     <必填> 图片路径
+ * @returns {string}              css图片base64
+ */
+inline-image($imgPath)
+```
+示例：
+```scss
+background-image:inline-image('../images/logo.png','rem');
+```
+```css
+background-image:url('data:image/png;base64,iVBORw0...===');
 ```
 
 ## Mixin
