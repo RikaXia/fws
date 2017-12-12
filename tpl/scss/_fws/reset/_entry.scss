@@ -56,7 +56,7 @@
 
 // 重置字体和垂直对齐
 @mixin reset-font {
-  font: inherit;
+  //font: inherit;
   font-size: 100%;
   font-family: -apple-system, Tahoma, "Microsoft YaHei", "WenQuanYi Micro Hei", "PingFang SC", Helvetica, arial;
   vertical-align: baseline;
