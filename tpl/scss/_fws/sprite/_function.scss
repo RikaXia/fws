@@ -10,7 +10,7 @@
     @if $unit == 'px'{
         $width:$width + 0px;
     } @else if $unit == 'rem'{
-        $width:$width + 0rem;
+        $width:rem($width);
     };
     @return $width;    
 };
@@ -21,7 +21,7 @@
     @if $unit == 'px'{
         $width:$height + 0px;
     } @else if $unit == 'rem'{
-        $width:$height + 0rem;
+        $width:rem($height);
     };
     @return $height;
 };
@@ -44,7 +44,7 @@
     @if $unit == 'px'{
         $spriteWidth:$spriteWidth + 0px;
     } @else if $unit == 'rem'{
-        $spriteWidth:$spriteWidth + 0rem;
+        $spriteWidth:rem($spriteWidth);
     };
     @return $spriteWidth;
 };
@@ -57,7 +57,7 @@
     @if $unit == 'px'{
         $spriteHeight:$spriteHeight + 0px;
     } @else if $unit == 'rem'{
-        $spriteHeight:$spriteHeight + 0rem;
+        $spriteHeight:rem($spriteHeight);
     };
     @return $spriteHeight;
 };
@@ -70,7 +70,7 @@
     @if $unit == 'px'{
         $spriteX:$spriteX + 0px;
     } @else if $unit == 'rem'{
-        $spriteX:$spriteX + 0rem;
+        $spriteX:rem($spriteX);
     };
     @return $spriteX;
 };
@@ -83,7 +83,7 @@
     @if $unit == 'px'{
         $spriteY:$spriteY + 0px;
     } @else if $unit == 'rem'{
-        $spriteY:$spriteY + 0rem;
+        $spriteY:rem($spriteY);
     };
     @return $spriteY;
 };
