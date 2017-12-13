@@ -37,9 +37,10 @@ map-url($sprite)
 /**
  * 获取精灵图总宽
  * @param   {object} $sprite      <必填> 精灵图名称对象
+ * @param   {string} $unit        [选填] 单位，默认'number'，选项'px'、'rem'、'number'
  * @returns {number}              精灵图宽度
  */
-map-width($sprite)
+map-width($sprite,$unit)
 ```
 
 
@@ -49,9 +50,10 @@ map-width($sprite)
 /**
  * 获取精灵图总高
  * @param   {object} $sprite      <必填> 精灵图名称对象
+ * @param   {string} $unit        [选填] 单位，默认'number'，选项'px'、'rem'、'number'
  * @returns {number}              精灵图高度
  */
-map-height($sprite)
+map-height($sprite,$unit)
 ```
 
 
@@ -72,9 +74,10 @@ sprite-list($sprite)
  * 获取精灵元素宽
  * @param   {object} $sprite      <必填> 精灵图名称对象
  * @param   {object} $element     <必填> 精灵元素名。如：a
+ * @param   {string} $unit        [选填] 单位，默认'number'，选项'px'、'rem'、'number'
  * @returns {number}              精灵元素宽。如：64
  */
-sprite-width($sprite,$element)
+sprite-width($sprite,$element,$unit)
 ```
 
 
@@ -84,9 +87,10 @@ sprite-width($sprite,$element)
  * 获取精灵元素高
  * @param   {object} $sprite      <必填> 精灵图名称对象
  * @param   {object} $element     <必填> 精灵元素名。如：a
+ * @param   {string} $unit        [选填] 单位，默认'number'，选项'px'、'rem'、'number'
  * @returns {number}              精灵元素高。如：64
  */
-sprite-height($sprite,$element)
+sprite-height($sprite,$element,$unit)
 ```
 
 
@@ -96,9 +100,10 @@ sprite-height($sprite,$element)
  * 获取精灵元素X坐标
  * @param   {object} $sprite      <必填> 精灵图名称对象
  * @param   {object} $element     <必填> 精灵元素名。如：a
+ * @param   {string} $unit        [选填] 单位，默认'number'，选项'px'、'rem'、'number'
  * @returns {number}              精灵元素水平起始坐标。如：128
  */
-sprite-x($sprite,$element)
+sprite-x($sprite,$element,$unit)
 ```
 
 
@@ -108,9 +113,10 @@ sprite-x($sprite,$element)
  * 获取精灵元素Y坐标
  * @param   {object} $sprite      <必填> 精灵图名称对象
  * @param   {object} $element     <必填> 精灵元素名。如：a
+ * @param   {string} $unit        [选填] 单位，默认'number'，选项'px'、'rem'、'number'
  * @returns {number}              精灵元素水平起始坐标。如：128
  */
-sprite-y($sprite,$element)
+sprite-y($sprite,$element,$unit)
 ```
 
 ## 图片相关
@@ -176,8 +182,9 @@ background-image:url('data:image/png;base64,iVBORw0...===');
  * 输出精灵元素大小
  * @param   {object} $sprite      <必填> 精灵图名称对象
  * @param   {object} $element     <必填> 精灵元素名。如：a
+ * @param   {string} $unit        [选填] 单位，默认'px'，选项'px'、'rem'
  */
-@include sprite-size($sprite,$element);
+@include sprite-size($sprite,$element,$unit);
 ```
 
 示例结果：
@@ -191,8 +198,11 @@ width:64px; height:64px;
  * 输出精灵元素背景坐标
  * @param   {object} $sprite      <必填> 精灵图名称对象
  * @param   {object} $element     <必填> 精灵元素名。如：a
+ * @param   {string} $unit        [选填] 单位，默认'px'，选项'px'、'rem'
+ * @param   {number} $offectX     [选填] 横向偏移量，默认0
+ * @param   {number} $offectY     [选填] 纵向偏移量，默认0
  */
-@include sprite-position($sprite,$element);
+@include sprite-position($sprite,$element,$unit,$offectX,$offectY);
 ```
 
 示例结果：

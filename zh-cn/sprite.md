@@ -67,7 +67,7 @@ map-url($sprite)
  * @param   {string} $unit        [选填] 单位，默认'number'，选项'px'、'rem'、'number'
  * @returns {number}              精灵图宽度
  */
-map-width($sprite)
+map-width($sprite,$unit)
 ```
 
 
@@ -80,7 +80,7 @@ map-width($sprite)
  * @param   {string} $unit        [选填] 单位，默认'number'，选项'px'、'rem'、'number'
  * @returns {number}              精灵图高度
  */
-map-height($sprite)
+map-height($sprite,$unit)
 ```
 
 
@@ -104,7 +104,7 @@ sprite-list($sprite)
  * @param   {string} $unit        [选填] 单位，默认'number'，选项'px'、'rem'、'number'
  * @returns {number}              精灵元素宽。如：64
  */
-sprite-width($sprite,$element)
+sprite-width($sprite,$element,$unit)
 ```
 
 
@@ -117,7 +117,7 @@ sprite-width($sprite,$element)
  * @param   {string} $unit        [选填] 单位，默认'number'，选项'px'、'rem'、'number'
  * @returns {number}              精灵元素高。如：64
  */
-sprite-height($sprite,$element)
+sprite-height($sprite,$element,$unit)
 ```
 
 
@@ -130,7 +130,7 @@ sprite-height($sprite,$element)
  * @param   {string} $unit        [选填] 单位，默认'number'，选项'px'、'rem'、'number'
  * @returns {number}              精灵元素水平起始坐标。如：128
  */
-sprite-x($sprite,$element)
+sprite-x($sprite,$element,$unit)
 ```
 
 
@@ -143,7 +143,7 @@ sprite-x($sprite,$element)
  * @param   {string} $unit        [选填] 单位，默认'number'，选项'px'、'rem'、'number'
  * @returns {number}              精灵元素水平起始坐标。如：128
  */
-sprite-y($sprite,$element)
+sprite-y($sprite,$element,$unit)
 ```
 
 ## Sprite Sass Mixin
