@@ -173,8 +173,10 @@ width:64px; height:64px;
  * @param   {object} $sprite      <必填> 精灵图名称对象
  * @param   {object} $element     <必填> 精灵元素名。如：a
  * @param   {string} $unit        [选填] 单位，默认'px'，选项'px'、'rem'
+ * @param   {number} $offectX     [选填] 横向偏移量，默认0
+ * @param   {number} $offectY     [选填] 纵向偏移量，默认0
  */
-@include sprite-position($sprite,$element,$unit);
+@include sprite-position($sprite,$element,$unit,$offectX,$offectY);
 ```
 
 示例结果：
