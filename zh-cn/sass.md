@@ -120,7 +120,7 @@ sprite-y($sprite,$element)
 /**
  * 获取图片宽度（仅限于src/images内非精灵图图片）
  * @param   {string} $imgPath     <必填> 图片路径
- * @param   {string} $unit        [选填] 返回的单位，默认'px'，选项'px'、'rem'、'number'
+ * @param   {string} $unit        [选填] 返回的单位，默认'number'，选项'px'、'rem'、'number'
  * @returns {string}              图片宽度
  */
 image-width($imgPath,$unit)
@@ -138,7 +138,7 @@ width:1rem;
 /**
  * 获取图片高度（仅限于src/images/内非精灵图目录图片）
  * @param   {string} $imgPath     <必填> 图片路径
- * @param   {string} $unit        [选填] 返回的单位，默认'px'，选项'px'、'rem'、'number'
+ * @param   {string} $unit        [选填] 返回的单位，默认'number'，选项'px'、'rem'、'number'
  * @returns {string}              图片高度
  */
 image-height($imgPath,$unit)
@@ -259,7 +259,7 @@ background-image:url('../images/_spritexxx.png');
 
 示例结果：
 ```css
-display:inline-block; _zoom:1; _display:inline; *display:inline;
+display:inline-block; _zoom:1; *zoom:1; _display:inline; *display:inline;
 ```
 
 
