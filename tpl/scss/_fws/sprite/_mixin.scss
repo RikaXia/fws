@@ -15,12 +15,12 @@
 
 //精灵图背景坐标获取方法
 @mixin sprite-position($sprite,$element,$unit:'px',$offectX:0,$offectY:0){    
-    $x:- sprite-x($sprite,$element,'px') + $offectX;
-    $y:- sprite-y($sprite,$element,'px') + $offectY;
+    $x:- sprite-x($sprite,$element,'number') + $offectX + 0px;
+    $y:- sprite-y($sprite,$element,'number') + $offectY + 0px;
     
     @if $unit == 'rem'{
-        $x:- sprite-x($sprite,$element,'rem') + $offectX;
-        $y:- sprite-y($sprite,$element,'rem') + $offectY;
+        $x:rem(- sprite-x($sprite,$element,'number') + $offectX);
+        $y:rem(- sprite-y($sprite,$element,'number') + $offectY);
     };
     background-position:$x $y;
 };
