@@ -17,15 +17,15 @@ $spriteList:sprite-list($_spriteHello);                     //得到精灵名称
 .sprite {background-image:url($spriteBg); background-size:($spriteWidth / 2) + px auto; display:block; opacity:0.8; float:left; transition:opacity 0.2s linear;
     &:hover {opacity:1;}
     @each $i in $spriteList {
-        $w:sprite-width($_spriteHello,$i) / 2;              //精灵元素宽
-        $h:sprite-height($_spriteHello,$i) / 4;             //精灵元素高
-        $x:sprite-x($_spriteHello,$i) / 2;                  //精灵元素X坐标
-        $y:sprite-y($_spriteHello,$i) / 2;                  //精灵元素Y坐标
+        $w:sprite-width($_spriteHello,$i,'px') / 2;              //精灵元素宽
+        $h:sprite-height($_spriteHello,$i,'px') / 4;             //精灵元素高
+        $x:sprite-x($_spriteHello,$i,'px') / 2;                  //精灵元素X坐标
+        $y:sprite-y($_spriteHello,$i,'px') / 2;                  //精灵元素Y坐标
 
         &--#{$i} {
-            width:$w + px; height:$h + px; background-position:(-$x + px) (-$y + px);
+            width:$w; height:$h; background-position:(-$x) (-$y);
             &:hover {
-                background-position:(-$x + px) (-($y + $h) + px);
+                background-position:(-$x) (-($y + $h));
             }
         }
     }

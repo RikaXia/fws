@@ -5,13 +5,25 @@
 //=========================
 
 //获取精灵图总的宽
-@function map-width($sprite){
-    @return map-get(map-get($sprite,size),width);    
+@function map-width($sprite,$unit:'number'){
+    $width:map-get(map-get($sprite,size),width);
+    @if $unit == 'px'{
+        $width:$width + 0px;
+    } @else if $unit == 'rem'{
+        $width:$width + 0rem;
+    };
+    @return $width;    
 };
 
 //获取精灵图总的高
-@function map-height($sprite){
-    @return map-get(map-get($sprite,size),height);
+@function map-height($sprite,$unit:'number'){
+    $height:map-get(map-get($sprite,size),height);
+    @if $unit == 'px'{
+        $width:$height + 0px;
+    } @else if $unit == 'rem'{
+        $width:$height + 0rem;
+    };
+    @return $height;
 };
 
 //获取精灵图url
@@ -25,29 +37,53 @@
 };
 
 //获取精灵图元素宽
-@function sprite-width($sprite,$element){
+@function sprite-width($sprite,$element,$unit:'number'){
     $es:map-get($sprite,element);
     $e:map-get($es,$element);
-    @return map-get($e,width);
+    $spriteWidth:map-get($e,width);
+    @if $unit == 'px'{
+        $spriteWidth:$spriteWidth + 0px;
+    } @else if $unit == 'rem'{
+        $spriteWidth:$spriteWidth + 0rem;
+    };
+    @return $spriteWidth;
 };
 
 //获取精灵图元素高
-@function sprite-height($sprite,$element){
+@function sprite-height($sprite,$element,$unit:'number'){
     $es:map-get($sprite,element);
     $e:map-get($es,$element);
-    @return map-get($e,height);
+    $spriteHeight:map-get($e,height);
+    @if $unit == 'px'{
+        $spriteHeight:$spriteHeight + 0px;
+    } @else if $unit == 'rem'{
+        $spriteHeight:$spriteHeight + 0rem;
+    };
+    @return $spriteHeight;
 };
 
 //获取精灵图元素X坐标
-@function sprite-x($sprite,$element){
+@function sprite-x($sprite,$element,$unit:'number'){
     $es:map-get($sprite,element);
     $e:map-get($es,$element);
-    @return map-get($e,x);
+    $spriteX:map-get($e,x);
+    @if $unit == 'px'{
+        $spriteX:$spriteX + 0px;
+    } @else if $unit == 'rem'{
+        $spriteX:$spriteX + 0rem;
+    };
+    @return $spriteX;
 };
 
 //获取精灵图元素Y坐标
-@function sprite-y($sprite,$element){
+@function sprite-y($sprite,$element,$unit:'number'){
     $es:map-get($sprite,element);
     $e:map-get($es,$element);
-    @return map-get($e,y);
+    $spriteY:map-get($e,y);
+    @if $unit == 'px'{
+        $spriteY:$spriteY + 0px;
+    } @else if $unit == 'rem'{
+        $spriteY:$spriteY + 0rem;
+    };
+    @return $spriteY;
 };

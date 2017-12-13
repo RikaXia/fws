@@ -2,7 +2,7 @@
 
 //rem单位转换
 @function rem($px){
-    @return $px / 2 / 50 + rem;
+    @return $px / 2 / 50 + 0rem;
 };
 
 
@@ -14,11 +14,11 @@
 @import "../imagesData";
 
 //根据路径获取图片宽度
-@function image-width($imgPath,$unit:'px'){
+@function image-width($imgPath,$unit:'number'){
     $imgInfo:map-get($_imagesData,$imgPath);
     $result:map-get($imgInfo,width);
     @if $unit == 'px' {
-        $result:$result + px;
+        $result:$result + 0px;
     } @else if $unit == 'rem' {
         $result:rem($result);
     };
@@ -26,11 +26,11 @@
 };
 
 //根据图片路径获取图片高度
-@function image-height($imgPath,$unit:'px'){
+@function image-height($imgPath,$unit:'number'){
     $imgInfo:map-get($_imagesData,$imgPath);
     $result:map-get($imgInfo,height);
     @if $unit == 'px' {
-        $result:$result + px;
+        $result:$result + 0px;
     } @else if $unit == 'rem' {
         $result:rem($result);
     };
