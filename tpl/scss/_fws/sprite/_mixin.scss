@@ -1,19 +1,27 @@
 ﻿@charset "utf-8";
 
 //精灵图宽高设置方法
-@mixin sprite-size($sprite,$element){
-    $w:sprite-width($sprite,$element)+px;
-    $h:sprite-height($sprite,$element)+px;
+@mixin sprite-size($sprite,$element,$unit:'px'){
+    $w:sprite-width($sprite,$element,'px');
+    $h:sprite-height($sprite,$element,'px');
+    @if $unit == 'rem'{
+        $w:sprite-width($sprite,$element,'rem');
+        $h:sprite-height($sprite,$element,'rem');
+    };
     
     width:$w;
     height:$h;
 };
 
 //精灵图背景坐标获取方法
-@mixin sprite-position($sprite,$element,$offectX:0,$offectY:0){    
-    $x:- sprite-x($sprite,$element) + $offectX + px;
-    $y:- sprite-y($sprite,$element) + $offectY + px;
+@mixin sprite-position($sprite,$element,$unit:'px',$offectX:0,$offectY:0){    
+    $x:- sprite-x($sprite,$element,'px') + $offectX;
+    $y:- sprite-y($sprite,$element,'px') + $offectY;
     
+    @if $unit == 'rem'{
+        $x:- sprite-x($sprite,$element,'rem') + $offectX;
+        $y:- sprite-y($sprite,$element,'rem') + $offectY;
+    };
     background-position:$x $y;
 };
 

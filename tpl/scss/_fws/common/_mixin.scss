@@ -2,7 +2,7 @@
 
 //inline-block
 @mixin inline-block(){
-	display:inline-block; _zoom:1; _display:inline; *display:inline;
+	display:inline-block; _zoom:1; *zoom:1; _display:inline; *display:inline;
 }
 
 //大小设置
