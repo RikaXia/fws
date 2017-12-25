@@ -6,7 +6,7 @@
 
 ## Sprite 快速开始
 
-首先需要在源文件目录`src/`下任意地方，创建一个精灵图目录。譬如：
+首先需要在源文件目录`src/`下任意地方，创建一个以`_sprite`开头的精灵图目录。譬如：
 
 ```bash
 └─src
@@ -198,3 +198,34 @@ background-position:-128px -128px;
 ```css
 background-image:url('../images/_spritexxx.png');
 ```
+
+## Sprite 规则自定义
+
+允许通过精灵图命名规则来自定义精灵图排序方式及间距设置。
+
+** 支持以下方式： **
+
+```bash
+_spriteImg_lr_0       # 从左到右排序，精灵图间距为0
+_spriteImg_lr         # 从左到右排序，精灵图间距使用默认值4
+_spriteImg_6          # 自动排序 ，精灵图间距为6
+```
+
+** 排序方式 **
+
+```bash
+td                    # top-down
+lr                    # left-right
+d                     # diagonal
+ad                    # alt-diagonal
+bt                    # binary-tree
+```
+|         `top-down`        |          `left-right`         |         `diagonal`        |           `alt-diagonal`          |          `binary-tree`          |
+|---------------------------|-------------------------------|---------------------------|-----------------------------------|---------------------------------|
+| ![top-down][top-down-img] | ![left-right][left-right-img] | ![diagonal][diagonal-img] | ![alt-diagonal][alt-diagonal-img] | ![binary-tree][binary-tree-img] |
+
+[top-down-img]: https://raw.githubusercontent.com/twolfson/layout/2.0.2/docs/top-down.png
+[left-right-img]: https://raw.githubusercontent.com/twolfson/layout/2.0.2/docs/left-right.png
+[diagonal-img]: https://raw.githubusercontent.com/twolfson/layout/2.0.2/docs/diagonal.png
+[alt-diagonal-img]: https://raw.githubusercontent.com/twolfson/layout/2.0.2/docs/alt-diagonal.png
+[binary-tree-img]: https://raw.githubusercontent.com/twolfson/layout/2.0.2/docs/binary-tree.png
