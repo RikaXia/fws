@@ -203,7 +203,7 @@ background-image:url('../images/_spritexxx.png');
 
 允许通过精灵图命名规则来自定义精灵图排序方式及间距设置。
 
-** 支持以下方式： **
+** 目录命名示例： **
 
 ```bash
 _spriteImg_lr_0       # 从左到右排序，精灵图间距为0
@@ -211,7 +211,7 @@ _spriteImg_lr         # 从左到右排序，精灵图间距使用默认值4
 _spriteImg_6          # 自动排序 ，精灵图间距为6
 ```
 
-** 排序方式 **
+** 排序方式： **
 
 ```bash
 td                    # top-down
