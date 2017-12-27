@@ -5,25 +5,13 @@
 //=========================
 
 //获取精灵图总的宽
-@function map-width($sprite,$unit:'number'){
-    $width:map-get(map-get($sprite,size),width);
-    @if $unit == 'px'{
-        $width:$width + 0px;
-    } @else if $unit == 'rem'{
-        $width:rem($width);
-    };
-    @return $width;    
+@function map-width($sprite){
+    @return map-get(map-get($sprite,size),width);    
 };
 
 //获取精灵图总的高
-@function map-height($sprite,$unit:'number'){
-    $height:map-get(map-get($sprite,size),height);
-    @if $unit == 'px'{
-        $width:$height + 0px;
-    } @else if $unit == 'rem'{
-        $width:rem($height);
-    };
-    @return $height;
+@function map-height($sprite){
+    @return map-get(map-get($sprite,size),height);
 };
 
 //获取精灵图url
@@ -37,53 +25,41 @@
 };
 
 //获取精灵图元素宽
-@function sprite-width($sprite,$element,$unit:'number'){
+@function sprite-width($sprite,$element){
     $es:map-get($sprite,element);
     $e:map-get($es,$element);
-    $spriteWidth:map-get($e,width);
-    @if $unit == 'px'{
-        $spriteWidth:$spriteWidth + 0px;
-    } @else if $unit == 'rem'{
-        $spriteWidth:rem($spriteWidth);
+    @if $e == null {
+        @debug 'Sprite "' + $element + '.png" file does not exist';
     };
-    @return $spriteWidth;
+    @return map-get($e,width);
 };
 
 //获取精灵图元素高
-@function sprite-height($sprite,$element,$unit:'number'){
+@function sprite-height($sprite,$element){
     $es:map-get($sprite,element);
     $e:map-get($es,$element);
-    $spriteHeight:map-get($e,height);
-    @if $unit == 'px'{
-        $spriteHeight:$spriteHeight + 0px;
-    } @else if $unit == 'rem'{
-        $spriteHeight:rem($spriteHeight);
+    @if $e == null {
+        @debug 'Sprite "' + $element + '.png" file does not exist';
     };
-    @return $spriteHeight;
+    @return map-get($e,height);
 };
 
 //获取精灵图元素X坐标
-@function sprite-x($sprite,$element,$unit:'number'){
+@function sprite-x($sprite,$element){
     $es:map-get($sprite,element);
     $e:map-get($es,$element);
-    $spriteX:map-get($e,x);
-    @if $unit == 'px'{
-        $spriteX:$spriteX + 0px;
-    } @else if $unit == 'rem'{
-        $spriteX:rem($spriteX);
+    @if $e == null {
+        @debug 'Sprite "' + $element + '.png" file does not exist';
     };
-    @return $spriteX;
+    @return map-get($e,x);
 };
 
 //获取精灵图元素Y坐标
-@function sprite-y($sprite,$element,$unit:'number'){
+@function sprite-y($sprite,$element){
     $es:map-get($sprite,element);
     $e:map-get($es,$element);
-    $spriteY:map-get($e,y);
-    @if $unit == 'px'{
-        $spriteY:$spriteY + 0px;
-    } @else if $unit == 'rem'{
-        $spriteY:rem($spriteY);
+    @if $e == null {
+        @debug 'Sprite "' + $element + '.png" file does not exist';
     };
-    @return $spriteY;
+    @return map-get($e,y);
 };

@@ -22,7 +22,8 @@ class Watch{
                 isFilter:require('../lib/isFilter'),                    //判断是否为需要忽略的文件
                 getCompileFn:require('../lib/getCompileFn'),            //根据文件类型来获取编译方法
                 getDistPath:require('../lib/getDistPath'),              //获取输出路径
-                updateImgData:require('../lib/updateImgData')           //更新sass图片数据文件
+                updateImgData:require('../lib/updateImgData'),          //更新sass图片数据文件
+                updateImg:require('../lib/updateImg')
             },
             config = _ts.config = {},
             option = _ts.option = options;
@@ -408,28 +409,51 @@ class Watch{
     
                                 //文件删除
                                 case 'unlink':
-
-                                    
                                     try {
-                                        if(isImgDirImgs && fws.ImgsData){
-                                            let key = filePath.replace(fws.srcPath,'../').replace(/\\/g,'/');
-                                            if(fws.ImgsData[key]){
-                                                delete fws.ImgsData[key];
-                                                console.log(fws.ImgsData);
-                                                taskList.push((resolve,reject)=>{
-                                                    return new Promise(()=>{
-                                                        m.updateImgData(fws.ImgsData).then(v => {
+                                        //图片目录，非精灵图删除更新图片base64数据
+                                        if(isImgDirImgs){
+                                            if(fws.ImgsData === undefined){
+                                                let srcDirFiles = _ts.m.getDirFilesPath({
+                                                    srcDir:fws.srcPath
+                                                });
+                                                
+                                                taskList.push(()=>{
+                                                    return new Promise((resolve,reject)=>{
+                                                        new _ts.m.updateImg({
+                                                            srcDirFiles:srcDirFiles
+                                                        }).then(v => {
                                                             resolve(v);
                                                         }).catch(e => {
                                                             reject(e);
                                                         });
-                                                    });
+                                                    })
                                                 });
+                                            }else{
+                                                let key = filePath.replace(fws.srcPath,'../').replace(/\\/g,'/');
+                                                if(fws.ImgsData[key]){
+                                                    delete fws.ImgsData[key];
+                                                    taskList.push(()=>{
+                                                        return new Promise((resolve,reject)=>{
+                                                            m.updateImgData(fws.ImgsData).then(v => {
+                                                                resolve(v);
+                                                            }).catch(e => {
+                                                                reject(e);
+                                                            });
+                                                        });
+                                                    });
+                                                };
                                             };
                                         };
 
+                                        //精灵图删除即时更新数据
+                                        if(isSprite){
+                                            compileFn();
+                                        };
+
                                         delete data[key][filePath];
-                                    } catch (error) {};
+                                    } catch (error) {
+                                        console.log(error);
+                                    };
                                 break;
                             };
 
