@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-const {fs,path,cwdPath,program,tip,pathInfo,getType,fwsConfig,npmPackage} = {
+const {fs,path,cwdPath,program,tip,pathInfo,getType,fwsConfig,npmPackage,getLocalIp} = {
     fs:require('fs'),
     path:require('path'),
     cwdPath:process.cwd(),                                  //当前路径
@@ -10,7 +10,19 @@ const {fs,path,cwdPath,program,tip,pathInfo,getType,fwsConfig,npmPackage} = {
     pathInfo:require('./lib/getPathInfo'),                  //获取目标路径的相关信息
     getType:require('./lib/getType'),                       //获取数据类型
     fwsConfig:require('./config'),
-    npmPackage:require('./package.json')
+    npmPackage:require('./package.json'),
+    getLocalIp:require('./lib/getLocalIp')                  //获取本机ip地址
+};
+
+
+//字符串方法扩展
+String.prototype.replaceAll = function(substr,replacement){
+    let re = /\*|\.|\?|\+|\$|\^|\[|\]|\(|\)|\{|\}|\||\\|\//g,
+        newReS = substr.replace(re,(item,index)=>{
+            return '\\'+item;
+        }),
+        newRe = new RegExp(newReS,'g');
+    return this.replace(newRe,replacement);
 };
 
 
@@ -19,22 +31,25 @@ program.version(npmPackage.version);
 
 //定义全局
 global.fws = {
-    'fwsPath':path.join(__dirname,path.sep),                     //fws目录路径
+    'fwsPath':path.join(__dirname,path.sep),                        //fws目录路径
     'taskPath':path.join(__dirname,'task'+path.sep),                //任务插件路径
     'tplPath':path.join(__dirname,'tpl'+path.sep),                  //内置tpl目录
-    'tplConfigPath':path.join(__dirname,'tpl','_config'+path.sep), //内置tpl配置目录    
-    'cmdPath':cwdPath,                                      //当前进程所在的目录
+    'tplConfigPath':path.join(__dirname,'tpl','_config'+path.sep),  //内置tpl配置目录    
+    'cmdPath':cwdPath,                                              //当前进程所在的目录
     'srcPath':path.join(cwdPath,'src'+path.sep),                    //当前进程下的src目录
     'devPath':path.join(cwdPath,'dev'+path.sep),                    //当前进程下的dev目录
     'distPath':path.join(cwdPath,'dist'+path.sep),                  //当前进程下的dist目录
     'config':fwsConfig,
-    'require':(module)=>{                                   //引入模块并且不缓存
+    'require':(module)=>{                                           //引入模块并且不缓存
         delete require.cache[require.resolve(module)];
         return require(module);
+    },
+    'globalReplace':{
+        '$$localhost':getLocalIp()
     }
 };
 
-global.fws_spriteTime ={};                                  //用于保存精灵图目录编译时间
+global.fws_spriteTime ={};                                          //用于保存精灵图目录编译时间
 
 
 fws.config.update_author = fwsConfig.author;

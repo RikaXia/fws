@@ -18,10 +18,12 @@ class create{
 
         //任务依赖模块
         let m = _ts.m = {
+                fs:require('fs'),
                 path:require('path'),
-                tip:require('../lib/tip'),                  //文字提示
-                getType:require('../lib/getType'),          //获取数据类型
-                pathInfo:require('../lib/getPathInfo')      //获取目标路径的相关信息
+                tip:require('../lib/tip'),                            //文字提示
+                getType:require('../lib/getType'),                    //获取数据类型
+                pathInfo:require('../lib/getPathInfo'),               //获取目标路径的相关信息
+                getDirFilesPath:require('../lib/getDirFilesPath')     //获取目录文件数据
             },
             config = _ts.config = {
                 // name:'demo',                                //<string>,项目名称
@@ -41,7 +43,6 @@ class create{
         const _ts = this,
             m = _ts.m,
             config = _ts.config;
-
         let f = async ()=>{
             let pList = _ts.start();
 
@@ -182,7 +183,9 @@ class create{
     }
 
     /**
-     * 
+     * 任务初始化
+     * @param {*} src 
+     * @param {*} target 
      */
     taskInit(src,target){
         const _ts = this,

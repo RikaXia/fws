@@ -7,6 +7,7 @@ module.exports = {
     Pug2html:require('./lib/pug2html'),
     OutSprite:require('./lib/outSprite'),
     html2html:require('./lib/html2html'),
+    js2js:require('./lib/js2js'),
     compileImg:require('./lib/compile_img'),
     compileJs:require('./lib/compile_js'),
     compileHtml:require('./lib/compile_html'),
