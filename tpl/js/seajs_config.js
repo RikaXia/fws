@@ -5,8 +5,8 @@ seajs.config({
     base: './',
     //路径配置
     paths: {
-        'feUtil': '$$localhost/staticfile/',
-        'seajs': '$$localhost/staticfile/seajs/3.0.0',
+        'feUtil': '//$$localhost/staticfile/',
+        'seajs': '//$$localhost/staticfile/seajs/3.0.0',
         'js': window.cdnPath ? window.cdnPath + 'js' : 'js'
     },
     //别名配置
