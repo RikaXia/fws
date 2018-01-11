@@ -35,6 +35,9 @@ module.exports = {
             {
                 find:'feutil.localstatic.com',
                 replace:'pic.my4399.com/re/cms/feUtil'
+            },{
+                find:'$$localhost/staticfile',
+                replace:'pic.my4399.com/re/cms/feUtil'
             }
         ]
     },
