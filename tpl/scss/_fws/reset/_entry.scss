@@ -107,27 +107,7 @@
 
 // html5块元素重置
 @mixin reset-html5 {
-  #{elements-of-type(html5-block)} {
+  article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
     display: block;
-  }
-}
-
-// 内链和块元素样式重置，根据标签的不同类型来处理
-@mixin reset-display($selector: "", $important: false) {
-  #{append-selector(elements-of-type("inline"), $selector)} {
-    @if $important {
-      display: inline !important;
-    }
-    @else {
-      display: inline;
-    }
-  }
-  #{append-selector(elements-of-type("block"), $selector)} {
-    @if $important {
-      display: block !important;
-    }
-    @else {
-      display: block;
-    }
   }
 }
