@@ -59,6 +59,17 @@ module.exports = {
     distSync:{
         targetPath:'',
         fileType:'*'
-    }
+    },
 
+    //svn信息
+    svn:{
+        pc:{
+            username:"",
+            password:""
+        },
+        mobile:{
+            username:"",
+            password:""
+        }
+    }
 };
