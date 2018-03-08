@@ -11,6 +11,7 @@ class SvnCommit{
             svn:require('svn-spawn'),
             clipboardy:require('clipboardy'),
             zip:require('../lib/zip'),
+            pathInfo:require('../lib/getPathInfo'),
             tip:require('../lib/tip')
         };
 
@@ -98,15 +99,69 @@ class SvnCommit{
                         m.tip.success('检出远程目录到本地');
                     };
                 }else{
+                    //获取svn首次提交的日期，并更新相关路径信息
+                    let svnFirstSubmmitDate = svnInfo.data.commit.date.split('-');
+                    if(svnFirstSubmmitDate.length){
+                        _ts.time.year = svnFirstSubmmitDate[0];
+                        _ts.time.month = svnFirstSubmmitDate[1];
+
+                        urlInfo = _ts.getUrlInfo();
+                        svnPath = urlInfo.svnUrl;
+                        preview = urlInfo.preview;
+                    };
+                    
+                    //得到旧的SVN版本号
+                    let oldSvnVer = +svnInfo.data.$.revision,
+                        oldFilePath = _ts.getDirFilesPath(fws.cmdPath);
+
                     //有svn信息则update到最新版本
                     update = await _ts.update();
                     if(update.status === 'success'){
                         m.tip.success('更新本地代码版本');
                     };
+
+                    let currentSvnVer = +(await _ts.getSvnInfo()).data.$.revision,
+                        currentFilePath = _ts.getDirFilesPath(fws.cmdPath);
+                    
+                    //如果更新之后的版本号跟之前版本号相同，则对比前后文件是否有删除的
+                    if(oldSvnVer === currentSvnVer){
+                        for(let i in oldFilePath){
+                            if(currentFilePath[i] === null){
+                                delete currentFilePath[i];
+                            };
+                        };
+
+                        //将需要删除的文件整理成数组
+                        let deleFiles = (()=>{
+                            let files = [];
+                            for(let i in currentFilePath){
+                                files.push(i);
+                            };
+                            return files;
+                        })();
+                        
+                        //从SVN中删除需要移除的文件
+                        if(deleFiles.length){
+                            for(let i=0,len=deleFiles.length; i<len; i++){
+                                let item = deleFiles[i].replace(m.path.join(fws.cmdPath,m.path.sep),'');
+
+                                if(item !== '.DS_Store'){
+                                    let del = await _ts.delete(item);
+                                    if(del.status === 'success'){
+                                        m.tip.success(del.msg);
+                                    };
+
+                                    if(m.fs.existsSync(deleFiles[i])){
+                                        m.fs.removeSync(deleFiles[i]);
+                                    };
+                                };
+                            };
+                        };
+                    };  
                 };
 
-                //如果有开启打包选项，则打包dist目录
-                if(_ts.option.zip){
+                //如果有开启打包选项，并且dist目录存在，则打包dist目录
+                if(_ts.option.zip && m.fs.existsSync(fws.distPath)){
                     srcPath = fws.distPath;
                     outPath = m.path.join(fws.cmdPath,`${config.currentDirName}--${m.path.basename(srcPath)}.tar`);
                     
@@ -128,9 +183,9 @@ class SvnCommit{
                     m.tip.success('提交文件成功');
                 };
 
-                //压缩包路径
+                //压缩包路径（有开启压缩项，且dist目录存在）
                 let zipFileInfo = (()=>{
-                    if(_ts.option.zip){
+                    if(_ts.option.zip && m.fs.existsSync(fws.distPath)){
                         let zipFileName = m.path.basename(outPath),
                             time = _ts.time,
                             zipFilePath = `${config.preview[config.projectType]}${time.year}/${time.month}/${config.currentDirName}/${zipFileName}`;
@@ -171,6 +226,36 @@ By 4399 [GDC](http://www.4399gdc.com) @${fws.config.author}, From [FWS](https://
         }).catch(e => {
             m.tip.error(v.msg);
         });
+    }
+    
+    //获取目录内所有文件路径（包括目录）
+    getDirFilesPath(path){
+        const _ts = this,
+            m = _ts.m;
+        let data = {
+            },
+            eathDir;
+
+        (eathDir = (dir)=>{
+            let isDir = m.pathInfo(dir).type === 'dir';
+            if(isDir){
+                let files = m.fs.readdirSync(dir);
+                files.forEach((item,index)=>{
+                    let filePath = m.path.join(dir,item),
+                        itemInfo = m.pathInfo(filePath);
+                    if(item !== '.svn'){
+                        if(itemInfo.type === 'dir'){
+                            filePath = m.path.join(filePath,m.path.sep);
+                            eathDir(filePath);
+                        };
+                        data[filePath] = null;
+                        
+                    };
+                    
+                });
+            };
+        })(path);
+        return data;
     }
 
     //获取Svn信息
@@ -353,6 +438,28 @@ By 4399 [GDC](http://www.4399gdc.com) @${fws.config.author}, From [FWS](https://
         });
     }
 
+    //删除
+    delete(path){
+        const _ts = this;
+        return new Promise((resolve,reject)=>{
+            _ts.client.del(path,(err,data)=>{
+                if(err){
+                    reject({
+                        status:'error',
+                        msg:`${path} 从svn移除失败`,
+                        data:err
+                    });
+                }else{
+                    resolve({
+                        status:'success',
+                        msg:`${path} 从svn移除成功`,
+                        data:data
+                    });
+                };
+            });
+        })
+    }
+
     //svn更新
     update(){
         const _ts = this;
@@ -374,6 +481,7 @@ By 4399 [GDC](http://www.4399gdc.com) @${fws.config.author}, From [FWS](https://
             });
         });
     }
+    
 
     //获取并创建fws临时交换目录
     getUserDir(){
