@@ -71,7 +71,8 @@ class SvnCommit{
         };
 
         let data = {},
-            urlInfo = _ts.getUrlInfo(),
+            distDirItExist = m.fs.existsSync(fws.distPath),
+            urlInfo = _ts.getUrlInfo(distDirItExist),
             svnPath = urlInfo.svnUrl,
             preview = urlInfo.preview,
             f = async()=>{
@@ -105,7 +106,7 @@ class SvnCommit{
                         _ts.time.year = svnFirstSubmmitDate[0];
                         _ts.time.month = svnFirstSubmmitDate[1];
 
-                        urlInfo = _ts.getUrlInfo();
+                        urlInfo = _ts.getUrlInfo(distDirItExist);
                         svnPath = urlInfo.svnUrl;
                         preview = urlInfo.preview;
                     };
@@ -123,13 +124,23 @@ class SvnCommit{
                 };
 
                 //如果有开启打包选项，并且dist目录存在，则打包dist目录
-                if(_ts.option.zip && m.fs.existsSync(fws.distPath)){
+                if(_ts.option.zip && distDirItExist){
                     srcPath = fws.distPath;
                     outPath = m.path.join(fws.cmdPath,`${config.currentDirName}--${m.path.basename(srcPath)}.tar`);
                     
                     zipDist = await m.zip(srcPath,outPath);
                     if(zipDist.status === 'success'){
-                        m.tip.success('Dist目录压缩完成');
+                        m.tip.success(`${srcPath} 目录压缩完成`);
+                    };
+                }else if(_ts.option.zip){
+                    let tempPath = m.path.join(m.os.homedir(),`${config.currentDirName}.tar`);     //临时交换路径
+                    srcPath = fws.cmdPath;
+                    outPath = m.path.join(fws.cmdPath,`${config.currentDirName}.tar`);
+                    zipDist = await m.zip(srcPath,tempPath);
+                    m.fs.removeSync(outPath);                                                      //删除原本的压缩文件
+                    m.fs.moveSync(tempPath,outPath);                                               //将临时文件移动到目录地址
+                    if(zipDist.status === 'success'){
+                        m.tip.success(`${srcPath} 目录压缩完成`);
                     };
                 };
                 
@@ -151,12 +162,14 @@ class SvnCommit{
                     m.tip.success('更新本地代码版本');
                 };
 
-                //压缩包路径（有开启压缩项，且dist目录存在）
+                //压缩包路径（有开启压缩项，且dist目录存在的，则压缩dist目录。否则压缩项目目录）
                 let zipFileInfo = (()=>{
-                    if(_ts.option.zip && m.fs.existsSync(fws.distPath)){
-                        let zipFileName = m.path.basename(outPath),
-                            time = _ts.time,
-                            zipFilePath = `${config.preview[config.projectType]}${time.year}/${time.month}/${config.currentDirName}/${zipFileName}`;
+                    let zipFileName,time,zipFilePath;
+
+                    if(_ts.option.zip){
+                        zipFileName = m.path.basename(outPath);
+                        time = _ts.time;
+                        zipFilePath = `${config.preview[config.projectType]}${time.year}/${time.month}/${config.currentDirName}/${zipFileName}`;
                         return `
 
 **下载：**
@@ -464,7 +477,7 @@ By 4399 [GDC](http://www.4399gdc.com) @${fws.config.author}, From [FWS](https://
     }
 
     //获取当前项目的的相关URL及信息
-    getUrlInfo(){
+    getUrlInfo(distDirItExist){
         const _ts = this,
             m = _ts.m,
             config = _ts.config;
@@ -475,7 +488,7 @@ By 4399 [GDC](http://www.4399gdc.com) @${fws.config.author}, From [FWS](https://
             year = time.year,
             month = time.month,
             svnUrl = `${config.svns[projectType]}${year}/${month}/${currentDirName}/`,          //当前目录的SVN路径为项目类型SVN地址
-            previewUrl = `${config.preview[projectType]}${year}/${month}/${currentDirName}/dist/`;
+            previewUrl = `${config.preview[projectType]}${year}/${month}/${currentDirName}/${distDirItExist ? 'dist/':''}`;
         
         return projectType ? {
             svnUrl:svnUrl,
