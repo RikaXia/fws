@@ -40,7 +40,7 @@ class SvnCommit{
                 pc:'https://gdc.4399svn.com/svn/yypt/page/'
             },
             preview:{
-                mobile:'http://gdc.4399svn.com/svn/yypt/page/',
+                mobile:'http://static.4399gdc.com/sypt/4399gdc/',
                 pc:'http://static.4399gdc.com/yypt/'
             },
             currentDirName:currentDirName,

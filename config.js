@@ -2,7 +2,7 @@
 
 module.exports = {  
     //作者名称
-    author:'FWS',
+    author:'fws',
     
     //作者邮箱
     mail:'china1099@qq.com',
