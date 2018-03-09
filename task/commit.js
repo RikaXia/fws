@@ -110,54 +110,16 @@ class SvnCommit{
                         preview = urlInfo.preview;
                     };
                     
-                    //得到旧的SVN版本号
-                    let oldSvnVer = +svnInfo.data.$.revision,
-                        oldFilePath = _ts.getDirFilesPath(fws.cmdPath);
-
-                    //有svn信息则update到最新版本
-                    update = await _ts.update();
-                    if(update.status === 'success'){
-                        m.tip.success('更新本地代码版本');
-                    };
-
-                    let currentSvnVer = +(await _ts.getSvnInfo()).data.$.revision,
-                        currentFilePath = _ts.getDirFilesPath(fws.cmdPath);
+                    let localSvnVer = +svnInfo.data.$.revision,     //得到本地SVN版本号
+                        remotelySvnVer = +(await _ts.checkSvn(svnInfo.data.url)).data.Revision;     //得到远程SVN版本号
                     
-                    //如果更新之后的版本号跟之前版本号相同，则对比前后文件是否有删除的
-                    if(oldSvnVer === currentSvnVer){
-                        for(let i in oldFilePath){
-                            if(currentFilePath[i] === null){
-                                delete currentFilePath[i];
-                            };
+                    //远程版本较新时则更新远程版本到本地
+                    if(remotelySvnVer > localSvnVer){
+                        update = await _ts.update();
+                        if(update.status === 'success'){
+                            m.tip.success('更新本地代码版本');
                         };
-
-                        //将需要删除的文件整理成数组
-                        let deleFiles = (()=>{
-                            let files = [];
-                            for(let i in currentFilePath){
-                                files.push(i);
-                            };
-                            return files;
-                        })();
-                        
-                        //从SVN中删除需要移除的文件
-                        if(deleFiles.length){
-                            for(let i=0,len=deleFiles.length; i<len; i++){
-                                let item = deleFiles[i].replace(m.path.join(fws.cmdPath,m.path.sep),'');
-
-                                if(item !== '.DS_Store'){
-                                    let del = await _ts.delete(item);
-                                    if(del.status === 'success'){
-                                        m.tip.success(del.msg);
-                                    };
-
-                                    if(m.fs.existsSync(deleFiles[i])){
-                                        m.fs.removeSync(deleFiles[i]);
-                                    };
-                                };
-                            };
-                        };
-                    };  
+                    }; 
                 };
 
                 //如果有开启打包选项，并且dist目录存在，则打包dist目录
@@ -181,6 +143,12 @@ class SvnCommit{
                 commit = await _ts.commit(`由 ${fws.config.author} 通过 fws push 任务提交`);
                 if(commit.status === 'success'){
                     m.tip.success('提交文件成功');
+                };
+
+                //提交完成之后再刷新本地SVN版本信息
+                update = await _ts.update();
+                if(update.status === 'success'){
+                    m.tip.success('更新本地代码版本');
                 };
 
                 //压缩包路径（有开启压缩项，且dist目录存在）
@@ -529,11 +497,24 @@ By 4399 [GDC](http://www.4399gdc.com) @${fws.config.author}, From [FWS](https://
                             data:err
                         });
                     }else{
+                        let temp = {};
+                        
+                        //将获取到的远程SVN信息格式化为对象
+                        data = data.split('\n');
+                        data.forEach((item,index)=>{
+                            item = item.split(': ');
+                            let key = item[0].replace(/ /ig,''),
+                                val = item[1];
+                            if(key && val){
+                                temp[key] = val;
+                            };
+                        });
+                        
                         resolve({
                             status:'success',
                             msg:'svn地址有效',
                             path:svnUrl,
-                            data:''
+                            data:temp
                         });
                     };
                 });

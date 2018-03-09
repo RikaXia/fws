@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 'use strict';
-
 const {fs,path,cwdPath,program,tip,pathInfo,getType,fwsConfig,npmPackage,getLocalIp} = {
     fs:require('fs'),
     path:require('path'),
@@ -13,7 +12,6 @@ const {fs,path,cwdPath,program,tip,pathInfo,getType,fwsConfig,npmPackage,getLoca
     npmPackage:require('./package.json'),
     getLocalIp:require('./lib/getLocalIp')                  //获取本机ip地址
 };
-
 
 //字符串方法扩展
 String.prototype.replaceAll = function(substr,replacement){
