@@ -1,6 +1,7 @@
 module.exports = {
     config:{
         isMobile:false,
+        isPortrait:false,
         isFullScreen:false,
         showIosIcon:false
     },
