@@ -19,12 +19,22 @@ mixin metaMobile
 
 	//忽略页面中的电话号码数字和邮件链接
 	meta(name='format-detection',content='telephone=no, email=no')
-mixin metaPortrait
-//uc横竖屏设置
-meta(name='screen-orientation',content='portrait')
-
-//QQ横竖屏设置
-meta(name='x5-orientation',content='portrait')
+mixin metaIsPortrait(val)
+	case val
+		when 'portrait'
+			//uc横竖屏设置
+			meta(name='screen-orientation',content='portrait')
+			//QQ横竖屏设置
+			meta(name='x5-orientation',content='portrait')
+		when 'landscape'
+			//uc横竖屏设置
+			meta(name='screen-orientation',content='landscape')
+			//QQ横竖屏设置
+			meta(name='x5-orientation',content='landscape')
+		when 'user'
+			//用户当前首选的方向
+			meta(name='screen-orientation',content='user')
+			meta(name='x5-orientation',content='user')
 mixin metaFullScreen
 	
 
