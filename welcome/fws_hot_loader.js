@@ -39,6 +39,7 @@
         },
         //获取path信息
         getPathInfo:function(path){
+            path = path || '';
             var aDir = path.split('\\');
             if(aDir.length === 1){
                 aDir = path.split('/');
