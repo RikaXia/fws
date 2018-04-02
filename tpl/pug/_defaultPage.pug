@@ -10,14 +10,9 @@ html
         if config.isMobile
             //移动端头部兼容
             +metaMobile
-        //移动端横竖屏
-        case config.isPortrait
-            when 0
-                +metaIsPortrait('portrait')
-            when 1
-                +metaIsPortrait('landscape')
-            when 2
-                +metaIsPortrait('user')
+
+            //横竖屏设置
+            +metaPolicy(config.policy)
                 
         if config.isFullScreen
             +metaFullScreen

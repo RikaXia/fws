@@ -1,16 +1,13 @@
 {
   "name": "fws",
-  "version": "1.1.23",
+  "version": "1.1.24",
   "description": "Fws is a workflow management tool that focuses on global automation tasks.",
   "main": "index.js",
   "bin": {
     "fws": "bin.js"
   },
   "scripts": {
-    "test": "echo 'Welcome to fws (front-end Workspace) ^_^'",
-    "pug2html": "node lib/pug2html.js",
-    "sass2html": "node lib/sass2css.js",
-    "getParameter": "node lib/getParameter.js"
+    "test": "echo 'Welcome to fws (front-end Workspace) ^_^'"
   },
   "repository": {
     "type": "git",
