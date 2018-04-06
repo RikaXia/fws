@@ -1,3 +1,6 @@
+/**
+ * 生成Pixi.js支持的sprite
+ */
 class PixiSprite{
     constructor(name,options){
         const _ts = this;
@@ -24,11 +27,21 @@ class PixiSprite{
         let srcPath = _ts.srcPath;
         _ts.outData(srcPath).then(v => {
             let outDir = m.path.join(srcPath,'../'),
-                sjson = JSON.stringify(v.data.json,null,2);
+                sjson = (()=>{
+                    let json;
+                    //如果开启格式化选项，则模式化json文件
+                    if(_ts.option.format){
+                        json = JSON.stringify(v.data.json,null,2);
+                    }else{
+                        json = JSON.stringify(v.data.json);
+                    };
+                    return json;
+                })();
 
             try {
                 let jsonPath = m.path.join(outDir,v.data.name+'.json'),
                     imgPath = m.path.join(outDir,v.data.name+'.png');
+                
                 m.fs.writeFileSync(jsonPath,sjson);
                 m.tip.success(`${jsonPath} 生成成功`);
                 m.fs.writeFileSync(imgPath,v.data.image);
@@ -179,8 +192,7 @@ module.exports = {
         command:'[name]',
         description:'从指定目录创建PixiSprite',
         option:[
-            //['-p, --param [type]','任务参数（可选）']
-            ['-p, --param <type>','任务参数（必选）']
+            ['-f, --format','格式化输出的 JSON 文件']
         ],
         help:()=>{
             console.log('');
