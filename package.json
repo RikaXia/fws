@@ -1,6 +1,6 @@
 {
   "name": "fws",
-  "version": "1.1.25",
+  "version": "1.1.26",
   "description": "Fws is a workflow management tool that focuses on global automation tasks.",
   "main": "index.js",
   "bin": {
@@ -79,7 +79,7 @@
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-node-resolve": "^3.0.3",
     "rollup-plugin-vue": "^3.0.0",
-    "spritesmith": "^3.1.1",
+    "spritesmith": "^3.3.0",
     "svgo": "^0.7.2",
     "svgstore": "^2.0.2",
     "svn-spawn": "^0.1.5",
