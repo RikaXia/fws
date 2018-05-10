@@ -2,10 +2,10 @@
 
 module.exports = {  
     //作者名称
-    author:'单炒饭',
+    author:'FWS',
     
     //作者邮箱
-    mail:'liyong2@4399.com',
+    mail:'username@xxx.com',
     
     // //项目名称
     // projectName:'',
@@ -64,12 +64,12 @@ module.exports = {
     //svn信息
     svn:{
         pc:{
-            username:"liyong2",
-            password:"4df8a7cd"
+            username:"",
+            password:""
         },
         mobile:{
-            username:"liyong2",
-            password:"4df8a7cd"
+            username:"",
+            password:""
         }
     }
 };
