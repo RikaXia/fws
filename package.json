@@ -1,8 +1,8 @@
 {
   "name": "fws",
-  "version": "1.1.29",
+  "version": "1.2.0",
   "description": "Fws is a workflow management tool that focuses on global automation tasks.",
-  "main": "index.js",
+  "main": "main.js",
   "bin": {
     "fws": "bin.js"
   },
@@ -70,7 +70,8 @@
     "koa-router": "^7.1.1",
     "koa-socket": "^4.4.0",
     "koa-static": "^4.0.2",
-    "node-sass": "^4.7.0",
+    "mocha": "^3.5.3",
+    "node-sass": "^4.9.0",
     "openurl": "^1.1.1",
     "postcss-filter-gradient": "^1.0.0",
     "postcss-opacity": "^5.0.0",
@@ -80,7 +81,7 @@
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-node-resolve": "^3.0.3",
     "rollup-plugin-typescript": "^0.8.1",
-    "rollup-plugin-vue": "^3.0.0",
+    "rollup-plugin-vue": "^4.1.4",
     "spritesmith": "^3.3.0",
     "svgo": "^0.7.2",
     "svgstore": "^2.0.2",
@@ -92,7 +93,6 @@
     "vue-template-compiler": "^2.5.13"
   },
   "devDependencies": {
-    "mocha": "^3.4.2"
   },
   "engines": {
     "node": ">= 7.6.0"

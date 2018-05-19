@@ -18,7 +18,7 @@ class create{
 
         //任务依赖模块
         let m = _ts.m = {
-                fs:require('fs'),
+                fs:require('fs-extra'),
                 path:require('path'),
                 tip:require('../lib/tip'),                            //文字提示
                 getType:require('../lib/getType'),                    //获取数据类型
@@ -32,6 +32,7 @@ class create{
         config.name = name;
 
         config.template = typeof options.template === 'string' ? options.template : 'default';
+        config.unittest = options.unittest;
 
         _ts.starTime = new Date();
     }
@@ -95,6 +96,7 @@ class create{
             fws.srcPath = m.path.join(projectPath,'src');
             fws.devPath = m.path.join(projectPath,'dev');
             fws.distPath = m.path.join(projectPath,'dist');
+            fws.testPath = m.path.join(projectPath,'test');
 
             //创建目录
             fs.mkdirSync(projectPath);
@@ -108,6 +110,28 @@ class create{
 
             fs.mkdirSync(fws.distPath);
             m.tip.success('创建 '+fws.distPath);
+
+            if(config.unittest){
+                fs.mkdirSync(fws.testPath);
+                m.tip.success('创建 '+fws.testPath);
+
+                //创建单元测试演示及依赖文件
+                let demoTestPath =  m.path.join(fws.testPath,'main.test.js'),
+                    packagePath = m.path.join(projectPath,'package.json'),
+                    packageTplPath = m.path.join(fws.tplPath,'json','packageTpl.json'),
+                    packageTpl = JSON.parse(m.fs.readFileSync(packageTplPath).toString());
+                m.fs.copySync(
+                    m.path.join(fws.tplPath,'test','main.test.js'),
+                    demoTestPath
+                );
+                m.tip.success('创建 '+demoTestPath);
+
+                packageTpl.author = fws.config.author;
+                packageTpl.name = config.name;
+
+                m.fs.writeFileSync(packagePath,JSON.stringify(packageTpl,null,4));
+                m.tip.success('创建 '+packagePath);
+            };
 
             //创建项目配置文件
             let projectType = (()=>{
@@ -252,7 +276,8 @@ module.exports = {
         command:'[name]',
         description:'创建一个新的空项目',
         option:[
-            ['-t, --template [template]','项目模版。默认pc，可选参数 '+aConfigList.toString()]
+            ['-t, --template [template]','项目模版。默认pc，可选参数 '+aConfigList.toString()],
+            ['-u, --unittest','创建单元测试模块文件及依赖配置']
         ],
         help:()=>{
             console.log('');

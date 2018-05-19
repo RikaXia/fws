@@ -57,6 +57,9 @@ class SvnCommit{
         
         option.noAuthCache = true;
 
+        // SVN需要过滤的目录、文件
+        _ts.svnIgnoreConfig = require('../lib/svnIgnore.json');
+
         _ts.client = new _ts.m.svn(option);
     }
 
@@ -77,6 +80,7 @@ class SvnCommit{
             preview = urlInfo.preview,
             f = async()=>{
                 let svnInfo = await _ts.getSvnInfo(),
+                    // excludePaths = _ts.getExcludePath(fws.cmdPath),
                     svnMkdir,
                     checkout,
                     update,
@@ -85,7 +89,9 @@ class SvnCommit{
                     commit,
                     clipboardText,
                     srcPath,
-                    outPath;
+                    outPath,
+                    // addPaths = _ts.getDirFilesPath(fws.cmdPath),
+                    ignore;
 
                 if(svnInfo.data === 'none'){
                     //无svn信息则在远程创建目录并检出到当前工作目录
@@ -143,12 +149,73 @@ class SvnCommit{
                         m.tip.success(`${srcPath} 目录压缩完成`);
                     };
                 };
+
+                // 设置过滤规则
+                ignore = await _ts.ignore([..._ts.svnIgnoreConfig.dirs,..._ts.svnIgnoreConfig.files]);
+                if(ignore.success === 'success'){
+                    m.tip.success(ignore.msg);
+                };
                 
-                //添加文件
+                //添加所有文件
                 addLocal = await _ts.addLocal();
                 if(addLocal.status === 'success'){
                     m.tip.success('添加所有文件到仓库');
                 };
+
+                
+
+                // for(let i=0,len=addPaths.length; i<len; i++){
+                //     let item = addPaths[i],
+                //         itemInfo = m.pathInfo(item),
+                //         svnStatus = await _ts.getStatus(item);
+                //     svnStatus = (()=>{
+                //         if(svnStatus.data === ''){
+                //             return ''
+                //         };
+
+                //         if(svnStatus.data.indexOf('Error') > -1){
+                //             return '?';
+                //         };
+
+                //         return svnStatus.data[0];
+                //     })();
+
+                //     //if(svnStatus === '?' || svnStatus === '')
+                //     console.log(svnStatus,item)
+                // };
+
+                // return;
+
+
+                // for(let i=0,len=addPaths.length; i<len; i++){
+                //     let item = addPaths[i],
+                //         itemInfo = m.pathInfo(item),
+                //         itemStatus = await _ts.add(item);
+
+                //     if(itemStatus.status === 'success'){
+                //         m.tip.success(`强行添加 ${item} 完成`);
+                //     };
+                // };
+
+                /* //从过滤中过滤要忽略的文件
+                for(let i=0,len=excludePaths.length; i<len; i++){
+                    let item = excludePaths[i];
+
+                    // item = item.replace(fws.cmdPath,'.');
+
+                    // let statu = await _ts.getStatus(item);
+                    let del = await _ts.delete(item);
+                        if(del.status === 'success'){
+                            m.tip.success(`过滤 ${item} 文件`);
+                        }
+
+                    
+                    
+                    // excludeTaskList[i] = await _ts.delete(item);
+                    // if(excludeTaskList[i].status === 'success'){
+                    //     m.tip.success(`过滤 ${item} 文件`);
+                    // };
+                }; */
 
                 //提交文件
                 commit = await _ts.commit(`由 ${fws.config.author} 通过 fws push 任务提交`);
@@ -207,36 +274,174 @@ By 4399 [GDC](http://www.4399gdc.com) @${fws.config.author}, From [FWS](https://
         }).catch(e => {
             m.tip.error(v.msg);
         });
+
+        
+    }
+
+    //获取需要排除的目录
+    getExcludePath(path){
+        const _ts = this,
+            m = _ts.m;
+        let paths = [],
+            excludeDirs = _ts.svnIgnoreConfig.dirs,
+            excludeFiles = _ts.svnIgnoreConfig.files,
+            eathDir;
+
+        (eathDir = (path)=>{
+            let pathInfo = m.pathInfo(path),            // 文件路径信息
+                isDir = pathInfo.type === 'dir',        // 是否为目录
+                isFile = pathInfo.type === 'file',      // 是否为文件
+                isExclude = (()=>{                      // 是否需要过滤掉
+                    let fileName = pathInfo.name + (pathInfo.extension !== undefined ? pathInfo.extension : ''),
+                        exeName = pathInfo.extension;
+
+                    // 是目录则从excludeDirs匹配文件名
+                    return (isDir ? excludeDirs : excludeFiles).some(item => {
+                        // 如果传入是文件类型，则对比文件扩展名是否相等，否则就直接匹配文件名
+                        if(item[0] === '*'){
+                            return exeName === item.substr(-(item.length - 1));
+                        }else{
+                            return item === fileName;
+                        };
+                    });
+                })();
+
+            // 如果是需要过滤的文件或目录，则添加保存起来
+            if(isExclude){
+                paths.push(path);
+            };
+
+            // 如果是目录并且不是需要过滤的则继续遍历当前目录
+            if(isDir && !isExclude){
+                m.fs.readdirSync(path).forEach(item => {
+                    let filePath = m.path.join(path,item);
+                    eathDir(filePath);
+                });
+            };
+        })(path);
+        return paths; 
+    }
+
+    async revert(path){
+        const _ts = this;
+        return await new Promise((resolve,reject)=>{
+            try {
+                _ts.client.cmd(['revert',path],(err,data)=>{
+                    resolve({
+                        status:'success',
+                        msg:`回滚${path}成功`,
+                        data:data
+                    });
+                })
+            } catch (error) {
+                reject({
+                    status:'error',
+                    msg:`回滚${path}错误`,
+                    data:error
+                });
+            };
+        });
+    }
+    
+
+    //添加过滤规则
+    async ignore(list){
+        const _ts = this;
+        let ignoreConfig = (()=>{
+            let s = '';
+            list.forEach(item => {
+                s += `${item}\n`;
+            });
+            return s;
+        })();
+        return await new Promise((resolve,reject)=>{
+            try {
+                _ts.client.cmd(['propset','svn:ignore','-R',`'${ignoreConfig}'`,'.'],(err,data)=>{
+                    resolve({
+                        status:'success',
+                        msg:`过滤${list}成功`,
+                        data:data
+                    });
+                });
+            } catch (error) {
+                reject({
+                    status:'error',
+                    msg:`过滤${list}失败`,
+                    data:error
+                });
+            };
+        });
+    }
+
+    //获取文件状态
+    getStatus(path){
+        const _ts = this;
+        return new Promise((resolve,reject)=>{
+            try {
+                _ts.client.cmd(['status', path],(err,data)=>{
+                    resolve({
+                        status:'success',
+                        msg:`获取 ${path} SVN状态成功`,
+                        data:err ? err : data
+                    });
+                });
+            } catch (error) {
+                reject({
+                    status:'error',
+                    msg:`获取 ${path} SVN状态失败`,
+                    data:data
+                })
+            };
+        });
     }
     
     //获取目录内所有文件路径（包括目录）
     getDirFilesPath(path){
         const _ts = this,
             m = _ts.m;
-        let data = {
-            },
+        let paths = [],
+            excludeDirs = ['node_modules','.svn','.git'],
+            excludeFiles = ['.DS_Store','Thumbs.db','*.psd','*.psb','*.ppt','*.pptx','*.rp','*.xls','*.xlsx','*.doc','*.docx'],
             eathDir;
 
-        (eathDir = (dir)=>{
-            let isDir = m.pathInfo(dir).type === 'dir';
-            if(isDir){
-                let files = m.fs.readdirSync(dir);
-                files.forEach((item,index)=>{
-                    let filePath = m.path.join(dir,item),
-                        itemInfo = m.pathInfo(filePath);
-                    if(item !== '.svn'){
-                        if(itemInfo.type === 'dir'){
-                            filePath = m.path.join(filePath,m.path.sep);
-                            eathDir(filePath);
+        (eathDir = (path)=>{
+            let pathInfo = m.pathInfo(path),            // 文件路径信息
+                isDir = pathInfo.type === 'dir',        // 是否为目录
+                isFile = pathInfo.type === 'file',      // 是否为文件
+                isExclude = (()=>{                      // 是否需要过滤掉
+                    let fileName = pathInfo.name + (pathInfo.extension !== undefined ? pathInfo.extension : ''),
+                        exeName = pathInfo.extension;
+
+                    // 是目录则从excludeDirs匹配文件名
+                    return (isDir ? excludeDirs : excludeFiles).some(item => {
+                        // 如果传入是文件类型，则对比文件扩展名是否相等，否则就直接匹配文件名
+                        if(item[0] === '*'){
+                            return exeName === item.substr(-(item.length - 1));
+                        }else{
+                            return item === fileName;
                         };
-                        data[filePath] = null;
-                        
-                    };
-                    
+                    });
+                })();
+
+            // 如果是需要过滤的文件或目录，则添加保存起来
+            if(!isExclude){
+                // paths.push(path);
+                if(isDir){
+                    paths.unshift(path);
+                }else{
+                    paths.push(path);
+                };
+            };
+
+            // 如果是目录并且不是需要过滤的则继续遍历当前目录
+            if(isDir && !isExclude){
+                m.fs.readdirSync(path).forEach(item => {
+                    let filePath = m.path.join(path,item);
+                    eathDir(filePath);
                 });
             };
         })(path);
-        return data;
+        return paths; 
     }
 
     //获取Svn信息
@@ -268,6 +473,7 @@ By 4399 [GDC](http://www.4399gdc.com) @${fws.config.author}, From [FWS](https://
             };  
         });
     }
+    
 
     checkout(svnUrl){
         const _ts = this;
@@ -377,6 +583,28 @@ By 4399 [GDC](http://www.4399gdc.com) @${fws.config.author}, From [FWS](https://
     }
 
     //svn添加文件
+    add(path){
+        const _ts = this;
+        return new Promise((resolve,reject)=>{
+            try {
+                _ts.client.add(path,(err,data)=>{
+                    resolve({
+                        status:'success',
+                        msg:`svn添加${path}文件成功`,
+                        data:err ? err : data
+                    });
+                });
+            } catch (error) {
+                reject({
+                    status:'error',
+                    msg:`svn添加${path}文件错误`,
+                    data:error
+                });
+            };
+        });
+    }
+
+    //svn添加所有文件
     addLocal(){
         const _ts = this;
 

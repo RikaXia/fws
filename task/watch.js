@@ -88,6 +88,17 @@ class Watch{
 
         //开启http服务
         //var listenPort;
+        let vsCodeDebugConfigDirPath = m.path.join(fws.srcPath,'../','.vscode/'),
+            vsCodeDebugConfigPath = m.path.join(vsCodeDebugConfigDirPath,'launch.json'),
+            vsCodeDebugConfigTplPath = m.path.join(fws.tplPath,'json','launchTpl.json'),
+            vsCodeDebugConfigTpl = (()=>{
+                if(m.pathInfo(vsCodeDebugConfigPath).type === 'file'){
+                    return JSON.parse(m.fs.readFileSync(vsCodeDebugConfigPath).toString());
+                }else{
+                    return JSON.parse(m.fs.readFileSync(vsCodeDebugConfigTplPath).toString());
+                };
+            })();
+
         if(option.server){
             tasks.push(()=>{
                 return new Promise((resolve,reject)=>{
@@ -96,16 +107,58 @@ class Watch{
                         //保存端口号
                         global.fws.listenPort = v.data.listenPort;
                         global.fws.localIp = m.getLocalIp();
+
+                        let url = `${global.fws.localIp}:${global.fws.listenPort}`;
+                        //vscode调试配置添加本服务url，以便启动访问
+                        vsCodeDebugConfigTpl.configurations.forEach(item => {
+                            if(item.name === 'FWS Web'){
+                                item.url = `http://${url}/dev/`;
+                            };
+                        });
                         
-                        v.msg = v.msg + ` ${global.fws.localIp}:${global.fws.listenPort}`;
+                        v.msg = v.msg + ` ${url}`;
                         resolve(v);
                     }).catch(e => {
                         reject(e);
                     });
-                    
                 });
             });
         };
+
+        // 创建调试文件
+        tasks.push(()=>{
+            return new Promise((resolve,reject)=>{
+                try {
+                    // vscode调试配置添加本服务url，以便启动访问
+                    vsCodeDebugConfigTpl.configurations.forEach(item => {
+                        if(item.name === 'FWS Mocha'){
+                            item.program = m.path.join(fws.fwsPath,'node_modules','mocha','bin','_mocha');
+                        };
+                    });
+
+                    // 目录不存在则创建
+                    if(m.pathInfo(vsCodeDebugConfigDirPath).type !== 'dir'){
+                        m.fs.mkdirSync(m.path.join(vsCodeDebugConfigPath,'../'));
+                    };
+                    // 写入调试配置文件
+                    m.fs.writeFileSync(vsCodeDebugConfigPath,JSON.stringify(vsCodeDebugConfigTpl,null,4));
+
+                    resolve({
+                        status:'success',
+                        msg:'创建 vsCode 调试配置文件',
+                        data:{
+                            data:vsCodeDebugConfigTpl,
+                            path:vsCodeDebugConfigPath
+                        }
+                    });
+                } catch (error) {
+                    reject({
+                        status:'error',
+                        msg:'创建 vsCode 调试配置文件失败'
+                    });
+                };
+            });
+        });
 
         //如果有开启快速模式，将不会预先编译项目
         if(!option.fast){
