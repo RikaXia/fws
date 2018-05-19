@@ -344,19 +344,21 @@ By 4399 [GDC](http://www.4399gdc.com) @${fws.config.author}, From [FWS](https://
     }
     
 
-    //添加过滤规则
+    //添加全局过滤规则
     async ignore(list){
         const _ts = this;
+
+        // 过滤规则，每条一行
         let ignoreConfig = (()=>{
             let s = '';
-            list.forEach(item => {
-                s += `${item}\n`;
+            list.forEach((item,index) => {
+                s += `\n${item}${index === list.length - 1 ? '\n':''}`;
             });
             return s;
         })();
         return await new Promise((resolve,reject)=>{
             try {
-                _ts.client.cmd(['propset','svn:ignore','-R',`'${ignoreConfig}'`,'.'],(err,data)=>{
+                _ts.client.cmd(['propset','svn:global-ignores',`'${ignoreConfig}'`,'.'],(err,data)=>{
                     resolve({
                         status:'success',
                         msg:`过滤${list}成功`,
