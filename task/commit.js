@@ -92,7 +92,7 @@ class SvnCommit{
                     outPath,
                     // addPaths = _ts.getDirFilesPath(fws.cmdPath),
                     ignore;
-
+                    
                 if(svnInfo.data === 'none'){
                     //无svn信息则在远程创建目录并检出到当前工作目录
                     svnMkdir = await _ts.svnMkdir(svnPath);
@@ -112,9 +112,9 @@ class SvnCommit{
                         _ts.time.year = svnFirstSubmmitDate[0];
                         _ts.time.month = svnFirstSubmmitDate[1];
 
-                        urlInfo = _ts.getUrlInfo(distDirItExist);
-                        svnPath = urlInfo.svnUrl;
-                        preview = urlInfo.preview;
+                        // urlInfo = _ts.getUrlInfo(distDirItExist);
+                        // svn地址去除用户名部分
+                        svnPath = svnInfo.data.url.replace(new RegExp('\/\/.*@'),'//') + '/';
                     };
                     
                     let localSvnVer = +svnInfo.data.$.revision,     //得到本地SVN版本号
@@ -128,6 +128,13 @@ class SvnCommit{
                         };
                     }; 
                 };
+
+                // 得到预览地址
+                preview = (()=>{
+                    let s = config.svns[config.projectType],
+                        p = config.preview[config.projectType];
+                    return svnPath.replace(s,p);
+                })();
 
                 //如果有开启打包选项，并且dist目录存在，则打包dist目录
                 if(_ts.option.zip && distDirItExist){
@@ -236,7 +243,7 @@ class SvnCommit{
                     if(_ts.option.zip){
                         zipFileName = m.path.basename(outPath);
                         time = _ts.time;
-                        zipFilePath = `${config.preview[config.projectType]}${time.year}/${time.month}/${config.currentDirName}/${zipFileName}`;
+                        zipFilePath = `${preview}${zipFileName}`;
                         return `
 
 **下载：**
@@ -251,7 +258,7 @@ ${zipFilePath}
 ## 项目文件
 
 **预览：**
-${urlInfo.previewUrl}
+${preview}
 ${zipFileInfo}
 
 **SVN：**
@@ -446,9 +453,19 @@ By 4399 [GDC](http://www.4399gdc.com) @${fws.config.author}, From [FWS](https://
         return paths; 
     }
 
+
     //获取Svn信息
-    getSvnInfo(){
+    async getSvnInfo(){
         const _ts = this;
+        // 先强制执行更新
+        try {
+            await new Promise((resolve,reject)=>{
+                _ts.client.cmd('upgrade',()=>{
+                    resolve();
+                })
+            });
+        } catch (error) {};
+
         return new Promise((resolve,reject)=>{
             try {
                 _ts.client.getInfo((err,data)=>{

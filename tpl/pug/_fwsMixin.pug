@@ -21,8 +21,9 @@ mixin metaMobile
 	meta(name='format-detection',content='telephone=no, email=no')
 
 
-//移动端模竖屏设置（portrait [默认] 纵向；landscape 横向；user 用户当前首选方向）
 mixin metaPolicy(val)
+	//移动端模竖屏设置（portrait [默认] 纵向；landscape 横向；user 用户当前首选方向）
+	
 	//uc
 	meta(name='screen-orientation',content=val?val:'portrait')
 	//QQ
