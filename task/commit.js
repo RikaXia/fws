@@ -132,8 +132,9 @@ class SvnCommit{
                 // 得到预览地址
                 preview = (()=>{
                     let s = config.svns[config.projectType],
-                        p = config.preview[config.projectType];
-                    return svnPath.replace(s,p);
+                        p = config.preview[config.projectType],
+                        url = svnPath.replace(s,p);
+                    return distDirItExist ? `${url}dist/` : url;
                 })();
 
                 //如果有开启打包选项，并且dist目录存在，则打包dist目录
@@ -238,12 +239,16 @@ class SvnCommit{
 
                 //压缩包路径（有开启压缩项，且dist目录存在的，则压缩dist目录。否则压缩项目目录）
                 let zipFileInfo = (()=>{
-                    let zipFileName,time,zipFilePath;
+                    let zipFileName,time,zipFilePath,
+                        url = svnPath.replace(
+                            config.svns[config.projectType],
+                            config.preview[config.projectType]
+                        );
 
                     if(_ts.option.zip){
                         zipFileName = m.path.basename(outPath);
                         time = _ts.time;
-                        zipFilePath = `${preview}${zipFileName}`;
+                        zipFilePath = `${url}${zipFileName}`;
                         return `
 
 **下载：**

@@ -5,14 +5,7 @@ module.exports = {
     author:'FWS',
     
     //作者邮箱
-    mail:'username@xxx.com',
-    
-    // //项目名称
-    // projectName:'',
-
-    // //更新者信息
-    // author_update:'',
-    // mail_update:'',
+    mail:'name@mail.com',
 
     //图像合并处理引擎，推荐('canvassmith')
     //由于安装门槛，请在全局或fws成功安装'canvassmith'再启用，否则可能导致出错
