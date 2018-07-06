@@ -1,6 +1,6 @@
 /// <reference path="./typings/index.d.ts" />
 module.exports = {
-    //Ts2:require('./lib/ts2'),
+    Ts2:require('./lib/ts2'),
     //Jsx2js:require('./lib/jsx2js'),
     Sass2css:require('./lib/sass2css'),    
     Es2:require('./lib/es2'),  
