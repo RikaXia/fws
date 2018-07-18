@@ -14,7 +14,7 @@
 };
 
 //精灵图背景坐标获取方法
-@mixin sprite-position($sprite,$element,$unit:'px',$offectX:0,$offectY:0){    
+@mixin sprite-position($sprite,$element,$offectX:0,$offectY:0,$unit:'px'){    
     $x:- sprite-x($sprite,$element,'number') + $offectX + 0px;
     $y:- sprite-y($sprite,$element,'number') + $offectY + 0px;
     
