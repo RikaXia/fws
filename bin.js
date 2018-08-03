@@ -44,7 +44,8 @@ global.fws = {
     },
     'globalReplace':{
         '$$localhost':getLocalIp()
-    }
+    },
+    'cache':{}                                                      //文件编译缓存
 };
 
 global.fws_spriteTime ={};                                          //用于保存精灵图目录编译时间
